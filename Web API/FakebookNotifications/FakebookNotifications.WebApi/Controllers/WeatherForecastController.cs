@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fakebook_Notifications.WebAPI.Controllers
+namespace FakebookNotifications.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]

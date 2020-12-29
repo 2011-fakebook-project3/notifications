@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fakebook_Notifications.WebAPI
+namespace FakebookNotifications.WebApi
 {
     public class Program
     {

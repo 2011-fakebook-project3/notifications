@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fakebook_Notifications.WebAPI
+namespace FakebookNotifications.WebApi
 {
     public class Startup
     {
@@ -30,7 +30,7 @@ namespace Fakebook_Notifications.WebAPI
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook_Notifications.WebAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FakebookNotifications.WebApi", Version = "v1" });
             });
         }
 
@@ -41,7 +41,7 @@ namespace Fakebook_Notifications.WebAPI
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fakebook_Notifications.WebAPI v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FakebookNotifications.WebApi v1"));
             }
 
             app.UseHttpsRedirection();

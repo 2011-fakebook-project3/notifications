@@ -1,6 +1,6 @@
 using System;
 
-namespace Fakebook_Notifications.WebAPI
+namespace FakebookNotifications.WebApi
 {
     public class WeatherForecast
     {
