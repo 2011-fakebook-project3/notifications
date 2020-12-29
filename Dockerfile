@@ -1,11 +1,11 @@
 #base image + dependencies
 FROM mcr.microsoft.com/dotnet/sdk:5.0
 #copy in published stuff (TODO: update for actual published location)
-COPY bin/Release/net5.0/publish/ App/
+COPY publish/ /app
 #set working directory
-WORKDIR /App
+WORKDIR /app
 #set entrypoint of file
-ENTRYPOINT ["dotnet", "Fakebook-Notifications.WebAPI.dll"]
+CMD dotnet /app/FakebookNotifications.WebApi.dll 
 
 
 
@@ -13,5 +13,7 @@ ENTRYPOINT ["dotnet", "Fakebook-Notifications.WebAPI.dll"]
 
 
 # To Run:
-# 2. docker build -t Fakebook-Notifications.WebAPI  .
-# 3. docker run
+# how do i use this Dockerfile?
+# 1. dotnet publish -o publish
+# 2. docker build -t FakebookNotification.WebApi .
+# 3. docker run FakebookNotification.WebApi
