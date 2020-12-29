@@ -10,63 +10,82 @@ trigger:
   paths:
     include:
     - 'FakebookNotifications'
+pool:
+  vmImage: 'ubuntu-latest'
 
 stages:
-- stage: build
-  jobs:
-  - job: build
-    # use ubuntu latest
-    pool:
-      vmImage: ubuntu-latest
-  # use an earlier version of .net because sonar cloud doesn't like .net 5
+  - stage: build
+    jobs:
+      - job: build
+      # use an earlier version of .net because sonar cloud doesn't like .net 5
+        variables:
+          sdkVersion: 3.1.x
+          buildConfiguration: 'Release'
+      # build using dotnet 5 
+        steps:
+        - task: UseDotNet@2
+          displayName: dotnet sdk 2.x
+          inputs:
+            packageType: 'sdk'
+            version: '5.x'
+            installationPath: $(Agent.ToolsDirectory)/dotnet
+            workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
+        # run build
+        - script: dotnet build --configuration $(buildConfiguration)
+          displayName: dotnet build
+          workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
+        # publish build to artifact
+        - script: dotnet publish --configuration $(buildConfiguration) --output publish
+          displayName: dotnet publish
+          workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
+        
+        - publish: 'FakebookNotifications/FakebookNotifications.WebApi/publish'
+          artifact: app
+
+  - stage: SonarCloud
+    dependsOn: []
+    jobs:
+      - job: testing
     variables:
-      sdkVersion: 3.1.x
       buildConfiguration: 'Release'
-    steps:
-    - task: UseDotNet@2
-      displayName: dotnet sdk 2.x
-      inputs:
-        packageType: 'sdk'
-        version: '2.x'
+      sdkVersion: '5.0.x'
+
+      steps:
   #use sonar cloud token 
-    - task: SonarCloudPrepare@1
-      inputs:
-        SonarCloud: 'SonarCloud Token'
-        organization: '2011-fakebook-project3'
-        scannerMode: 'MSBuild'
-        projectKey: '2011-fakebook-project3_notifications'
-        extraProperties: |
-              sonar.exclusions=**/lib/**
-              sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
-  # use the latest .net
-    - task: UseDotNet@2
-      displayName: 'Use .NET 5 SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '5.x'
-        installationPath: $(Agent.ToolsDirectory)/dotnet
-        workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
-    # build on dotnet build
-    - script: dotnet build --configuration $(buildConfiguration)
-      displayName: dotnet build
-      workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
-    # run dotnet tests
-    - task: DotNetCoreCLI@2
-      displayName: dotnet test
-      inputs:
-        command: 'test'
-        arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
-        publishTestResults: true
-        workingDirectory: 'FakebookNotifications/'
-      # publish the dotnet tests
-    - script: dotnet publish --configuration $(buildConfiguration) --output publish
-      displayName: dotnet publish
-      workingDirectory: 'FakebookNotifications'
-    # analyze the tests
-    - task: SonarCloudAnalyze@1
-      displayName: sonar run analysis
-    # publish to sonar cloud
-    - task: SonarCloudPublish@1
-      displayName: sonar analysis publish
-      inputs:
-        pollingTimeoutSec: '300'
+      - task: SonarCloudPrepare@1
+        inputs:
+          SonarCloud: 'SonarCloud Token'
+          organization: '2011-fakebook-project3'
+          scannerMode: 'MSBuild'
+          projectKey: '2011-fakebook-project3_notifications'
+          extraProperties: |
+                sonar.exclusions=**/lib/**
+                sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
+    # use the latest .net
+      - task: UseDotNet@2
+        displayName: 'Use .NET 5 SDK'
+        inputs:
+          packageType: 'sdk'
+          version: '5.x'
+          installationPath: $(Agent.ToolsDirectory)/dotnet
+          workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
+      # run dotnet tests
+      - task: DotNetCoreCLI@2
+        displayName: dotnet test
+        inputs:
+          command: 'test'
+          arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+          publishTestResults: true
+          workingDirectory: 'FakebookNotifications/'
+        # publish the dotnet tests
+      - script: dotnet publish --configuration $(buildConfiguration) --output publish
+        displayName: dotnet publish
+        workingDirectory: 'FakebookNotifications'
+      # analyze the tests
+      - task: SonarCloudAnalyze@1
+        displayName: sonar run analysis
+      # publish to sonar cloud
+      - task: SonarCloudPublish@1
+        displayName: sonar analysis publish
+        inputs:
+          pollingTimeoutSec: '300'
