@@ -49,9 +49,8 @@ stages:
     variables:
       buildConfiguration: 'Release'
       sdkVersion: '5.0.x'
-
-      steps:
   #use sonar cloud token 
+      steps:
       - task: SonarCloudPrepare@1
         inputs:
           SonarCloud: 'SonarCloud Token'
