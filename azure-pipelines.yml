@@ -41,14 +41,16 @@ stages:
         
         - publish: 'FakebookNotifications/FakebookNotifications.WebApi/publish'
           artifact: app
-
   - stage: SonarCloud
-    dependsOn: []
     jobs:
-      - job: testing
-    variables:
-      buildConfiguration: 'Release'
-      sdkVersion: '5.0.x'
+    - job: build
+      # use ubuntu latest
+      pool:
+        vmImage: ubuntu-latest
+    # use an earlier version of .net because sonar cloud doesn't like .net 5
+      variables:
+        sdkVersion: 3.1.x
+        buildConfiguration: 'Release'
   #use sonar cloud token 
       steps:
       - task: SonarCloudPrepare@1
@@ -88,3 +90,4 @@ stages:
         displayName: sonar analysis publish
         inputs:
           pollingTimeoutSec: '300'
+  
