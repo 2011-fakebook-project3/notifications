@@ -32,7 +32,7 @@ stages:
         SonarCloud: 'SonarCloud Token'
         organization: '2011-fakebook-project3'
         scannerMode: 'MSBuild'
-        projectKey: '2011-fakebook-project3'
+        projectKey: '2011-fakebook-project3_notifications'
         extraProperties: |
               sonar.exclusions=**/lib/**
               sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
