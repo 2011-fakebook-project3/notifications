@@ -2,6 +2,7 @@
 # Build and test ASP.NET projects.
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+#trigger on master pull
 trigger:
   branches:
     include:
@@ -14,10 +15,10 @@ stages:
 - stage: build
   jobs:
   - job: build
-
+    # use ubuntu latest
     pool:
       vmImage: ubuntu-latest
-
+  # use an earlier version of .net because sonar cloud doesn't like .net 5
     variables:
       sdkVersion: 3.1.x
       buildConfiguration: 'Release'
@@ -27,6 +28,7 @@ stages:
       inputs:
         packageType: 'sdk'
         version: '2.x'
+  #use sonar cloud token 
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'SonarCloud Token'
@@ -36,7 +38,7 @@ stages:
         extraProperties: |
               sonar.exclusions=**/lib/**
               sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
-
+  # use the latest .net
     - task: UseDotNet@2
       displayName: 'Use .NET 5 SDK'
       inputs:
@@ -44,11 +46,11 @@ stages:
         version: '5.x'
         installationPath: $(Agent.ToolsDirectory)/dotnet
         workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
-
+    # build on dotnet build
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: dotnet build
       workingDirectory: 'FakebookNotifications/FakebookNotifications.WebApi/'
-
+    # run dotnet tests
     - task: DotNetCoreCLI@2
       displayName: dotnet test
       inputs:
@@ -56,14 +58,14 @@ stages:
         arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
         publishTestResults: true
         workingDirectory: 'FakebookNotifications/'
-
+      # publish the dotnet tests
     - script: dotnet publish --configuration $(buildConfiguration) --output publish
       displayName: dotnet publish
       workingDirectory: 'FakebookNotifications'
-
+    # analyze the tests
     - task: SonarCloudAnalyze@1
       displayName: sonar run analysis
-
+    # publish to sonar cloud
     - task: SonarCloudPublish@1
       displayName: sonar analysis publish
       inputs:
