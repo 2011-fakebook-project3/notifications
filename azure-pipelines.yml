@@ -47,12 +47,17 @@ stages:
       # use ubuntu latest
       pool:
         vmImage: ubuntu-latest
-    # use an earlier version of .net because sonar cloud doesn't like .net 5
+        # use an earlier version of .net because sonar cloud doesn't like .net 5
       variables:
         sdkVersion: 3.1.x
         buildConfiguration: 'Release'
-  #use sonar cloud token 
+        #use sonar cloud token 
       steps:
+      - task: UseDotNet@2
+        displayName: dotnet sdk 2.x
+        inputs:
+          packageType: 'sdk'
+          version: '2.x'
       - task: SonarCloudPrepare@1
         inputs:
           SonarCloud: 'SonarCloud Token'
