@@ -68,12 +68,3 @@ stages:
       displayName: sonar analysis publish
       inputs:
         pollingTimeoutSec: '300'
-      
-    - task: AzureRmWebAppDeployment@4
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'Azure subscription 1(81bd61fe-b8b6-4706-814b-556dc3ff0cc5)'
-        appType: 'webAppLinux'
-        WebAppName: '2011-project2-fakebook'
-        packageForLinux: 'FakebookNotifications/FakebookNotifications.WebApi/'
