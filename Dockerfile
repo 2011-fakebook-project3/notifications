@@ -23,5 +23,5 @@ ENTRYPOINT ["dotnet", "FakebookNotifications.WebApi.dll"]
 
 
 # To Run:
-# 1. docker build -t FakebookNotification.WebApi .
-# 2. docker run FakebookNotification.WebApi
+# 1. docker build -t fakebooknotifications .
+# 2. docker run fakebooknotifications
