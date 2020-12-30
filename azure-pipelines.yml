@@ -19,7 +19,7 @@ stages:
         directory: 'FakebookNotifications/FakebookNotifications.WebApi'
       steps:
       - task: UseDotNet@2
-        displayName: dotnet sdk 5.x
+        displayName: 'Use sdk 5.x'
         inputs:
           packageType: 'sdk'
           version: '5.x'
@@ -49,7 +49,7 @@ stages:
       steps:
       # use dotnet 2 for sonar compatibility
       - task: 'UseDotNet@2'
-        displayName: 'dotnet sdk 2.x'
+        displayName: 'Use sdk 2.x'
         inputs:
           packageType: 'sdk'
           version: '2.x'
