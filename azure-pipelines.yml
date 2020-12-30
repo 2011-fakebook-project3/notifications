@@ -74,6 +74,7 @@ stages:
         inputs:
           command: test
           arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+          workingDirectory: 'FakebookNotifications'
           publishTestResults: true
       - task: 'SonarCloudAnalyze@1'
         displayName: 'sonar run analysis'
