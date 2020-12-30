@@ -6,6 +6,7 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+# build a docker file
 stages:
   - stage: build
     jobs:
