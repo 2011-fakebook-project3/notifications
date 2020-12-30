@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace FakebookNotifications.DataAccess.Models
 {
@@ -10,17 +11,17 @@ namespace FakebookNotifications.DataAccess.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        //notification type: post/comment/tag
+        //notification type: post/comment/tag  
         [BsonElement("type")]
-        public string Type { get; set; }
+        public KeyValuePair<string, int> Type { get; set; } // ("Post", 1), ("Comment", 45) etc
 
-        //user logged in to receive notifications
+        //email of user logged in to receive notifications
         [BsonElement("user")]
-        public User LoggedInUser { get; set; }
+        public string LoggedInUserId { get; set; }
 
-        //user that triggered a notifiaction by commenting on a user post or tagging a user etc.
+        //email user that triggered a notification by commenting on a user post or tagging a user etc.
         [BsonElement("trigger")]
-        public User TriggerUser { get; set; }
+        public string TriggerUserId { get; set; }
 
         //if notification has been read
         [BsonElement("read")]
