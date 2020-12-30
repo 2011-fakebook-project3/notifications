@@ -10,7 +10,10 @@ pool:
 stages:
   - stage: build
     jobs:
-    - job: build        
+    - job: build
+      variables:
+        imageName: 'fakebooknotifications'
+        
       steps:
       - task: Docker@2
         displayName: Build Docker Image
