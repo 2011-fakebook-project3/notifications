@@ -12,22 +12,13 @@ namespace FakebookNotifications.DataAccess
 {
     public class NotificationsRepo: INotificationsRepo
     {
-        private readonly IMongoCollection<User> _users;
-        private readonly IMongoCollection<Notification> _notifications;
-        private NotificationsDatabaseSettings _settings;
+        private readonly NotificationsContext _context;
 
         public NotificationsRepo(IOptions<NotificationsDatabaseSettings> settings)
         {
-            //Get settings
-            _settings = settings.Value;
+            //create context from settings
+            _context = new NotificationsContext(settings);
 
-            //Create client and db objects from settings
-            var client = new MongoClient(_settings.ConnectionString);
-            var database = client.GetDatabase(_settings.DatabaseName);
-
-            //create collection objects to be used in repo methods
-            _users = database.GetCollection<User>(_settings.UserCollection);
-            _notifications = database.GetCollection<Notification>(_settings.NotificationsCollection);
         }
     }
 }
