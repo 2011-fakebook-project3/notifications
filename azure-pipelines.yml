@@ -16,20 +16,13 @@ stages:
         directory: 'FakebookNotifications/FakebookNotifications.WebApi'
         
       steps:
-      - task: UseDotNet@2
-        displayName: 'Use sdk 5.x'
+      - task: Docker@2
+        displayName: Build Docker Image
         inputs:
-          packageType: sdk
-          version: 5.x
-          installationPath: $(Agent.ToolsDirectory)/dotnet
-          workingDirectory: $(directory)
-      # build and publish app
-      - script: dotnet build --configuration $(buildConfiguration)
-        displayName: dotnet build
-        workingDirectory: $(directory)
-      - script: dotnet publish --configuration $(buildConfiguration) --output publish
-        displayName: dotnet publish
-        workingDirectory: $(directory)
+          repository: $(imageName)
+          command: 'build'
+          Dockerfile: 'FakebookNotifications/Dockerfile'
+
   - stage: SonarCloud
     jobs:
     - job: build
