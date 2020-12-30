@@ -6,30 +6,11 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-# build a docker file
 stages:
   - stage: build
     jobs:
     - job: build
-      variables:
-        buildConfiguration: Release
-        directory: 'FakebookNotifications/FakebookNotifications.WebApi'
-        
       steps:
-      - task: UseDotNet@2
-        displayName: 'Use sdk 5.x'
-        inputs:
-          packageType: sdk
-          version: 5.x
-          installationPath: $(Agent.ToolsDirectory)/dotnet
-          workingDirectory: $(directory)
-      # build and publish app
-      - script: dotnet build --configuration $(buildConfiguration)
-        displayName: dotnet build
-        workingDirectory: $(directory)
-      - script: dotnet publish --configuration $(buildConfiguration) --output publish
-        displayName: dotnet publish
-        workingDirectory: $(directory)
       - task: Docker@2
         displayName: Build Docker Image
         inputs:
