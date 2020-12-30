@@ -1,39 +1,35 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-#trigger on master pull
+#trigger on master push
 trigger:
   branches:
     include:
     - main
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 stages:
   - stage: build
     jobs:
     - job: build
       variables:
-        buildConfiguration: 'Release'
+        buildConfiguration: Release
         directory: 'FakebookNotifications/FakebookNotifications.WebApi'
       steps:
       - task: UseDotNet@2
         displayName: 'Use sdk 5.x'
         inputs:
-          packageType: 'sdk'
-          version: '5.x'
+          packageType: sdk
+          version: 5.x
           installationPath: $(Agent.ToolsDirectory)/dotnet
-          workingDirectory: '$(directory)'
+          workingDirectory: $(directory)
       # build and publish app
       - script: dotnet build --configuration $(buildConfiguration)
         displayName: dotnet build
-        workingDirectory: '$(directory)/'
+        workingDirectory: $(directory)
       - script: dotnet publish --configuration $(buildConfiguration) --output publish
         displayName: dotnet publish
-        workingDirectory: '$(directory)'
+        workingDirectory: $(directory)
       # publish artifact for eventual release
-      - publish: '$(directory)/publish'
+      - publish: $(directory)/publish
         artifact: app
 
   - stage: SonarCloud
@@ -42,43 +38,42 @@ stages:
       pool:
         vmImage: ubuntu-latest
       variables:
-        sdkVersion: 3.1.x
         buildConfiguration: 'Release'
         directory: 'FakebookNotifications/FakebookNotifications.WebApi'
 
       steps:
       # use dotnet 2 for sonar compatibility
-      - task: 'UseDotNet@2'
-        displayName: 'Use sdk 2.x'
+      - task: UseDotNet@2
+        displayName: Use sdk 2.x
         inputs:
-          packageType: 'sdk'
-          version: '2.x'
+          packageType: sdk
+          version: 2.x
       # use the Sonar Cloud Token from the available connections
-      - task: 'SonarCloudPrepare@1'
+      - task: SonarCloudPrepare@1
         inputs:
           SonarCloud: 'SonarCloud Token'
           organization: '2011-fakebook-project3'
           scannerMode: 'MSBuild'
           projectKey: '2011-fakebook-project3_notifications'
-          extraProperties: |
-                'sonar.exclusions=**/lib/**'
-                'sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml'
+          extraProperties: 'sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml'
       # switch to dotnet 5
       - task: 'UseDotNet@2'
         displayName: 'Use sdk 5.x'
         inputs:
-          packageType: 'sdk'
-          version: '5.x'
-          installationPath: '$(Agent.ToolsDirectory)/dotnet'
-          workingDirectory: '$(directory)'
-      # add working directory
+          packageType: sdk
+          version: 5.x
+          installationPath: $(Agent.ToolsDirectory)/dotnet
+          workingDirectory: $(directory)
+      # build
+      - script: dotnet build --configuration $(buildConfiguration)
+        displayName: dotnet build
+        workingDirectory: $(directory)
       - task: 'DotNetCoreCLI@2' 
-        displayName: 'dotnet test'
+        displayName: dotnet test
         inputs:
-          command: 'test'
-          arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+          command: test
+          arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
           publishTestResults: true
-          workingDirectory: 'FakebookNotifications'
       - task: 'SonarCloudAnalyze@1'
         displayName: 'sonar run analysis'
       - task: 'SonarCloudPublish@1'
