@@ -4,7 +4,7 @@ trigger:
     include:
     - main
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 # build a docker file
 stages:
@@ -30,13 +30,6 @@ stages:
       - script: dotnet publish --configuration $(buildConfiguration) --output publish
         displayName: dotnet publish
         workingDirectory: $(directory)
-      - task: Docker@2
-        displayName: Build Docker Image
-        inputs:
-          repository: 'Dockerfile'
-          command: build
-          Dockerfile: FakebookNotifications
-
   - stage: SonarCloud
     jobs:
     - job: build
