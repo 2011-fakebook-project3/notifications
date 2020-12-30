@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FakebookNotifications.WebApi.HubInterfaces
 {
-    public interface INotificationHub
-    {
-         Task SendNotifications(string user, string notification);
+    public interface INotificationHub    {
+        
+         Task Send(string user, string notification);
     }
 }
