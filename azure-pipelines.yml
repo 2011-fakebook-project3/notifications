@@ -1,0 +1,74 @@
+#trigger on main push
+trigger:
+  branches:
+    include:
+    - main
+pool:
+  vmImage: 'ubuntu-latest'
+
+# build a docker file
+stages:
+  - stage: build
+    jobs:
+    - job: build
+      variables:
+        imageName: 'fakebooknotifications'
+        
+      steps:
+      - task: Docker@2
+        displayName: Build Docker Image
+        inputs:
+          repository: $(imageName)
+          command: 'build'
+          Dockerfile: 'FakebookNotifications/Dockerfile'
+
+  - stage: SonarCloud
+    jobs:
+    - job: build
+      pool:
+        vmImage: ubuntu-latest
+      variables:
+        buildConfiguration: 'Release'
+        directory: 'FakebookNotifications/FakebookNotifications.WebApi'
+
+      steps:
+      # use dotnet 2 for sonar compatibility
+      - task: UseDotNet@2
+        displayName: Use sdk 2.x
+        inputs:
+          packageType: sdk
+          version: 2.x
+      # use the Sonar Cloud Token from the available connections
+      - task: SonarCloudPrepare@1
+        inputs:
+          SonarCloud: 'SonarCloud Token'
+          organization: '2011-fakebook-project3'
+          scannerMode: 'MSBuild'
+          projectKey: '2011-fakebook-project3_notifications'
+          extraProperties: 'sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml'
+      # switch to dotnet 5
+      - task: 'UseDotNet@2'
+        displayName: 'Use sdk 5.x'
+        inputs:
+          packageType: sdk
+          version: 5.x
+          installationPath: $(Agent.ToolsDirectory)/dotnet
+          workingDirectory: $(directory)
+      # build
+      - script: dotnet build --configuration $(buildConfiguration)
+        displayName: dotnet build
+        workingDirectory: $(directory)
+      - task: 'DotNetCoreCLI@2' 
+        displayName: dotnet test
+        inputs:
+          command: test
+          arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+          workingDirectory: 'FakebookNotifications'
+          publishTestResults: true
+      - task: 'SonarCloudAnalyze@1'
+        displayName: 'sonar run analysis'
+      - task: 'SonarCloudPublish@1'
+        displayName: 'sonar analysis publish'
+        inputs:
+          pollingTimeoutSec: '300'
+  
