@@ -6,12 +6,14 @@ WORKDIR /app
 COPY  *.sln .
 COPY FakebookNotifications.WebApi/*.csproj ./FakebookNotifications.WebApi/
 COPY FakebookNotifications.Testing/*.csproj ./FakebookNotifications.Testing/
+COPY FakebookNotifications.DataAccess/*.csproj ./FakebookNotifications.DataAccess/
 RUN dotnet restore
 
 # Copy everything else and build
 COPY . ./
 COPY FakebookNotifications.WebApi/. ./FakebookNotifications.WebApi/
 COPY FakebookNotifications.Testing/. ./FakebookNotifications.Testing/
+COPY FakebookNotifications.DataAccess/. ./FakebookNotifications.DataAccess/
 RUN dotnet publish FakebookNotifications.WebApi/FakebookNotifications.WebApi.csproj -c Release -o publish
 
 # Build runtime image
