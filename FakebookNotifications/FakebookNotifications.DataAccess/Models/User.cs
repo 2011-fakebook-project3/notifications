@@ -15,10 +15,6 @@ namespace FakebookNotifications.DataAccess.Models
         [BsonElement("email")]
         public string Email { get; }
 
-        //total number of unread notifications user has
-        [BsonElement("total")]
-        public string TotalUnreadNotifications { get; set; }
-
         //collection of notifications belonging to the user
         [BsonElement("notifications")]
         public IEnumerable<Notification> Notifications { get; set; }
