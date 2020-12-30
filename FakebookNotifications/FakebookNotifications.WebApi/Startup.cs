@@ -27,10 +27,6 @@ namespace FakebookNotifications.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //MongoDb service Config
-            services.Configure<NotificationsDatabaseSettings>(
-                Configuration.GetSection(nameof(NotificationsDatabaseSettings)));
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
