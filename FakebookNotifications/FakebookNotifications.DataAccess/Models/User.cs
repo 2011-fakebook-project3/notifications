@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace FakebookNotifications.DataAccess.Models
 {
@@ -17,5 +18,9 @@ namespace FakebookNotifications.DataAccess.Models
         //total number of unread notifications user has
         [BsonElement("total")]
         public string TotalUnreadNotifications { get; set; }
+
+        //collection of notifications belonging to the user
+        [BsonElement("notifications")]
+        public IEnumerable<Notification> Notifications { get; set; }
     }
 }

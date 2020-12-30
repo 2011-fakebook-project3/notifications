@@ -1,3 +1,5 @@
+using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.DataAccess.Models.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -6,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
@@ -26,6 +29,17 @@ namespace FakebookNotifications.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //MongoDb service Config
+            services.Configure<NotificationsDatabaseSettings>(
+                Configuration.GetSection(nameof(NotificationsDatabaseSettings)));
+
+            //Mongo add db service
+            services.AddSingleton<INotificationsDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<NotificationsDatabaseSettings>>().Value);
+
+            //Add repos
+            //services.AddScoped<IUserRepo, UserRepo>();
+            //services.AddScoped<INotificationRepo, NotificationRepo>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
