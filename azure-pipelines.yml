@@ -4,7 +4,7 @@ trigger:
     include:
     - main
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 stages:
   - stage: build
