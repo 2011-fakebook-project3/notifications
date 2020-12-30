@@ -10,11 +10,7 @@ pool:
 stages:
   - stage: build
     jobs:
-    - job: build
-      variables:
-        buildConfiguration: Release
-        directory: 'FakebookNotifications/FakebookNotifications.WebApi'
-        
+    - job: build        
       steps:
       - task: Docker@2
         displayName: Build Docker Image
