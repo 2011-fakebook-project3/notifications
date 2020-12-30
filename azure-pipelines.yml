@@ -65,7 +65,7 @@ stages:
                 'sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml'
       # switch to dotnet 5
       - task: 'UseDotNet@2'
-        displayName: 'Use .NET 5 SDK'
+        displayName: 'Use sdk 5.x'
         inputs:
           packageType: 'sdk'
           version: '5.x'
