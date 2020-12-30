@@ -10,12 +10,16 @@ stages:
   - stage: build
     jobs:
     - job: build
+    variables:
+      imageName: 'fakebooknotifications'
       steps:
       - task: Docker@2
         displayName: Build Docker Image
         inputs:
+          repository: $(imageName)
           command: 'build'
           Dockerfile: 'FakebookNotifications/Dockerfile'
+
   - stage: SonarCloud
     jobs:
     - job: build
