@@ -15,26 +15,42 @@ namespace FakebookNotifications.Testing
         public void MongoDbConnectionTest()
         {
             //Arrange
-            /*var mockSettings = Mock.Of<IOptions<NotificationsDatabaseSettings>>();
+            var mockSettings = Mock.Of<IOptions<NotificationsDatabaseSettings>>();
             var mockContext = new Mock<NotificationsContext>(mockSettings.Value);
 
             //Act
             var result = mockContext.Object.Connect();
 
             //Assert
-            Assert.True(result);*/
+            Assert.True(result);
         }
 
         [Fact]
         public void MongoUserCollectionTest()
         {
+            //Arrange
+            var mockSettings = Mock.Of<IOptions<NotificationsDatabaseSettings>>();
+            var mockContext = new Mock<NotificationsContext>(mockSettings.Value);
 
+            //Act
+            var result = mockContext.Object.User;
+
+            //Assert
+            Assert.NotNull(result);
         }
 
         [Fact]
         public void MongoNotificationCollectionTest()
         {
+            //Arrange
+            var mockSettings = Mock.Of<IOptions<NotificationsDatabaseSettings>>();
+            var mockContext = new Mock<NotificationsContext>(mockSettings.Value);
 
+            //Act
+            var result = mockContext.Object.Notifications;
+
+            //Assert
+            Assert.NotNull(result);
         }
     }
 }
