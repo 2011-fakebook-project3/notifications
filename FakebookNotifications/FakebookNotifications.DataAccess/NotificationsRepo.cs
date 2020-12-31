@@ -14,11 +14,13 @@ namespace FakebookNotifications.DataAccess
     {
         private readonly NotificationsContext _context;
 
-        public NotificationsRepo(IOptions<NotificationsDatabaseSettings> settings)
+        public NotificationsRepo(NotificationsContext context)
         {
-            //create context from settings
-            _context = new NotificationsContext(settings);
+            //create context object to work with
+            _context = context;
 
+            //Try to connect
+            _context.Connect();
         }
 
         public Task<bool> AddNotification()

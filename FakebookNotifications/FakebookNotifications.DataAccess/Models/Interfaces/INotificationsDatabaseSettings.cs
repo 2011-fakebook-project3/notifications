@@ -3,11 +3,11 @@
     public interface INotificationsDatabaseSettings
     {
         //Collections
-        string NotificationsCollection { get; }
-        string UserCollection { get; }
+        string NotificationsCollection { get; set; }
+        string UserCollection { get; set; }
 
         //DB Settings
-        string ConnectionString { get; }
-        string DatabaseName { get; }
+        string ConnectionString { get; set; }
+        string DatabaseName { get; set; }
     }
 }
