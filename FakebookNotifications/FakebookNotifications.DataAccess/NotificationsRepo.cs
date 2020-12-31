@@ -20,5 +20,25 @@ namespace FakebookNotifications.DataAccess
             _context = new NotificationsContext(settings);
 
         }
+
+        public Task<bool> AddNotification()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteNotification()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Domains.Models.Notification>> GetAllNotifications()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Domains.Models.Notification>> GetNotificationsByEmail(Domains.Models.Notification notification)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
