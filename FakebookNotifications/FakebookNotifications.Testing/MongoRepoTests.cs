@@ -1,6 +1,5 @@
 using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models.Interfaces;
-using MongoDB.Driver;
 using Moq;
 using System;
 using Xunit;
