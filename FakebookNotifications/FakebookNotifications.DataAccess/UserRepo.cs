@@ -12,6 +12,13 @@ namespace FakebookNotifications.DataAccess
 {
     class UserRepo : IUserRepo
     {
+        private readonly NotificationsContext _context;
+        public UserRepo(IOptions<NotificationsDatabaseSettings> settings)
+        {
+            //create context from settings
+            _context = new NotificationsContext(settings);
+
+        }
         public Task<bool> CreateUser(Domains.Models.User user)
         {
             throw new NotImplementedException();
