@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakebookNotifications.WebApi", "FakebookNotifications.WebApi\FakebookNotifications.WebApi.csproj", "{7182C800-A74A-4D44-9682-F9171BAD981C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakebookNotifications.WebApi", "FakebookNotifications.WebApi\FakebookNotifications.WebApi.csproj", "{7182C800-A74A-4D44-9682-F9171BAD981C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakebookNotifications.Testing", "FakebookNotifications.Testing\FakebookNotifications.Testing.csproj", "{3D40AD3A-1E08-4135-867A-AAD78677079D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakebookNotifications.Testing", "FakebookNotifications.Testing\FakebookNotifications.Testing.csproj", "{3D40AD3A-1E08-4135-867A-AAD78677079D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakebookNotifications.Domain", "FakebookNotifications.Domain\FakebookNotifications.Domain.csproj", "{10727CC8-E023-4F66-8510-151B65218FD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3D40AD3A-1E08-4135-867A-AAD78677079D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D40AD3A-1E08-4135-867A-AAD78677079D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D40AD3A-1E08-4135-867A-AAD78677079D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10727CC8-E023-4F66-8510-151B65218FD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10727CC8-E023-4F66-8510-151B65218FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10727CC8-E023-4F66-8510-151B65218FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10727CC8-E023-4F66-8510-151B65218FD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
