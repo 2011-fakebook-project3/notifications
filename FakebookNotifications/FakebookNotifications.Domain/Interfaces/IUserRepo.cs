@@ -13,7 +13,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a User object.
         /// </returns>
-        Task<User> GetUser(int Id);
+        Task<User> GetUserAsync(int Id);
         /// <summary>
         /// Creates a User
         /// </summary>
@@ -21,7 +21,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a bool that returns true on a successful Delete.
         /// </returns>
-        Task<bool> CreateUser(User user);
+        Task<bool> CreateUserAsync(User user);
         /// <summary>
         /// Return a list of users from a list of ids. 
         /// </summary>
@@ -30,7 +30,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains an IEnumerable of the user's list of users they are following.
         /// </returns>
-        Task<IEnumerable<User>> GetUsersBySubscription(List<string> Ids);
+        Task<IEnumerable<User>> GetUsersBySubscriptionAsync(List<string> Ids);
         /// <summary>
         /// Delete a User
         /// </summary>
@@ -38,7 +38,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a bool that returns true on a successful delete.
         /// </returns>
-        Task<bool> DeleteUser(User user);
+        Task<bool> DeleteUserAsync(User user);
         /// <summary>
         /// Updates a User.
         /// </summary>
@@ -47,7 +47,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a bool that returns true on a successful update.
         /// </returns>
-        Task<bool> UpdateUser(User user);
+        Task<bool> UpdateUserAsync(User user);
         /// <summary>
         /// Returns the number of total notifications a user has.
         /// </summary>
@@ -56,7 +56,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains an int to represent unread notifications.
         /// </returns>
-        Task<int> TotalUserNotifications(User user);
+        Task<int> TotalUserNotificationsAsync(User user);
         /// <summary>
         /// Get 5 notifications at a time from a user.
         /// Should be called with page number, if page number is -1. Return all notifications at once.
@@ -65,7 +65,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains an IEnumerable of user notifications.
         /// </returns>
-        Task<IEnumerable<Notification>> GetUserNotifications(User user);
+        Task<IEnumerable<Notification>> GetUserNotificationsAsync(User user);
 
     }
 }

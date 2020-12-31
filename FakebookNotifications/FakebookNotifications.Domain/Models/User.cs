@@ -15,14 +15,14 @@ namespace FakebookNotifications.Domain.Models
             }
             set
             {
-                // checks to see if int is parsable if not we assign it to a value of 0;
+                // tries to parse the value
                 if (Int32.TryParse(value, out _))
                 {
                     _id = value;
                 }
                 else
                 {
-                    Console.WriteLine($"Int32.TryParse could not parse '{value}' to an int.");
+                    // assigns the value to an empty string
                     _id = "";
                 }
             }
