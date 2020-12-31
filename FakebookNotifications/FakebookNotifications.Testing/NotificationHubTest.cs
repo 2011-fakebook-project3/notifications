@@ -104,7 +104,7 @@ namespace FakebookNotifications.Testing
         }
 
         /// <summary>
-        /// Tests notifcation hub method to send a notification to a specific user
+        /// Tests notification hub method to send a notification to a specific user
         /// </summary>
         [Fact]
         async public void SendUserVerify()

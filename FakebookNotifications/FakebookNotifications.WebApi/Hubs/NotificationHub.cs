@@ -10,25 +10,25 @@ namespace FakebookNotifications.WebApi.Hubs
 
         public new IHubCallerClients  Clients { get; set; }
 
-        //Send a notfication to all clients
+        //Send a notification to all clients
         public async Task SendAll(string user, string notification)
         { 
             throw new NotImplementedException();
         }
 
-        //Send a notfication to all clients within a specific group
+        //Send a notification to all clients within a specific group
         public async Task SendGroup(string group, string notification)
         {
             throw new NotImplementedException();
         }
 
-        //Send a notfication to the caller
+        //Send a notification to the caller
         public async Task SendCaller(string caller, string notification)
         {
             throw new NotImplementedException();
         }
 
-        //Send a notfication to one specific user
+        //Send a notification to one specific user
         public async Task SendUser(string user, string notification)
         {
             throw new NotImplementedException();
