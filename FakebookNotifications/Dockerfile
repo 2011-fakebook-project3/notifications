@@ -7,11 +7,11 @@ COPY  *.sln .
 COPY FakebookNotifications.WebApi/*.csproj ./FakebookNotifications.WebApi/
 COPY FakebookNotifications.Testing/*.csproj ./FakebookNotifications.Testing/
 COPY FakebookNotifications.DataAccess/*.csproj ./FakebookNotifications.DataAccess/
-COPY FakebookNotifications.Domains/*.csproj ./FakebookNotifications.Domains/
 RUN dotnet restore
 
 # Copy everything else and build
 COPY . ./
+
 RUN dotnet publish FakebookNotifications.WebApi/FakebookNotifications.WebApi.csproj -c Release -o publish
 
 # Build runtime image
