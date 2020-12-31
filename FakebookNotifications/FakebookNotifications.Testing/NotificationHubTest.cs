@@ -12,12 +12,8 @@ namespace FakebookNotifications.Testing
 
 {
     public class NotificationHubTest
-    {
-
-        public interface IClientContract
-        {
-            void Broadcast(string message);
-        }
+    {   
+        // Variables used throughout test, mocked to the appropriate interface
         private NotificationHub hub;
         private Mock<IHubCallerClients> mockClients = new Mock<IHubCallerClients>();
         private Mock<IGroupManager> mockGroups = new Mock<IGroupManager>();
@@ -40,6 +36,7 @@ namespace FakebookNotifications.Testing
             mockGroups.Setup(group => group.RemoveFromGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
             mockContext.Setup(context => context.ConnectionId).Returns(It.IsIn<string>(clientIds));
 
+            // creates hub for testing
             hub = new NotificationHub()
             {
                 Clients = mockClients.Object,
@@ -48,6 +45,10 @@ namespace FakebookNotifications.Testing
             };
         }
 
+
+        /// <summary>
+        /// Tests notfication hub method to send global notifications
+        /// </summary>
         [Fact]
         async public void SendAllVerify()
         {
@@ -63,22 +64,29 @@ namespace FakebookNotifications.Testing
 
         }
 
-
+        /// <summary>
+        /// Tests notfication hub method to send notifications to all users in a group
+        /// </summary>
         [Fact]
         async public void SendGroupVerify()
         {
             //arrange
             string groupId = groupIds[0];
+            var others = groupIds[1];
 
             // act
             await hub.SendGroup(groupId, "test");
 
             // assert
-            // checks to see if a message was sent to all clients, once
+            // checks to see if a message was sent to all clients within a group, once, and not other groups
             mockClients.Verify(c => c.Group(groupId), Times.Once);
+            mockClients.Verify(c => c.Group(others), Times.Never);
 
         }
 
+        /// <summary>
+        /// Tests notification hub method to send notification back to the user who called the method
+        /// </summary>
         [Fact]
         async public void SendCallerVerify()
         {
@@ -90,25 +98,26 @@ namespace FakebookNotifications.Testing
             await hub.SendCaller("caller", "test");
 
             // assert
-            // checks to see if a message was sent to all clients, once
+            // checks to see if a message was sent to the caller-user, once, and not other users
             mockClients.Verify(c => c.Caller, Times.Once);
-
-
+            mockClients.Verify(o => o.AllExcept(caller), Times.Never);
         }
 
+        /// <summary>
+        /// Tests notifcation hub method to send a notification to a specific user
+        /// </summary>
         [Fact]
         async public void SendUserVerify()
         {
             // arrange
 
-
             // act
             await hub.SendUser("user", "test");
 
             // assert
-            // checks to see if a message was sent to all clients, once
+            // checks to see if a message was sent to one specific user, once, and not other users
             mockClients.Verify(c => c.User("user"), Times.Once);
-
+            mockClients.Verify(c => c.AllExcept("user"), Times.Never);
         }
     }
 }
