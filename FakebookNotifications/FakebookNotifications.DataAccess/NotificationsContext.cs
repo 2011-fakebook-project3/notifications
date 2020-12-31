@@ -19,25 +19,10 @@ namespace FakebookNotifications.DataAccess
         {
             //assign settings to object to be used is other methods
             _settings = settings.Value;
-        }
 
-        //Method to connect to db for testing connection
-        //Return true if successfull connection
-        public bool Connect()
-        {
             //Create client and db objects from settings
             var client = new MongoClient(_settings.ConnectionString);
-            if (client != null)
-            {
-                _database = client.GetDatabase(_settings.DatabaseName);
-                Debug.WriteLine("Database Connection Successfull.");
-                return true;
-            }
-            else
-            {
-                Debug.WriteLine("Error - Database Connection Failed.");
-                return false;
-            }
+            _database = client.GetDatabase(_settings.DatabaseName);
         }
 
         //Method to get the user collection
