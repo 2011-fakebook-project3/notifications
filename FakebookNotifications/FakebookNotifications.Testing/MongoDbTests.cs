@@ -206,5 +206,50 @@ namespace FakebookNotifications.Testing
             //Assert
             Assert.Equal(DateTime.Now, notification.Object.Date);
         }
+
+        //Tests for DB Settings
+        [Fact]
+        public void NotificationSettings_NotificationsCollectionTest()
+        {
+            //Arrange
+            var dbSettings = new Mock<NotificationsDatabaseSettings>();
+            dbSettings.Object.NotificationsCollection = "Notifications";
+
+            //Assert
+            Assert.Equal("Notifications", dbSettings.Object.NotificationsCollection);
+        }
+
+        [Fact]
+        public void NotificationSettings_UserCollectionTest()
+        {
+            //Arrange
+            var dbSettings = new Mock<NotificationsDatabaseSettings>();
+            dbSettings.Object.UserCollection = "User";
+
+            //Assert
+            Assert.Equal("User", dbSettings.Object.UserCollection);
+        }
+
+        [Fact]
+        public void NotificationSettings_ConnectionStringTest()
+        {
+            //Arrange
+            var dbSettings = new Mock<NotificationsDatabaseSettings>();
+            dbSettings.Object.ConnectionString = "localhost";
+
+            //Assert
+            Assert.Equal("localhost", dbSettings.Object.ConnectionString);
+        }
+
+        [Fact]
+        public void NotificationSettings_DatabaseNameTest()
+        {
+            //Arrange
+            var dbSettings = new Mock<NotificationsDatabaseSettings>();
+            dbSettings.Object.DatabaseName = "NotificationsDb";
+
+            //Assert
+            Assert.Equal("NotificationsDb", dbSettings.Object.DatabaseName);
+        }
     }
 }
