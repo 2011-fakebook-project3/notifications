@@ -3,6 +3,7 @@ using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.DataAccess.Models.Interfaces;
 using Microsoft.Extensions.Options;
 using Moq;
+using MongoDB.Driver;
 using System;
 using Xunit;
 
@@ -10,47 +11,84 @@ namespace FakebookNotifications.Testing
 {
     public class MongoDbTests
     {
-        //Test if connection to database is successfull
-        [Fact]
-        public void MongoDbConnectionTest()
+        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
+        private Mock<IMongoDatabase> _mockDB;
+        private Mock<IMongoClient> _mockClient;
+        private NotificationsDatabaseSettings settings;
+
+        //Constructor to initialize mocked components before each test
+        public MongoDbTests()
         {
-            //Arrange
-            var mockSettings = Mock.Of<IOptions<NotificationsDatabaseSettings>>();
-            var mockContext = new Mock<NotificationsContext>(mockSettings.Value);
+            _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
+            _mockDB = new Mock<IMongoDatabase>();
+            _mockClient = new Mock<IMongoClient>();
 
-            //Act
-            var result = mockContext.Object.Connect();
-
-            //Assert
-            Assert.True(result);
+            settings = new NotificationsDatabaseSettings()
+            {
+                ConnectionString = "mongodb://localhost:27017",
+                DatabaseName = "NotificationsDb",
+                UserCollection = "User",
+                NotificationsCollection = "Notifications"
+            };
         }
 
+        //Test for context constructor to see if database is connected to successfully
         [Fact]
-        public void MongoUserCollectionTest()
+        public void MongoContextCreationTest()
         {
             //Arrange
-            var mockSettings = Mock.Of<IOptions<NotificationsDatabaseSettings>>();
-            var mockContext = new Mock<NotificationsContext>(mockSettings.Value);
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Setup Mongo Client
+            _mockClient.Setup(c => c.GetDatabase(_mockSettings.Object.Value.DatabaseName, null))
+                .Returns(_mockDB.Object);
 
             //Act
-            var result = mockContext.Object.User;
+            var context = new NotificationsContext(_mockSettings.Object); //create context and test constructor
 
             //Assert
-            Assert.NotNull(result);
+            Assert.NotNull(context);
         }
 
+        //Test to see if the notification collection is successfully read from db
         [Fact]
         public void MongoNotificationCollectionTest()
         {
             //Arrange
-            var mockSettings = Mock.Of<IOptions<NotificationsDatabaseSettings>>();
-            var mockContext = new Mock<NotificationsContext>(mockSettings.Value);
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Setup Mongo Client
+            _mockClient.Setup(c => c.GetDatabase(_mockSettings.Object.Value.DatabaseName, null))
+                .Returns(_mockDB.Object);
 
             //Act
-            var result = mockContext.Object.Notifications;
+            var context = new NotificationsContext(_mockSettings.Object); //Create context
+            var notificationCollection = context.Notifications; //Get collection from context
 
-            //Assert
-            Assert.NotNull(result);
+            //Assert 
+            Assert.NotNull(notificationCollection);
+        }
+
+        //Test to see if the user collection is successfully read from db
+        [Fact]
+        public void MongoUserCollectionTest()
+        {
+            //Arrange
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Setup Mongo Client
+            _mockClient.Setup(c => c.GetDatabase(_mockSettings.Object.Value.DatabaseName, null))
+                .Returns(_mockDB.Object);
+
+            //Act
+            var context = new NotificationsContext(_mockSettings.Object); //Create context
+            var userCollection = context.User; //Get collection from context
+
+            //Assert 
+            Assert.NotNull(userCollection);
         }
     }
 }
