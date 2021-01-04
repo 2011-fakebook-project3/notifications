@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FakebookNotifications.WebApi.Hubs;
 
 namespace FakebookNotifications.WebApi
 {
@@ -42,6 +43,7 @@ namespace FakebookNotifications.WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FakebookNotifications.WebApi", Version = "v1" });
             });
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +65,7 @@ namespace FakebookNotifications.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/notifications");
             });
         }
     }
