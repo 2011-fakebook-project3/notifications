@@ -14,5 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\FakebookNotifications.DataAccess\FakebookNotifications.DataAccess.csproj" />
   </ItemGroup>
-
 </Project>
