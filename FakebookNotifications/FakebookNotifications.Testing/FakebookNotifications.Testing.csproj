@@ -21,7 +21,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../FakebookNotifications.WebApi/FakebookNotifications.WebApi.csproj" />
+    <ProjectReference Include="../FakebookNotifications.WebApi/FakebookNotifications.WebApi.csproj" />
     <ProjectReference Include="../FakebookNotifications.DataAccess/FakebookNotifications.DataAccess.csproj" />
 	</ItemGroup>
 
