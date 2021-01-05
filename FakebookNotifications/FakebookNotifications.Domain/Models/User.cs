@@ -44,7 +44,7 @@ namespace FakebookNotifications.Domain.Models
         /// </returns>
         public bool IsValid()
         {
-            return !(string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Email));
+            throw new NotImplementedException();
         }
     }
 }
