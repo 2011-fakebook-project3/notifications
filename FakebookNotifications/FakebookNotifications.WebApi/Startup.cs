@@ -31,13 +31,6 @@ namespace FakebookNotifications.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //DB settings configuration to get from appsettings
-            services.Configure<NotificationsDatabaseSettings>(
-                Configuration.GetSection(nameof(NotificationsDatabaseSettings)));
-
-            // Create context and repos services
-            services.AddScoped<NotificationsContext>();
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
