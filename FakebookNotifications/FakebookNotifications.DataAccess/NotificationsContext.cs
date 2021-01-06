@@ -17,7 +17,12 @@ namespace FakebookNotifications.DataAccess
 
         public NotificationsContext(IOptions<NotificationsDatabaseSettings> settings)
         {
+            //assign settings to object to be used is other methods
+            _settings = settings.Value;
 
+            //Create client and db objects from settings
+            var client = new MongoClient(_settings.ConnectionString);
+            _database = client.GetDatabase(_settings.DatabaseName);
         }
 
         //Method to get the user collection
@@ -25,7 +30,7 @@ namespace FakebookNotifications.DataAccess
         {
             get
             {
-                return null;
+                return _database.GetCollection<User>(_settings.UserCollection);
             }
         }
 
@@ -34,7 +39,7 @@ namespace FakebookNotifications.DataAccess
         {
             get
             {
-                return null;
+                return _database.GetCollection<Notification>(_settings.NotificationsCollection);
             }
         }
     }
