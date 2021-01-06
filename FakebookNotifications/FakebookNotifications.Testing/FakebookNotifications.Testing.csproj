@@ -23,6 +23,7 @@
 	<ItemGroup>
     <ProjectReference Include="../FakebookNotifications.WebApi/FakebookNotifications.WebApi.csproj" />
     <ProjectReference Include="../FakebookNotifications.DataAccess/FakebookNotifications.DataAccess.csproj" />
+    <ProjectReference Include="..\FakebookNotifications.Domain\FakebookNotifications.Domain.csproj" />
 	</ItemGroup>
 
 
