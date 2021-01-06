@@ -13,8 +13,6 @@ namespace FakebookNotifications.Testing
 {
     public class UserRepoTests
     {
-        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
-
         public UserRepoTests()
         {
             

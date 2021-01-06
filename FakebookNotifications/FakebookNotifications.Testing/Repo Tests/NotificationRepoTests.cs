@@ -13,8 +13,6 @@ namespace FakebookNotifications.Testing
 {
     public class NotificationRepoTests
     {
-        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
-
         public NotificationRepoTests()
         {
 
@@ -86,7 +84,7 @@ namespace FakebookNotifications.Testing
             };
 
             //Act
-            var result = await repo.CreateNotificationAsync(notification);
+            var result = await repo.DeleteNotificationAsync(notification);
 
             //Assert
             Assert.True(result);
