@@ -11,6 +11,19 @@ namespace FakebookNotifications.Testing
 {
     public class UserRepoTests
     {
+        private Mock<NotificationsContext> _context;
+
+        public UserRepoTests()
+        {
+            var settings = new NotificationsDatabaseSettings();
+            var _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            _context = new Mock<NotificationsContext>(_mockSettings.Object);
+
+            var repo = new UserRepo(_context.Object);
+        }
+
         [Fact]
         public void GetUser_RepoTest()
         {

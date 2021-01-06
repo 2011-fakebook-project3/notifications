@@ -1,4 +1,5 @@
 ﻿using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,39 +8,46 @@ using System.Threading.Tasks;
 
 namespace FakebookNotifications.DataAccess
 {
-    public class UserRepo
+    public class UserRepo : IUserRepo
     {
-        public Task<User> GetUserAsync(int Id)
+        private readonly NotificationsContext _context;
+
+        public UserRepo(NotificationsContext context)
+        {
+            _context = context;
+        }
+
+        public Task<Domain.Models.User> GetUserAsync(int Id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> CreateUserAsync(User user)
+        public Task<bool> CreateUserAsync(Domain.Models.User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<User>> GetUsersBySubscriptionAsync(List<string> Ids)
+        public Task<IEnumerable<Domain.Models.User>> GetUsersBySubscriptionAsync(List<string> Ids)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteUserAsync(User user)
+        public Task<bool> DeleteUserAsync(Domain.Models.User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateUserAsync(User user)
+        public Task<bool> UpdateUserAsync(Domain.Models.User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> TotalUserNotificationsAsync(User user)
+        public Task<int> TotalUserNotificationsAsync(Domain.Models.User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Notification>> GetUserNotificationsAsync(User user)
+        public Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
         {
             throw new NotImplementedException();
         }
