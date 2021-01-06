@@ -5,14 +5,13 @@ namespace FakebookNotifications.Domain.Models
     public class User
     {
         private string _id;
+
         /// <summary>
         /// Assigns _id an Id number, after verifying it.
         /// </summary>
-        public string Id {
-            get
-            {
-                return _id;
-            }
+        public string Id
+        {
+            get => _id;
             set
             {
                 // tries to parse the value
@@ -26,8 +25,8 @@ namespace FakebookNotifications.Domain.Models
                     _id = "";
                 }
             }
-                
-                }
+        }
+
         public string Email { get; set; }
 
         public User(string id, string email)
