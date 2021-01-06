@@ -12,6 +12,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakebookNotifications.Domai
 		{7182C800-A74A-4D44-9682-F9171BAD981C} = {7182C800-A74A-4D44-9682-F9171BAD981C}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakebookNotifications.DataAccess", "FakebookNotifications.DataAccess\FakebookNotifications.DataAccess.csproj", "{B8BEEE82-0DE8-4C01-800C-B85AB4676B92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{10727CC8-E023-4F66-8510-151B65218FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10727CC8-E023-4F66-8510-151B65218FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10727CC8-E023-4F66-8510-151B65218FD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8BEEE82-0DE8-4C01-800C-B85AB4676B92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8BEEE82-0DE8-4C01-800C-B85AB4676B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8BEEE82-0DE8-4C01-800C-B85AB4676B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8BEEE82-0DE8-4C01-800C-B85AB4676B92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

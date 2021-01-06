@@ -1,0 +1,12 @@
+{"type": {"Post": "1"},"user": "ryan@gmail.com","trigger": "antonio@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Comment": "1"},"user": "ryan@gmail.com","trigger": "matt@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Post": "1"},"user": "antonio@gmail.com","trigger": "ryan@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Comment": "1"},"user": "antonio@gmail.com","trigger": "jordan@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Post": "1"},"user": "matt@gmail.com","trigger": "antonio@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Comment": "1"},"user": "matt@gmail.com","trigger": "ryan@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Post": "1"},"user": "antonio@gmail.com","trigger": "jordan@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Comment": "1"},"user": "jordan@gmail.com","trigger": "antonio@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Post": "1"},"user": "jordan@gmail.com","trigger": "matt@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Comment": "1"},"user": "joe@gmail.com","trigger": "bob@gmail.com","read": 0,"date": "12-30-2020"}
+{"type": {"Post": "1"},"user": "bob@gmail.com","trigger": "tony@gmail.com","read": 0,"date": "12-30-2020"}
+
