@@ -1,5 +1,6 @@
 ﻿using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.Domain.Interfaces;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,13 @@ namespace FakebookNotifications.DataAccess
 {
     public class NotificationsRepo : INotificationsRepo
     {
-        private readonly NotificationsContext _context;
+        private readonly INotificationsContext _context;
+        private readonly IMongoCollection<Notification> _dbCollection;
 
-        public NotificationsRepo(NotificationsContext context)
+        public NotificationsRepo(INotificationsContext context)
         {
             _context = context;
+            _dbCollection = _context.Notifications;
         }
 
         public Task<IEnumerable<Domain.Models.Notification>> GetAllNotificationsAsync()

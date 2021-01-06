@@ -7,6 +7,7 @@ using Xunit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FakebookNotifications.Domain.Interfaces;
 
 namespace FakebookNotifications.Testing
 {
@@ -16,9 +17,7 @@ namespace FakebookNotifications.Testing
 
         public UserRepoTests()
         {
-            var settings = new NotificationsDatabaseSettings();
-            _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
-            _mockSettings.Setup(s => s.Value).Returns(settings);
+            
         }
 
         [Fact]
@@ -26,7 +25,7 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock context
-            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+            var context = new Mock<INotificationsContext>();
 
             //Create repo to work with
             var repo = new UserRepo(context.Object);
@@ -43,7 +42,7 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock context
-            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+            var context = new Mock<INotificationsContext>();
 
             //Create repo to work with
             var repo = new UserRepo(context.Object);
@@ -64,7 +63,7 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock context
-            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+            var context = new Mock<INotificationsContext>();
 
             //Create repo to work with
             var repo = new UserRepo(context.Object);
@@ -82,7 +81,7 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock context
-            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+            var context = new Mock<INotificationsContext>();
 
             //Create repo to work with
             var repo = new UserRepo(context.Object);
@@ -102,7 +101,7 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock context
-            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+            var context = new Mock<INotificationsContext>();
 
             //Create repo to work with
             var repo = new UserRepo(context.Object);
@@ -122,7 +121,7 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock context
-            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+            var context = new Mock<INotificationsContext>();
 
             //Create repo to work with
             var repo = new UserRepo(context.Object);
@@ -142,7 +141,7 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock context
-            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+            var context = new Mock<INotificationsContext>();
 
             //Create repo to work with
             var repo = new UserRepo(context.Object);
