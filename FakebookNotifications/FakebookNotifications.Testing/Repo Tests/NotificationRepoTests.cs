@@ -6,25 +6,26 @@ using System;
 using Xunit;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FakebookNotifications.Testing
 {
     public class NotificationRepoTests
     {
         [Fact]
-        public void GetAllNotifications_RepoTest()
+        public async Task GetAllNotifications_RepoTest()
         {
 
         }
 
         [Fact]
-        public void CreateNotification_RepoTest()
+        public async Task CreateNotification_RepoTest()
         {
 
         }
 
         [Fact]
-        public void DeleteNotification_RepoTest()
+        public async Task DeleteNotification_RepoTest()
         {
 
         }

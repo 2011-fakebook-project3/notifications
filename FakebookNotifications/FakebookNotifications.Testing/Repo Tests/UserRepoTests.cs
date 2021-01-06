@@ -39,39 +39,124 @@ namespace FakebookNotifications.Testing
         }
 
         [Fact]
-        public void CreateUser_RepoTest()
+        public async Task CreateUser_RepoTest()
         {
+            //Arrange
+            //Mock context
+            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new UserRepo(context.Object);
+
+            //User to create
+            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+
+            //Act
+            var result = await repo.CreateUserAsync(user);
+
+            //Assert
+            Assert.True(result);
 
         }
 
         [Fact]
-        public void GetUsersSubscriptionsById_RepoTest()
+        public async Task GetUsersSubscriptionsById_RepoTest()
         {
+            //Arrange
+            //Mock context
+            var context = new Mock<NotificationsContext>(_mockSettings.Object);
 
+            //Create repo to work with
+            var repo = new UserRepo(context.Object);
+
+            //Act
+            IEnumerable<Domain.Models.User> subList = await repo.GetUsersSubscriptionsByIdAsync("ryan@gmail.com");
+            var resultList = subList.ToList();
+
+            //Assert
+            Assert.Equal("antonio@gmail.com", resultList.First().Email);
         }
 
         [Fact]
-        public void DeleteUser_RepoTest()
+        public async Task DeleteUser_RepoTest()
         {
+            //Arrange
+            //Mock context
+            var context = new Mock<NotificationsContext>(_mockSettings.Object);
 
+            //Create repo to work with
+            var repo = new UserRepo(context.Object);
+
+            //User to delete
+            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+
+            //Act
+            var result = await repo.DeleteUserAsync(user);
+
+            //Assert
+            Assert.True(result);
         }
 
         [Fact]
-        public void UpdateUser_RepoTest()
+        public async Task UpdateUser_RepoTest()
         {
+            //Arrange
+            //Mock context
+            var context = new Mock<NotificationsContext>(_mockSettings.Object);
 
+            //Create repo to work with
+            var repo = new UserRepo(context.Object);
+
+            //User to update
+            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+
+            //Act
+            var result = await repo.UpdateUserAsync(user);
+
+            //Assert
+            Assert.True(result);
         }
 
         [Fact]
-        public void TotalUserNotifications_RepoTest()
+        public async Task TotalUserNotifications_RepoTest()
         {
+            //Arrange
+            //Mock context
+            var context = new Mock<NotificationsContext>(_mockSettings.Object);
 
+            //Create repo to work with
+            var repo = new UserRepo(context.Object);
+
+            //User to get notifications for
+            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+
+            //Act
+            var result = await repo.TotalUserNotificationsAsync(user);
+
+            //Assert
+            Assert.Equal(1, result);
         }
 
         [Fact]
-        public void GetUserNotifications_RepoTest()
+        public async Task GetUserNotifications_RepoTest()
         {
+            //Arrange
+            //Mock context
+            var context = new Mock<NotificationsContext>(_mockSettings.Object);
 
+            //Create repo to work with
+            var repo = new UserRepo(context.Object);
+
+            //User to get notifications for
+            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+
+            //Act
+            IEnumerable<Domain.Models.Notification> notList = await repo.GetUserNotificationsAsync(user);
+            var resultList = notList.ToList();
+
+            //Assert
+            Assert.Equal("ryan@gmail.com", resultList.First().LoggedInUserId);
+            Assert.Equal("antonio@gmail.com", resultList.First().TriggerUserId);
         }
     }
 }
