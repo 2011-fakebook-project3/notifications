@@ -7,6 +7,7 @@ COPY  *.sln .
 COPY FakebookNotifications.WebApi/*.csproj ./FakebookNotifications.WebApi/
 COPY FakebookNotifications.Testing/*.csproj ./FakebookNotifications.Testing/
 COPY FakebookNotifications.DataAccess/*.csproj ./FakebookNotifications.DataAccess/
+COPY FakebookNotifications.Domain/*.csproj ./FakebookNotifications.Domain/
 RUN dotnet restore
 
 # Copy everything else and build
