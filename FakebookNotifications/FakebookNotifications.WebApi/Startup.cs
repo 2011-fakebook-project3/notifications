@@ -35,6 +35,9 @@ namespace FakebookNotifications.WebApi
             services.Configure<NotificationsDatabaseSettings>(
                 Configuration.GetSection(nameof(NotificationsDatabaseSettings)));
 
+            // Create context and repos services
+            services.AddScoped<NotificationsContext>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

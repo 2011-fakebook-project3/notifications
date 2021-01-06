@@ -13,7 +13,7 @@ namespace FakebookNotifications.DataAccess.Models
 
         //users email to identify them
         [BsonElement("email")]
-        public string Email { get; }
+        public string Email { get; set; }
 
         //collection of notifications belonging to the user
         [BsonElement("notifications")]
