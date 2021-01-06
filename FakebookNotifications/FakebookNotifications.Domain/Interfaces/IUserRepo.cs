@@ -13,7 +13,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a User object.
         /// </returns>
-        Task<User> GetUserAsync(int Id);
+        Task<User> GetUserAsync(string email);
         /// <summary>
         /// Creates a User
         /// </summary>
@@ -30,7 +30,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains an IEnumerable of the user's list of users they are following.
         /// </returns>
-        Task<IEnumerable<User>> GetUsersBySubscriptionAsync(List<string> Ids);
+        Task<IEnumerable<User>> GetUsersSubscriptionsByIdAsync(string email);
         /// <summary>
         /// Delete a User
         /// </summary>

@@ -17,7 +17,7 @@ namespace FakebookNotifications.DataAccess
             _context = context;
         }
 
-        public Task<Domain.Models.User> GetUserAsync(int Id)
+        public Task<Domain.Models.User> GetUserAsync(string email)
         {
             throw new NotImplementedException();
         }
@@ -27,7 +27,7 @@ namespace FakebookNotifications.DataAccess
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Domain.Models.User>> GetUsersBySubscriptionAsync(List<string> Ids)
+        public Task<IEnumerable<Domain.Models.User>> GetUsersSubscriptionsByIdAsync(string email)
         {
             throw new NotImplementedException();
         }

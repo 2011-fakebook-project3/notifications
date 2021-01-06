@@ -6,28 +6,36 @@ using System;
 using Xunit;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FakebookNotifications.Testing
 {
     public class UserRepoTests
     {
-        private Mock<NotificationsContext> _context;
+        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
 
         public UserRepoTests()
         {
             var settings = new NotificationsDatabaseSettings();
-            var _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
+            _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             _mockSettings.Setup(s => s.Value).Returns(settings);
-
-            _context = new Mock<NotificationsContext>(_mockSettings.Object);
-
-            var repo = new UserRepo(_context.Object);
         }
 
         [Fact]
-        public void GetUser_RepoTest()
+        public async Task GetUser_RepoTestAsync()
         {
-           
+            //Arrange
+            //Mock context
+            var context = new Mock<NotificationsContext>(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new UserRepo(context.Object);
+
+            //Act
+            var result = await repo.GetUserAsync("ryan@gmail.com");
+
+            //Assert
+            Assert.Equal("ryan@gmail.com", result.Email);
         }
 
         [Fact]
@@ -37,7 +45,7 @@ namespace FakebookNotifications.Testing
         }
 
         [Fact]
-        public void GetUserBySubscription_RepoTest()
+        public void GetUsersSubscriptionsById_RepoTest()
         {
 
         }
