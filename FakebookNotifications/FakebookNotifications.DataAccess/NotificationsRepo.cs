@@ -22,7 +22,9 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<IEnumerable<Domain.Models.Notification>> GetAllNotificationsAsync()
         {
-            var all = await _dbCollection.FindAsync(Builders<Notification>.Filter.Empty);
+            // Get all the notifications from the database
+            IAsyncCursor<Notification> all = await _dbCollection.FindAsync(Builders<Notification>.Filter.Empty);
+            // Return all the notifications as a list, explicitly casted as an IEnumerable
             return (IEnumerable<Domain.Models.Notification>) await all.ToListAsync();
         }
 
@@ -30,6 +32,7 @@ namespace FakebookNotifications.DataAccess
         {
             try
             {
+                // Create a new notification based on the passed in Notification.
                 Notification newnotification = new Notification()
                 {
                     Id = notification.Id,
@@ -39,11 +42,13 @@ namespace FakebookNotifications.DataAccess
                     Type = notification.Type,
                     Date = notification.Date
                 };
+                // Insert the new notification into the database and return true if it suceeds.
                 await _dbCollection.InsertOneAsync(newnotification);
                 return true;
             }
             catch
             {
+                // Returns false if it fails.
                 return false;
             }
 
@@ -53,12 +58,14 @@ namespace FakebookNotifications.DataAccess
         {
             try
             {
-                var id = notification.Id;
-                await _dbCollection.DeleteOneAsync(Builders<Notification>.Filter.Eq("Id", id));
+                // Remove the notification from notifications.
+                await _dbCollection.DeleteOneAsync(Builders<Notification>.Filter.Eq("Id", notification.Id));
+                // Return true if it suceeds.
                 return true;
             }
             catch
             {
+                // Return false if it fails.
                 return false;
             }
         }

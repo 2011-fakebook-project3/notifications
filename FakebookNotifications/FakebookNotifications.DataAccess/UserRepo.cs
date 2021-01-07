@@ -21,12 +21,14 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<Domain.Models.User> GetUserAsync(string email)
         {
-            var p = await _dbCollection.FindAsync<User>(u => u.Email == email).FirstOrDefault();
-            var newuser = Domain.Models.User();
-            return newuser;
+            var user = await _dbCollection.FindAsync(u => u.Email == email);
+            var dbUser = user.FirstOrDefault();
+
+            var domainUser = new Domain.Models.User(dbUser.Id, dbUser.Email);
+            return domainUser;
         }
 
-        public Task<bool> CreateUserAsync(Domain.Models.User user)
+        public async Task<bool> CreateUserAsync(Domain.Models.User user)
         {
             try
             {
@@ -49,19 +51,44 @@ namespace FakebookNotifications.DataAccess
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteUserAsync(Domain.Models.User user)
+        public async Task<bool> DeleteUserAsync(Domain.Models.User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var id = user.Id;
+                await _dbCollection.DeleteOneAsync(Builders<User>.Filter.Eq("Id", id));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public Task<bool> UpdateUserAsync(Domain.Models.User user)
+        public async Task<bool> UpdateUserAsync(Domain.Models.User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                User updatedUser = new User()
+                {
+                    Id = user.Id,
+                    Email = user.Email
+                };
+                await _dbCollection.ReplaceOneAsync(u => u.Id == updatedUser.Id, updatedUser);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
-        public Task<int> TotalUserNotificationsAsync(Domain.Models.User user)
+        public async Task<int> TotalUserNotificationsAsync(Domain.Models.User user)
         {
-            throw new NotImplementedException();
+            var findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
+            var foundUser = findUser.FirstOrDefault();
+            return foundUser.Notifications.Count();
         }
 
         public Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
