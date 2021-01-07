@@ -13,21 +13,35 @@ namespace FakebookNotifications.DataAccess
     {
         private readonly INotificationsContext _context;
         private readonly IMongoCollection<User> _dbCollection;
-
         public UserRepo(INotificationsContext context)
         {
             _context = context;
             _dbCollection = _context.User;
         }
 
-        public Task<Domain.Models.User> GetUserAsync(string email)
+        public async Task<Domain.Models.User> GetUserAsync(string email)
         {
-            throw new NotImplementedException();
+            var p = await _dbCollection.FindAsync<User>(u => u.Email == email).FirstOrDefault();
+            var newuser = Domain.Models.User();
+            return newuser;
         }
 
         public Task<bool> CreateUserAsync(Domain.Models.User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                User newuser = new User()
+                {
+                    Id = user.Id,
+                    Email = user.Email
+                };
+                await _dbCollection.InsertOneAsync(newuser);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public Task<IEnumerable<Domain.Models.User>> GetUsersSubscriptionsByIdAsync(string email)

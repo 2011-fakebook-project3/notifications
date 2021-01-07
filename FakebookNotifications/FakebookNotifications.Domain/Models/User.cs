@@ -43,7 +43,7 @@ namespace FakebookNotifications.Domain.Models
         /// </returns>
         public bool IsValid()
         {
-            throw new NotImplementedException();
+            return !(String.IsNullOrEmpty(Id) || String.IsNullOrEmpty(Email)); 
         }
     }
 }

@@ -20,19 +20,47 @@ namespace FakebookNotifications.DataAccess
             _dbCollection = _context.Notifications;
         }
 
-        public Task<IEnumerable<Domain.Models.Notification>> GetAllNotificationsAsync()
+        public async Task<IEnumerable<Domain.Models.Notification>> GetAllNotificationsAsync()
         {
-            throw new NotImplementedException();
+            var all = await _dbCollection.FindAsync(Builders<Notification>.Filter.Empty);
+            return (IEnumerable<Domain.Models.Notification>) await all.ToListAsync();
         }
 
-        public Task<bool> CreateNotificationAsync(Domain.Models.Notification notification)
+        public async Task<bool> CreateNotificationAsync(Domain.Models.Notification notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Notification newnotification = new Notification()
+                {
+                    Id = notification.Id,
+                    HasBeenRead = notification.HasBeenRead,
+                    TriggerUserId = notification.TriggerUserId,
+                    LoggedInUserId = notification.LoggedInUserId,
+                    Type = notification.Type,
+                    Date = notification.Date
+                };
+                await _dbCollection.InsertOneAsync(newnotification);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
-        public Task<bool> DeleteNotificationAsync(Domain.Models.Notification notification)
+        public async Task<bool> DeleteNotificationAsync(Domain.Models.Notification notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var id = notification.Id;
+                await _dbCollection.DeleteOneAsync(Builders<Notification>.Filter.Eq("Id", id));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
