@@ -21,16 +21,11 @@
     </PackageReference>
   </ItemGroup>
 
-<<<<<<< HEAD
-	<ItemGroup>
-		<ProjectReference Include="../FakebookNotifications.WebApi/FakebookNotifications.WebApi.csproj" />
-	</ItemGroup>
 
-=======
   <ItemGroup>
       <ProjectReference Include="../FakebookNotifications.WebApi/FakebookNotifications.WebApi.csproj" />
       <ProjectReference Include="../FakebookNotifications.DataAccess/FakebookNotifications.DataAccess.csproj" />
   </ItemGroup>
->>>>>>> 2adf6a2e660233775a818d0c4531b0c7ecc41756
+
 
 </Project>
