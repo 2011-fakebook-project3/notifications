@@ -59,9 +59,9 @@ namespace FakebookNotifications.DataAccess
             try
             {
                 // Grab an identifier.
-                string id = user.Id;
+                string email = user.Email;
                 // Remove the user from the database. Return true if it succeeds.
-                await _dbCollection.DeleteOneAsync(Builders<User>.Filter.Eq("Id", id));
+                await _dbCollection.DeleteOneAsync(Builders<User>.Filter.Eq("Email", email));
                 return true;
             }
             catch
