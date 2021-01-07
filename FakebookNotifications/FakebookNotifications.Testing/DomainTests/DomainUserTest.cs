@@ -17,7 +17,7 @@ namespace FakebookNotifications.Testing.DomainTests
         public void UserIsValidTrue()
         {
             // arrange
-            User user = new User("jordan@gmail.com", "3");
+            User user = new User("3", "jordaneddygarcia@gmail.com");
 
             // act
             bool valid = user.IsValid(); // should be true
@@ -32,7 +32,7 @@ namespace FakebookNotifications.Testing.DomainTests
         public void UserIsValidFalse()
         {
             // arrange
-            User user = new User("Antonio@gmail.com", "a");
+            User user = new User("a", "Antonio@gmail.com");
 
             // act
             bool valid = user.IsValid(); // should be false

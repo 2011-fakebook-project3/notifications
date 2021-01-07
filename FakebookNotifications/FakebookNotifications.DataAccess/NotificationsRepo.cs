@@ -20,19 +20,53 @@ namespace FakebookNotifications.DataAccess
             _dbCollection = _context.Notifications;
         }
 
-        public Task<IEnumerable<Domain.Models.Notification>> GetAllNotificationsAsync()
+        public async Task<IEnumerable<Domain.Models.Notification>> GetAllNotificationsAsync()
         {
-            throw new NotImplementedException();
+            // Get all the notifications from the database
+            IAsyncCursor<Notification> all = await _dbCollection.FindAsync(Builders<Notification>.Filter.Empty);
+            // Return all the notifications as a list, explicitly casted as an IEnumerable
+            return (IEnumerable<Domain.Models.Notification>) await all.ToListAsync();
         }
 
-        public Task<bool> CreateNotificationAsync(Domain.Models.Notification notification)
+        public async Task<bool> CreateNotificationAsync(Domain.Models.Notification notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Create a new notification based on the passed in Notification.
+                Notification newnotification = new Notification()
+                {
+                    HasBeenRead = notification.HasBeenRead,
+                    TriggerUserId = notification.TriggerUserId,
+                    LoggedInUserId = notification.LoggedInUserId,
+                    Type = notification.Type,
+                    Date = notification.Date
+                };
+                // Insert the new notification into the database and return true if it suceeds.
+                await _dbCollection.InsertOneAsync(newnotification);
+                return true;
+            }
+            catch
+            {
+                // Returns false if it fails.
+                return false;
+            }
+
         }
 
-        public Task<bool> DeleteNotificationAsync(Domain.Models.Notification notification)
+        public async Task<bool> DeleteNotificationAsync(Domain.Models.Notification notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Remove the notification from notifications.
+                await _dbCollection.DeleteOneAsync(Builders<Notification>.Filter.Eq("Id", notification.Id));
+                // Return true if it suceeds.
+                return true;
+            }
+            catch
+            {
+                // Return false if it fails.
+                return false;
+            }
         }
     }
 }
