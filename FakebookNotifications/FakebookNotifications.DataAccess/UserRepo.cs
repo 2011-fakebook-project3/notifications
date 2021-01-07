@@ -100,6 +100,7 @@ namespace FakebookNotifications.DataAccess
 
             // Return the count of their notifications.
             return foundUser.Notifications.Count();
+
         }
 
         public async Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
