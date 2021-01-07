@@ -35,7 +35,6 @@ namespace FakebookNotifications.DataAccess
                 // Create a new notification based on the passed in Notification.
                 Notification newnotification = new Notification()
                 {
-                    Id = notification.Id,
                     HasBeenRead = notification.HasBeenRead,
                     TriggerUserId = notification.TriggerUserId,
                     LoggedInUserId = notification.LoggedInUserId,

@@ -4,7 +4,6 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FakebookNotifications.DataAccess
@@ -13,6 +12,7 @@ namespace FakebookNotifications.DataAccess
     {
         private readonly INotificationsContext _context;
         private readonly IMongoCollection<User> _dbCollection;
+
         public UserRepo(INotificationsContext context)
         {
             _context = context;
@@ -21,10 +21,12 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<Domain.Models.User> GetUserAsync(string email)
         {
-            var user = await _dbCollection.FindAsync(u => u.Email == email);
-            var dbUser = user.FirstOrDefault();
+            // Find the user by their email.
+            IAsyncCursor<User> user = await _dbCollection.FindAsync(u => u.Email == email);
+            User dbUser = user.FirstOrDefault();
 
-            var domainUser = new Domain.Models.User(dbUser.Id, dbUser.Email);
+            // Create the domain model version of the user and return it.
+            Domain.Models.User domainUser = new Domain.Models.User(dbUser.Id, dbUser.Email);
             return domainUser;
         }
 
@@ -32,11 +34,12 @@ namespace FakebookNotifications.DataAccess
         {
             try
             {
+                // Create an entity version of the user.
                 User newuser = new User()
                 {
-                    Id = user.Id,
                     Email = user.Email
                 };
+                // Insert it into the database, then return true if successful.
                 await _dbCollection.InsertOneAsync(newuser);
                 return true;
             }
@@ -55,12 +58,15 @@ namespace FakebookNotifications.DataAccess
         {
             try
             {
-                var id = user.Id;
+                // Grab an identifier.
+                string id = user.Id;
+                // Remove the user from the database. Return true if it succeeds.
                 await _dbCollection.DeleteOneAsync(Builders<User>.Filter.Eq("Id", id));
                 return true;
             }
             catch
             {
+                // Return false if deleting the user fails.
                 return false;
             }
         }
@@ -69,31 +75,50 @@ namespace FakebookNotifications.DataAccess
         {
             try
             {
+                // Create an entity version of the user.
                 User updatedUser = new User()
                 {
                     Id = user.Id,
                     Email = user.Email
                 };
+                // Replace the user information with the information from domain. Return true if it succeeds.
                 await _dbCollection.ReplaceOneAsync(u => u.Id == updatedUser.Id, updatedUser);
                 return true;
             }
             catch
             {
+                // Return false if updating the user fails.
                 return false;
             }
-
         }
 
         public async Task<int> TotalUserNotificationsAsync(Domain.Models.User user)
         {
-            var findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
-            var foundUser = findUser.FirstOrDefault();
+            // Find the user entity, based on the user email.
+            IAsyncCursor<User> findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
+            User foundUser = findUser.FirstOrDefault();
+
+            // Return the count of their notifications.
             return foundUser.Notifications.Count();
         }
 
-        public Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
+        public async Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
         {
-            throw new NotImplementedException();
+            // Find the user entity, based on the user email.
+            IAsyncCursor<User> findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
+            // Create a list of Notification Entities
+            IEnumerable<Notification> foundNotifications = findUser.FirstOrDefault().Notifications;
+            // Select each item from the list and create a new notification entity.
+            IEnumerable<Domain.Models.Notification> notifcationList = foundNotifications.Select(x => new Domain.Models.Notification()
+            {
+                Id = x.Id,
+                Type = x.Type,
+                Date = (DateTime)x.Date,
+                HasBeenRead = x.HasBeenRead,
+                LoggedInUserId = x.LoggedInUserId,
+                TriggerUserId = x.TriggerUserId
+            }).AsEnumerable(); // Create this item as an Enumarable
+            return notifcationList;
         }
     }
 }

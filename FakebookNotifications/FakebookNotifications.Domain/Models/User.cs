@@ -34,6 +34,8 @@ namespace FakebookNotifications.Domain.Models
             Id = id;
             Email = email;
         }
+        public User() { }
+
 
         /// <summary>
         /// Checks whether a user is a valid object or not.
