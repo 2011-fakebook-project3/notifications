@@ -13,6 +13,7 @@ namespace FakebookNotifications.DataAccess
     {
         private readonly INotificationsContext _context;
         private readonly IMongoCollection<User> _dbCollection;
+
         public UserRepo(INotificationsContext context)
         {
             _context = context;
@@ -89,6 +90,7 @@ namespace FakebookNotifications.DataAccess
             var findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
             var foundUser = findUser.FirstOrDefault();
             return foundUser.Notifications.Count();
+
         }
 
         public Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
