@@ -1,4 +1,5 @@
 ﻿using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.Domain.Interfaces;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FakebookNotifications.DataAccess
 {
-    public class NotificationsContext
+    public class NotificationsContext : INotificationsContext
     {
         private IMongoDatabase _database = null;
         private readonly NotificationsDatabaseSettings _settings;
