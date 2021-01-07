@@ -5,19 +5,42 @@ using FakebookNotifications.WebApi.HubInterfaces;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
+
     public class NotificationHub : Hub<INotificationHub>
     {
-
         public new IHubCallerClients  Clients { get; set; }
+        public string thisUser = "";
 
         //Send a notification to all clients
 
         public override async Task OnConnectedAsync()
         {
-            string user = new string;
-            await user = UserIdProvider.GetUserId();
+            thisUser = Context.UserIdentifier;
+            // add this connection id to this user in DB
+            // get notifcations for user
+            // send unread notifications
             await base.OnConnectedAsync();
         }
+
+        public async Task AddFollower(string user, string followed)
+        { 
+            string newNotification = "";
+            // add followed to user subscription
+            // send notification to followed
+            await SendUser(followed, newNotification);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            // remove this connection from user
+            await base.OnDisconnectedAsync(exception);
+           
+
+        }
+
+
+
+
         public async Task SendAll(string user, string notification)
         {
             await Clients.All.SendAsync("SendAll", user, notification);
