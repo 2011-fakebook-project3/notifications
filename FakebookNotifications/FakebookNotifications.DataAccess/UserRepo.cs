@@ -121,5 +121,15 @@ namespace FakebookNotifications.DataAccess
             }).AsEnumerable(); // Create this item as an Enumarable
             return notifcationList;
         }
+
+        public async Task<Domain.Models.User> AddUserSubscription(string subscriberEmail, string subscribeeEmail)
+        {
+            Domain.Models.User subscriber = await GetUserAsync(subscriberEmail);
+            Domain.Models.User subscribee = await GetUserAsync(subscribeeEmail);
+            subscriber.Follows.Add(subscribeeEmail);
+            subscribee.Subscribers.Add(subscriberEmail);
+            return subscribee;
+
+        }
     }
 }

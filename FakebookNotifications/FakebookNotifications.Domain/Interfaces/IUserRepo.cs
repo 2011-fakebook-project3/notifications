@@ -67,5 +67,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// </returns>
         Task<IEnumerable<Notification>> GetUserNotificationsAsync(User user);
 
+        Task<User> AddUserSubscription(string subscriberEmail, string subscribedEmail);
+
     }
 }

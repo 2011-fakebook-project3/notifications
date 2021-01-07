@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FakebookNotifications.Domain.Models;
 
 namespace FakebookNotifications.WebApi.HubInterfaces
 {
@@ -11,15 +12,15 @@ namespace FakebookNotifications.WebApi.HubInterfaces
         //user and notification params will be replaced with custom objects when available
         
         //Send to all users
-         Task SendAll(string user, string notification);
+         Task SendAll(User user, Notification notification);
 
         //Send to Group
-        Task SendGroup(string group, string notifications);
+        Task SendGroup(string group, Notification notifications);
 
         //Send to caller
-        Task SendCaller(string user, string notifcations);
+        Task SendCaller(User user, Notification notifcations);
 
         //Send to specific user
-        Task SendUser(string user, string notifcations);
+        Task SendUser(User user, Notification notifcations);
     }
 }
