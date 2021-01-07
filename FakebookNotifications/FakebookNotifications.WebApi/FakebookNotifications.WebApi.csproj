@@ -1,7 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>6d0c379a-9a54-4807-88ba-da05a2c64c95</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,5 +12,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+<<<<<<< HEAD
 	
+=======
+  <ItemGroup>
+    <ProjectReference Include="..\FakebookNotifications.DataAccess\FakebookNotifications.DataAccess.csproj" />
+  </ItemGroup>
+>>>>>>> 2adf6a2e660233775a818d0c4531b0c7ecc41756
 </Project>

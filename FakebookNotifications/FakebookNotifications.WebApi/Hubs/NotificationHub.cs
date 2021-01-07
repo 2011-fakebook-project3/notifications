@@ -5,6 +5,7 @@ using FakebookNotifications.WebApi.HubInterfaces;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
+<<<<<<< HEAD
 
     public class NotificationHub : Hub<INotificationHub>
     {
@@ -44,26 +45,45 @@ namespace FakebookNotifications.WebApi.Hubs
         public async Task SendAll(string user, string notification)
         {
             await Clients.All.SendAsync("SendAll", user, notification);
+=======
+    public class NotificationHub : Hub<INotificationHub>
+    {
+
+        public new IHubCallerClients  Clients { get; set; }
+
+        //Send a notification to all clients
+        public async Task SendAll(string user, string notification)
+        { 
+            throw new NotImplementedException();
+>>>>>>> 2adf6a2e660233775a818d0c4531b0c7ecc41756
         }
 
         //Send a notification to all clients within a specific group
         public async Task SendGroup(string group, string notification)
         {
             throw new NotImplementedException();
+<<<<<<< HEAD
             //await Clients.Group(group).SendAsync("SendGroup", notification);
+=======
+>>>>>>> 2adf6a2e660233775a818d0c4531b0c7ecc41756
         }
 
         //Send a notification to the caller
         public async Task SendCaller(string caller, string notification)
         {
+<<<<<<< HEAD
             //throw new NotImplementedException();
             await Clients.User(caller).SendAsync("SendCaller", notification);
+=======
+            throw new NotImplementedException();
+>>>>>>> 2adf6a2e660233775a818d0c4531b0c7ecc41756
         }
 
         //Send a notification to one specific user
         public async Task SendUser(string user, string notification)
         {
             throw new NotImplementedException();
+<<<<<<< HEAD
             //await Clients.User(user).SendAsync("SendCaller", notification);
            
         }
@@ -71,6 +91,8 @@ namespace FakebookNotifications.WebApi.Hubs
         public async Task AddToGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+=======
+>>>>>>> 2adf6a2e660233775a818d0c4531b0c7ecc41756
         }
     }
 }
