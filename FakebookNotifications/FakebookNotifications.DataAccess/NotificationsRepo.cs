@@ -68,5 +68,37 @@ namespace FakebookNotifications.DataAccess
                 return false;
             }
         }
+
+        public async Task<List<Domain.Models.Notification>> GetAllUnreadNotificationsAsync(string userEmail)
+        {
+            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
+            List<DataAccess.Models.Notification> dbNotes = new List<DataAccess.Models.Notification>();
+            dbNotes = await notifications.ToListAsync();
+            List<Domain.Models.Notification> domainNotes = new List<Domain.Models.Notification>();
+            foreach(Notification note in dbNotes)
+            {
+                
+                Domain.Models.Notification newNote = new Domain.Models.Notification
+                {
+                    Type = note.Type,
+                    LoggedInUserId = note.LoggedInUserId,
+                    TriggerUserId = note.TriggerUserId,
+                    HasBeenRead = note.HasBeenRead,
+                    Date = (DateTime)note.Date,
+                    Id = note.Id
+                };
+                domainNotes.Add(newNote);
+            }
+            return domainNotes;
+
+        }
+
+        public async Task<int> GetTotalUnreadNotificationsAsync(string userEmail)
+        {
+            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
+            return notifications.ToList().Count();
+        }
+
+     
     }
 }
