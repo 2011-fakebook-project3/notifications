@@ -1,6 +1,6 @@
 using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
-using FakebookNotifications.DataAccess.Models.Interfaces;
+using FakebookNotifications.Domain.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,6 +37,9 @@ namespace FakebookNotifications.WebApi
 
             // Create context and repos services
             services.AddScoped<NotificationsContext>();
+            services.AddScoped<IUserRepo, UserRepo>();
+            services.AddScoped<INotificationsRepo, NotificationsRepo>();
+              
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

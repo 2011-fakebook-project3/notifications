@@ -66,6 +66,29 @@ namespace FakebookNotifications.Domain.Interfaces
         /// The task result contains an IEnumerable of user notifications.
         /// </returns>
         Task<IEnumerable<Notification>> GetUserNotificationsAsync(User user);
+        /// <summary>
+        /// Updates a follower and a followed user
+        /// </summary>
+        /// <param name="subscriberEmail">email of the following user</param>
+        /// <param name="subscribedEmail">email of the followed user</param>
+        /// <returns>Domain User model of the followed user for followup notification</returns>
+        Task<User> AddUserSubscriptionAsync(string subscriberEmail, string subscribedEmail);
+
+        /// <summary>
+        /// Adds a connection id to the users collection for signalr to send notifications to
+        /// </summary>
+        /// <param name="email">email of the user</param>
+        /// <param name="connectionId">the connectionid to be added to the users collection</param>
+        /// <returns>Bool if the update was successfull</returns>
+        Task<bool> AddUserConnection(string email, string connectionId);
+
+        /// <summary>
+        /// Removes a connection id to the users collection
+        /// </summary>
+        /// <param name="email">email of the user</param>
+        /// <param name="connectionId">the connectionid to be removed from the users collection</param>
+        /// <returns>Bool if the update was successfull</returns>
+        Task<bool> RemoveUserConnection(string email, string connectionId);
 
     }
 }

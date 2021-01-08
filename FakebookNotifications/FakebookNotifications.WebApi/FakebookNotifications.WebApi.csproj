@@ -12,7 +12,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+
   <ItemGroup>
     <ProjectReference Include="..\FakebookNotifications.DataAccess\FakebookNotifications.DataAccess.csproj" />
   </ItemGroup>
+
 </Project>
