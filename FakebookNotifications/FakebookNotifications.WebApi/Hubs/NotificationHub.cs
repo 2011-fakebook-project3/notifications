@@ -60,8 +60,7 @@ namespace FakebookNotifications.WebApi.Hubs
             };
             Domain.Models.User followedUser = await _userRepo.AddUserSubscriptionAsync(user, followed);
             await _noteRepo.CreateNotificationAsync(newNotification);
-            await _userRepo.
-            await SendUser(followedUser, newNotification);
+            await SendUserGroupAsync(followedUser, newNotification);
         }
 
         public async Task SendAll(string user, string notification)
@@ -84,16 +83,19 @@ namespace FakebookNotifications.WebApi.Hubs
         }
 
         //Send a notification to one specific user
-        public async Task SendUser(Domain.Models.User user, Domain.Models.Notification notification)
+        public async Task SendUserGroupAsync(Domain.Models.User user, Domain.Models.Notification notification)
         {
-            throw new NotImplementedException();
-            //await Clients.User(user).SendAsync("SendCaller", notification);
+            foreach(string connection in user.Connections)
+            {
+                await AddToGroupAsync(connection, user.Email);
+            }
+            await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
            
         }
 
-        public async Task AddToGroup(string groupName)
+        public async Task AddToGroupAsync(string connectionId, string groupName)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            await Groups.AddToGroupAsync(connectionId, groupName);
         }
     }
 }
