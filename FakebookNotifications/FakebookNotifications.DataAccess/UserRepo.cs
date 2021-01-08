@@ -12,11 +12,13 @@ namespace FakebookNotifications.DataAccess
     {
         private readonly INotificationsContext _context;
         private readonly IMongoCollection<User> _dbCollection;
+        private readonly INotificationsRepo _notRepo;
 
-        public UserRepo(INotificationsContext context)
+        public UserRepo(INotificationsContext context, INotificationsRepo notRepo)
         {
             _context = context;
             _dbCollection = _context.User;
+            _notRepo = notRepo;
         }
 
         public async Task<Domain.Models.User> GetUserAsync(string email)
@@ -107,8 +109,10 @@ namespace FakebookNotifications.DataAccess
         {
             // Find the user entity, based on the user email.
             IAsyncCursor<User> findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
+
             // Create a list of Notification Entities
             IEnumerable<Notification> foundNotifications = findUser.FirstOrDefault().Notifications;
+
             // Select each item from the list and create a new notification entity.
             IEnumerable<Domain.Models.Notification> notificationList = foundNotifications.Select(x => new Domain.Models.Notification()
             {
@@ -119,6 +123,7 @@ namespace FakebookNotifications.DataAccess
                 LoggedInUserId = x.LoggedInUserId,
                 TriggerUserId = x.TriggerUserId
             }).AsEnumerable(); // Create this item as an Enumarable
+
             return notificationList;
         }
 
@@ -128,33 +133,25 @@ namespace FakebookNotifications.DataAccess
             Domain.Models.User subscribee = await GetUserAsync(subscribeeEmail);
             subscriber.Follows.Add(subscribeeEmail);
             subscribee.Subscribers.Add(subscriberEmail);
-            return subscribee;
-        }
 
-        public async Task<bool> AddUserNotificationAsync(Domain.Models.User user, Domain.Models.Notification notification)
-        {
-
-            try
+            Domain.Models.Notification notification = new Domain.Models.Notification()
             {
-                DataAccess.Models.Notification dbNote = new Notification
-                {
-                    Type = notification.Type,
-                    HasBeenRead = notification.HasBeenRead,
-                    LoggedInUserId = notification.LoggedInUserId,
-                    TriggerUserId = notification.TriggerUserId,
-                    Date = DateTime.Now,
-                };
-                IAsyncCursor<User> notifiedUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
-                User dbUser = notifiedUser.FirstOrDefault();
-                dbUser.Notifications.ToList().Add(dbNote);
-                await _dbCollection.UpdateOneAsync();
+                Type = new KeyValuePair<string, int>("follow", 0),
+                Date = DateTime.Now,
+                HasBeenRead = false,
+                LoggedInUserId = subscribeeEmail,
+                TriggerUserId = subscriberEmail
+            };
 
-
+            //add follow notification to database
+            var result = await _notRepo.CreateNotificationAsync(notification);
+            if(result == true)
+            {
+                return subscribee;
             }
-          
-            catch
+            else
             {
-
+                throw new Exception("Error creating follow notification");
             }
         }
     }
