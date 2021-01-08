@@ -58,8 +58,9 @@ namespace FakebookNotifications.WebApi.Hubs
                 TriggerUserId = user,
                 Type = new KeyValuePair<string, int>("follow", 0)
             };
-
             Domain.Models.User followedUser = await _userRepo.AddUserSubscriptionAsync(user, followed);
+            await _noteRepo.CreateNotificationAsync(newNotification);
+            await _userRepo.
             await SendUser(followedUser, newNotification);
         }
 

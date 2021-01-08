@@ -110,7 +110,7 @@ namespace FakebookNotifications.DataAccess
             // Create a list of Notification Entities
             IEnumerable<Notification> foundNotifications = findUser.FirstOrDefault().Notifications;
             // Select each item from the list and create a new notification entity.
-            IEnumerable<Domain.Models.Notification> notifcationList = foundNotifications.Select(x => new Domain.Models.Notification()
+            IEnumerable<Domain.Models.Notification> notificationList = foundNotifications.Select(x => new Domain.Models.Notification()
             {
                 Id = x.Id,
                 Type = x.Type,
@@ -119,7 +119,7 @@ namespace FakebookNotifications.DataAccess
                 LoggedInUserId = x.LoggedInUserId,
                 TriggerUserId = x.TriggerUserId
             }).AsEnumerable(); // Create this item as an Enumarable
-            return notifcationList;
+            return notificationList;
         }
 
         public async Task<Domain.Models.User> AddUserSubscriptionAsync(string subscriberEmail, string subscribeeEmail)
@@ -129,6 +129,33 @@ namespace FakebookNotifications.DataAccess
             subscriber.Follows.Add(subscribeeEmail);
             subscribee.Subscribers.Add(subscriberEmail);
             return subscribee;
+        }
+
+        public async Task<bool> AddUserNotificationAsync(Domain.Models.User user, Domain.Models.Notification notification)
+        {
+
+            try
+            {
+                DataAccess.Models.Notification dbNote = new Notification
+                {
+                    Type = notification.Type,
+                    HasBeenRead = notification.HasBeenRead,
+                    LoggedInUserId = notification.LoggedInUserId,
+                    TriggerUserId = notification.TriggerUserId,
+                    Date = DateTime.Now,
+                };
+                IAsyncCursor<User> notifiedUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
+                User dbUser = notifiedUser.FirstOrDefault();
+                dbUser.Notifications.ToList().Add(dbNote);
+                await _dbCollection.UpdateOneAsync();
+
+
+            }
+          
+            catch
+            {
+
+            }
         }
     }
 }
