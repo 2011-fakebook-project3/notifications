@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
-
+    [Authorize]
     public class NotificationHub : Hub<INotificationHub>
     {
         
@@ -77,6 +77,19 @@ namespace FakebookNotifications.WebApi.Hubs
             await SendUserGroupAsync(followedUser, newNotification);
         }
 
+        public async Task GetTotalUnreadNotifications(string userEmail)
+        {
+            List<Domain.Models.Notification> notifications = await _noteRepo.GetAllUnreadNotificationsAsync(userEmail);
+            Domain.Models.User thisUser = await _userRepo.GetUserAsync(userEmail);
+            await SendMultipleUserGroupAsync(thisUser, notifications);
+        }
+
+        public async Task<int> GetUnreadCountAsync(string userEmail)
+        {
+            int count = await _noteRepo.GetTotalUnreadNotificationsAsync(userEmail);
+            return count;
+        }
+
         public async Task SendAll(string user, string notification)
         {
             await Clients.All.SendAsync("SendAll", user, notification);
@@ -105,6 +118,20 @@ namespace FakebookNotifications.WebApi.Hubs
             }
             await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
            
+        }
+
+        public async Task SendMultipleUserGroupAsync(Domain.Models.User user, List<Domain.Models.Notification> notifications)
+        {
+            foreach (string connection in user.Connections)
+            {
+                await AddToGroupAsync(connection, user.Email);
+            }
+            foreach(Domain.Models.Notification note in notifications)
+            {
+                await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", note);
+            }
+        
+
         }
 
         public async Task AddToGroupAsync(string connectionId, string groupName)
