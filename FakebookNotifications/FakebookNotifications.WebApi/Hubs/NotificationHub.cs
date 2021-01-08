@@ -7,10 +7,11 @@ using FakebookNotifications.Domain.Interfaces;
 using FakebookNotifications.Domain.Models;
 using FakebookNotifications.DataAccess.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
-
+    [Authorize]
     public class NotificationHub : Hub<INotificationHub>
     {
         
