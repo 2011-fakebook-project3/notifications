@@ -8,6 +8,7 @@ using FakebookNotifications.Domain.Models;
 using FakebookNotifications.DataAccess.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
@@ -38,7 +39,7 @@ namespace FakebookNotifications.WebApi.Hubs
                 await _userRepo.AddUserConnection(thisUser.Email, Context.ConnectionId);
 
                 //get notifcations for user
-                IEnumerable<Domain.Models.Notification> notifications = await _userRepo.GetUserNotificationsAsync(thisUser);
+                IEnumerable<Domain.Models.Notification> notifications = await _noteRepo.GetAllUnreadNotificationsAsync(thisUser.Email);
 
                 //send unread notifications
                 foreach(var note in notifications)
