@@ -12,13 +12,13 @@ namespace FakebookNotifications.DataAccess
     {
         private readonly INotificationsContext _context;
         private readonly IMongoCollection<User> _dbCollection;
-        private readonly INotificationsRepo _notRepo;
+        private readonly INotificationsRepo _noteRepo;
 
-        public UserRepo(INotificationsContext context, INotificationsRepo notRepo)
+        public UserRepo(INotificationsContext context, INotificationsRepo noteRepo)
         {
             _context = context;
             _dbCollection = _context.User;
-            _notRepo = notRepo;
+            _noteRepo = noteRepo;
         }
 
         public async Task<Domain.Models.User> GetUserAsync(string email)
@@ -144,7 +144,7 @@ namespace FakebookNotifications.DataAccess
             };
 
             //add follow notification to database
-            var result = await _notRepo.CreateNotificationAsync(notification);
+            var result = await _noteRepo.CreateNotificationAsync(notification);
             if(result == true)
             {
                 return subscribee;
