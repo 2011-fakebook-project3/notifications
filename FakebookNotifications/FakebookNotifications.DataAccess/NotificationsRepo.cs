@@ -71,13 +71,13 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<List<Domain.Models.Notification>> GetAllUnreadNotificationsAsync(string userEmail)
         {
-            var filter = Builders<Notification>.Filter.Eq("loggedInUser", userEmail);
-            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(filter);
+            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
             List<DataAccess.Models.Notification> dbNotes = new List<DataAccess.Models.Notification>();
             dbNotes = await notifications.ToListAsync();
             List<Domain.Models.Notification> domainNotes = new List<Domain.Models.Notification>();
             foreach(Notification note in dbNotes)
             {
+                
                 Domain.Models.Notification newNote = new Domain.Models.Notification
                 {
                     Type = note.Type,
@@ -95,8 +95,7 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<int> GetTotalUnreadNotificationsAsync(string userEmail)
         {
-            var filter = Builders<Notification>.Filter.Eq("loggedInUser", userEmail);
-            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(filter);
+            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
             return notifications.ToList().Count();
         }
 
