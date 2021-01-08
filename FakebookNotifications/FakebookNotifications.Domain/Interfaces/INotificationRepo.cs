@@ -38,5 +38,19 @@ namespace FakebookNotifications.Domain.Interfaces
         /// The task result contains a bool that returns true on a successful delete.
         /// </returns>
         Task<bool> UpdateNotificationAsync(Domain.Models.Notification notification);
+        /// <summary>
+        /// Method to get all unread notifications
+        /// </summary>
+        /// <param name="userEmail">email to search notifications for as string</param>
+        /// <returns>A list of notifications</returns>
+        Task<List<Notification>> GetAllUnreadNotificationsAsync(string userEmail);
+        /// <summary>
+        /// Method to get unread notification count
+        /// </summary>
+        /// <param name="userEmail">email to search notifications for as string</param>
+        /// <returns>Unread notification count as an int</returns>
+        Task<int> GetTotalUnreadNotificationsAsync(string userEmail);
     }
+
+
 }
