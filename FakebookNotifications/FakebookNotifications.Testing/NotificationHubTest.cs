@@ -71,22 +71,22 @@ namespace FakebookNotifications.Testing
         /// <summary>
         /// Tests notfication hub method to send notifications to all users in a group
         /// </summary>
-        //[Fact]
-        //async public void SendGroupVerify()
-        //{
-        //    //arrange
-        //    string group = groupIds[0];
-        //    var others = groupIds[1];
+        [Fact]
+        async public void SendGroupVerify()
+        {
+            //arrange
+            string group = groupIds[0];
+            var others = groupIds[1];
 
-        //    // act
-        //    await hub.SendGroup(group, "test");
+            // act
+            await hub.SendGroup(group, "test");
 
-        //    // assert
-        //    // checks to see if a message was sent to all clients within a group, once, and not other groups
-        //    mockClients.Verify(c => c.Group(group), Times.Once);
-        //    mockClients.Verify(c => c.Group(others), Times.Never);
+            // assert
+            // checks to see if a message was sent to all clients within a group, once, and not other groups
+            mockClients.Verify(c => c.Group(group), Times.Once);
+            mockClients.Verify(c => c.Group(others), Times.Never);
 
-        //}
+        }
 
         /// <summary>
         /// Tests notification hub method to send notification back to the user who called the method
