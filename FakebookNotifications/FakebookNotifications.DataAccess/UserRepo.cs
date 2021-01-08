@@ -154,5 +154,39 @@ namespace FakebookNotifications.DataAccess
                 throw new Exception("Error creating follow notification");
             }
         }
+
+        public async Task<bool> AddUserConnection(string email, string connectionId)
+        {
+            //Get the user
+            var user = await GetUserAsync(email);
+
+            try
+            {
+                //Add the connection id to their colelction
+                user.Connections.Add(connectionId);
+                return true;
+            }
+            catch
+            {
+                throw new Exception("Error adding connection id to user");
+            }
+        }
+
+        public async Task<bool> RemoveUserConnection(string email, string connectionId)
+        {
+            //Get the user
+            var user = await GetUserAsync(email);
+
+            try
+            {
+                //Remove the connection id to their colelction
+                user.Connections.Remove(connectionId);
+                return true;
+            }
+            catch
+            {
+                throw new Exception("Error removing connection id to user");
+            }
+        }
     }
 }
