@@ -60,7 +60,6 @@ namespace FakebookNotifications.WebApi.Hubs
             };
             Domain.Models.User followedUser = await _userRepo.AddUserSubscriptionAsync(user, followed);
             await _noteRepo.CreateNotificationAsync(newNotification);
-            await _userRepo.
             await SendUser(followedUser, newNotification);
         }
 

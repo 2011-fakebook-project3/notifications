@@ -10,10 +10,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakebookNotifications.Domain", "FakebookNotifications.Domain\FakebookNotifications.Domain.csproj", "{10727CC8-E023-4F66-8510-151B65218FD0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakebookNotifications.DataAccess", "FakebookNotifications.DataAccess\FakebookNotifications.DataAccess.csproj", "{B8BEEE82-0DE8-4C01-800C-B85AB4676B92}"
-	ProjectSection(ProjectDependencies) = postProject
-		{10727CC8-E023-4F66-8510-151B65218FD0} = {10727CC8-E023-4F66-8510-151B65218FD0}
-		{7182C800-A74A-4D44-9682-F9171BAD981C} = {7182C800-A74A-4D44-9682-F9171BAD981C}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
