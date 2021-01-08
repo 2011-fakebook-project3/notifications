@@ -85,6 +85,9 @@ namespace FakebookNotifications.WebApi.Hubs
 
         public async Task CreateNotification(DataAccess.Models.Notification notification)
         {
+            //Create User
+            var user = await _userRepo.GetUserAsync(notification.LoggedInUserId);
+
             //Create notification
             Domain.Models.Notification domainNotification = new Domain.Models.Notification()
             {
@@ -99,7 +102,11 @@ namespace FakebookNotifications.WebApi.Hubs
             var result = await _noteRepo.CreateNotificationAsync(domainNotification);
 
             //Check result
-            if(!result)
+            if(result)
+            {
+                await SendUserGroupAsync(user, domainNotification);
+            }
+            else
             {
                 throw new Exception("Error creating notification");
             }
