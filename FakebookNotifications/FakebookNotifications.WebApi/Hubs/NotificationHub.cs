@@ -7,6 +7,7 @@ using FakebookNotifications.Domain.Interfaces;
 using FakebookNotifications.Domain.Models;
 using FakebookNotifications.DataAccess.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
@@ -25,8 +26,7 @@ namespace FakebookNotifications.WebApi.Hubs
             _noteRepo = noteRepo;
         }
 
-        //Send a notification to all clients
-
+        //Get user connection id and send unread notifications
         public override async Task OnConnectedAsync()
         {
             thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
@@ -35,17 +35,22 @@ namespace FakebookNotifications.WebApi.Hubs
             {
                 Domain.Models.User thisUser = await _userRepo.GetUserAsync(thisUserEmail);
 
-
                 await _userRepo.AddUserConnection(thisUser.Email, Context.ConnectionId);
 
-                // TODO: get notifcations for user
+                //get notifcations for user
+                IEnumerable<Domain.Models.Notification> notifications = await _userRepo.GetUserNotificationsAsync(thisUser);
 
-                // TODO: send unread notifications
-
+                //send unread notifications
+                foreach(var note in notifications)
+                {
+                    await SendUserGroupAsync(thisUser, note);
+                }
             }
+
             await base.OnConnectedAsync();
         }
 
+        //Clear clients connection id
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
@@ -57,6 +62,7 @@ namespace FakebookNotifications.WebApi.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        //Create and send notification to user when a user follows them
         public async Task AddFollowerAsync(string user, string followed)
         {
             Domain.Models.Notification newNotification = new Domain.Models.Notification
