@@ -6,6 +6,7 @@ using System.Security.Claims;
 using FakebookNotifications.Domain.Interfaces;
 using FakebookNotifications.Domain.Models;
 using FakebookNotifications.DataAccess.Models;
+using System.Collections.Generic;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
@@ -42,28 +43,25 @@ namespace FakebookNotifications.WebApi.Hubs
             await base.OnConnectedAsync();
         }
 
-        public async Task AddFollower(string user, string followed)
-        {
-            Domain.Models.Notification newNotification = new Domain.Models.Notification();
-            Domain.Models.User followedUser = await _userRepo.AddUserSubscription(user, followed);
-            newNotification.HasBeenRead = false;
-            newNotification.LoggedInUserId = followed;
-            newNotification.TriggerUserId = user;
-            //newNotification.Type;
-   
-            await SendUser(followedUser, newNotification);
-        }
-
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             // remove this connection from user
             await base.OnDisconnectedAsync(exception);
-           
-
         }
 
+        public async Task AddFollowerAsync(string user, string followed)
+        {
+            Domain.Models.Notification newNotification = new Domain.Models.Notification
+            {
+                HasBeenRead = false,
+                LoggedInUserId = followed,
+                TriggerUserId = user,
+                Type = new KeyValuePair<string, int>("follow", 0)
+            };
 
-
+            Domain.Models.User followedUser = await _userRepo.AddUserSubscriptionAsync(user, followed);
+            await SendUser(followedUser, newNotification);
+        }
 
         public async Task SendAll(string user, string notification)
         {

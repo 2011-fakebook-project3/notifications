@@ -122,14 +122,13 @@ namespace FakebookNotifications.DataAccess
             return notifcationList;
         }
 
-        public async Task<Domain.Models.User> AddUserSubscription(string subscriberEmail, string subscribeeEmail)
+        public async Task<Domain.Models.User> AddUserSubscriptionAsync(string subscriberEmail, string subscribeeEmail)
         {
             Domain.Models.User subscriber = await GetUserAsync(subscriberEmail);
             Domain.Models.User subscribee = await GetUserAsync(subscribeeEmail);
             subscriber.Follows.Add(subscribeeEmail);
             subscribee.Subscribers.Add(subscriberEmail);
             return subscribee;
-
         }
     }
 }
