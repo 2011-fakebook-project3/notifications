@@ -1,3 +1,6 @@
+using FakebookNotifications.DataAccess;
+using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.Domain.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -6,11 +9,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FakebookNotifications.WebApi.Hubs;
 
 namespace FakebookNotifications.WebApi
 {
@@ -26,12 +31,22 @@ namespace FakebookNotifications.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //DB settings configuration to get from appsettings
+            services.Configure<NotificationsDatabaseSettings>(
+                Configuration.GetSection(nameof(NotificationsDatabaseSettings)));
+
+            // Create context and repos services
+            services.AddScoped<NotificationsContext>();
+            services.AddScoped<IUserRepo, UserRepo>();
+            services.AddScoped<INotificationsRepo, NotificationsRepo>();
+              
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FakebookNotifications.WebApi", Version = "v1" });
             });
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +68,7 @@ namespace FakebookNotifications.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/notifications");
             });
         }
     }
