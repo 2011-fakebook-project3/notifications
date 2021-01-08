@@ -40,12 +40,12 @@ namespace FakebookNotifications.Testing
             mockContext.Setup(context => context.ConnectionId).Returns("1");
 
             // creates hub for testing
-            hub = new NotificationHub()
+            /*hub = new NotificationHub()
             {
                 Clients = mockClients.Object,
                 Groups = mockGroups.Object,
                 Context = mockContext.Object,
-            };
+            };*/
         }
 
 
@@ -120,7 +120,7 @@ namespace FakebookNotifications.Testing
             var user = "0";
 
             // act
-            await hub.SendUserGroupAsync(user, "test");
+            //await hub.SendUser(user, "test");
 
             // assert
             // checks to see if a message was sent to one specific user, once, and not other users

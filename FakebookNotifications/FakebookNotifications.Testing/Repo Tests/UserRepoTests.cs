@@ -24,9 +24,10 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock context
             var context = new Mock<INotificationsContext>();
+            var noteRepo = new Mock<INotificationsRepo>();
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object);
+            var repo = new UserRepo(context.Object, noteRepo.Object);
 
             //Act
             var result = await repo.GetUserAsync("ryan@gmail.com");
@@ -41,9 +42,10 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock context
             var context = new Mock<INotificationsContext>();
+            var noteRepo = new Mock<INotificationsRepo>();
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object);
+            var repo = new UserRepo(context.Object, noteRepo.Object);
 
             //User to create
             Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
@@ -62,9 +64,10 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock context
             var context = new Mock<INotificationsContext>();
+            var noteRepo = new Mock<INotificationsRepo>();
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object);
+            var repo = new UserRepo(context.Object, noteRepo.Object);
 
             //Act
             IEnumerable<Domain.Models.User> subList = await repo.GetUsersSubscriptionsByIdAsync("ryan@gmail.com");
@@ -80,9 +83,10 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock context
             var context = new Mock<INotificationsContext>();
+            var noteRepo = new Mock<INotificationsRepo>();
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object);
+            var repo = new UserRepo(context.Object, noteRepo.Object);
 
             //User to delete
             Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
@@ -100,9 +104,10 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock context
             var context = new Mock<INotificationsContext>();
+            var noteRepo = new Mock<INotificationsRepo>();
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object);
+            var repo = new UserRepo(context.Object, noteRepo.Object);
 
             //User to update
             Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
@@ -120,9 +125,10 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock context
             var context = new Mock<INotificationsContext>();
+            var noteRepo = new Mock<INotificationsRepo>();
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object);
+            var repo = new UserRepo(context.Object, noteRepo.Object);
 
             //User to get notifications for
             Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
@@ -140,9 +146,10 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock context
             var context = new Mock<INotificationsContext>();
+            var noteRepo = new Mock<INotificationsRepo>();
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object);
+            var repo = new UserRepo(context.Object, noteRepo.Object);
 
             //User to get notifications for
             Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
