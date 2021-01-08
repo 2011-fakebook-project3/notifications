@@ -30,22 +30,30 @@ namespace FakebookNotifications.WebApi.Hubs
         public override async Task OnConnectedAsync()
         {
             thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
-            
-            if(thisUserEmail != "")
+
+            if (thisUserEmail != "")
             {
                 Domain.Models.User thisUser = await _userRepo.GetUserAsync(thisUserEmail);
+
+
+                await _userRepo.AddUserConnection(thisUser.Email, Context.ConnectionId);
+
+                // TODO: get notifcations for user
+
+                // TODO: send unread notifications
+
             }
-            // add this connection id to this user in DB
-
-            // get notifcations for user
-
-            // send unread notifications
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            // remove this connection from user
+            thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            if (thisUserEmail != "")
+            {
+                Domain.Models.User thisUser = await _userRepo.GetUserAsync(thisUserEmail);
+                await _userRepo.RemoveUserConnection(thisUser.Email, Context.ConnectionId);
+            }
             await base.OnDisconnectedAsync(exception);
         }
 
