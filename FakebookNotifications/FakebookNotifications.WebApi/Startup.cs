@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FakebookNotifications.WebApi.Hubs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FakebookNotifications.WebApi
 {
@@ -39,7 +40,25 @@ namespace FakebookNotifications.WebApi
             services.AddScoped<NotificationsContext>();
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<INotificationsRepo, NotificationsRepo>();
-              
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    });
+            });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.Authority = "https://dev-2875280.okta.com/oauth2/default";
+                options.Audience = "api://default";
+            });
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -63,6 +82,9 @@ namespace FakebookNotifications.WebApi
 
             app.UseRouting();
 
+            app.UseCors();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
