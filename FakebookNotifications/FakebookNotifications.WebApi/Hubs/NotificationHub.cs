@@ -25,8 +25,6 @@ namespace FakebookNotifications.WebApi.Hubs
             _noteRepo = noteRepo;
         }
 
-        //Send a notification to all clients
-
         public override async Task OnConnectedAsync()
         {
             thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
@@ -69,6 +67,51 @@ namespace FakebookNotifications.WebApi.Hubs
             Domain.Models.User followedUser = await _userRepo.AddUserSubscriptionAsync(user, followed);
             await _noteRepo.CreateNotificationAsync(newNotification);
             await SendUserGroupAsync(followedUser, newNotification);
+        }
+
+        public async Task CreateNotification(DataAccess.Models.Notification notification)
+        {
+            //Create notification
+            Domain.Models.Notification domainNotification = new Domain.Models.Notification()
+            {
+                Type = notification.Type,
+                LoggedInUserId = notification.LoggedInUserId,
+                TriggerUserId = notification.TriggerUserId,
+                HasBeenRead = false,
+                Date = (DateTime)notification.Date
+            };
+
+            //Add to db
+            var result = await _noteRepo.CreateNotificationAsync(domainNotification);
+
+            //Check result
+            if(!result)
+            {
+                throw new Exception("Error creating notification");
+            }
+        }
+
+        public async Task UpdateNotification(DataAccess.Models.Notification notification)
+        {
+            //Create notification
+            Domain.Models.Notification domainNotification = new Domain.Models.Notification()
+            {
+                Id = notification.Id,
+                Type = notification.Type,
+                LoggedInUserId = notification.LoggedInUserId,
+                TriggerUserId = notification.TriggerUserId,
+                HasBeenRead = notification.HasBeenRead,
+                Date = (DateTime)notification.Date
+            };
+
+            //update db
+            var result = await _noteRepo.UpdateNotificationAsync(domainNotification);
+
+            //Check result
+            if (!result)
+            {
+                throw new Exception("Error creating notification");
+            }
         }
 
         public async Task SendAll(string user, string notification)

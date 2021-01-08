@@ -30,5 +30,13 @@ namespace FakebookNotifications.Domain.Interfaces
         /// The task result contains a bool that returns true on a successful delete.
         /// </returns>
         Task<bool> DeleteNotificationAsync(Domain.Models.Notification notification);
+        /// <summary>
+        /// Updates a notification in the database
+        /// </summary>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// The task result contains a bool that returns true on a successful delete.
+        /// </returns>
+        Task<bool> UpdateNotificationAsync(Domain.Models.Notification notification);
     }
 }

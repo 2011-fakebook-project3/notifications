@@ -68,5 +68,31 @@ namespace FakebookNotifications.DataAccess
                 return false;
             }
         }
+
+        public async Task<bool> UpdateNotificationAsync(Domain.Models.Notification notification)
+        {
+            Notification dbNotification = new Notification()
+            {
+                Id = notification.Id,
+                Type = notification.Type,
+                LoggedInUserId = notification.LoggedInUserId,
+                TriggerUserId = notification.TriggerUserId,
+                HasBeenRead = notification.HasBeenRead,
+                Date = (DateTime)notification.Date
+            };
+
+            try
+            {
+                // Remove the notification from notifications.
+                await _dbCollection.ReplaceOneAsync(x => x.Id == dbNotification.Id, dbNotification);
+                // Return true if it suceeds.
+                return true;
+            }
+            catch
+            {
+                // Return false if it fails.
+                return false;
+            }
+        }
     }
 }
