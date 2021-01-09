@@ -7,45 +7,90 @@ using Moq;
 using FakebookNotifications.WebApi.Hubs;
 using FakebookNotifications.WebApi.HubInterfaces;
 using System.Threading.Tasks;
+using FakebookNotifications.Domain.Interfaces;
+using FakebookNotifications.DataAccess;
+using FakebookNotifications.DataAccess.Models;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace FakebookNotifications.Testing
 
 {
     public class NotificationHubTest
-    {   
+    {
         // Variables used throughout test, mocked to the appropriate interface
+
         private NotificationHub hub;
+
+        private Domain.Models.User testUser1 = new Domain.Models.User
+        {
+            Id = "01",
+            Connections = new List<string>(),
+            Email = "test@test.com"
+        };
+        private Domain.Models.User testUser2 = new Domain.Models.User
+        {
+            Id = "02",
+            Connections = new List<string>{
+                "03", "04", "05",
+            },
+            Email = "notTest@test.com"
+        };
+        private Domain.Models.Notification testNote = new Domain.Models.Notification
+        {
+            Id = "58GF023D",
+            Type = new KeyValuePair<string, int>("follow", 0),
+            HasBeenRead = false,
+            TriggerUserId = "notTest@test.com",
+            LoggedInUserId = "test@test.com"
+        };
+
+        private List<string> groupIds = new List<string>
+        {
+            "test@test.com","group1", "group2", "group3"
+        };
+        private List<string> clientIds = new List<string>() { "0", "1", "2", "03", "04", "05" };
+
         private Mock<IHubCallerClients> mockClients = new Mock<IHubCallerClients>();
-        private Mock<IHubCallerClients> mockCaller = new Mock<IHubCallerClients>(); 
         private Mock<IGroupManager> mockGroups = new Mock<IGroupManager>();
         private Mock<IClientProxy> mockClientProxy = new Mock<IClientProxy>();
-        private Mock<IClientProxy> mockCallerProxy = new Mock<IClientProxy>();
         private Mock<HubCallerContext> mockContext = new Mock<HubCallerContext>();
-        private List<string> groupIds = new List<string>()
-        {
-            Guid.NewGuid().ToString(),
-            Guid.NewGuid().ToString(),
-        };
-        private List<string> clientIds = new List<string>() { "0", "1", "2" };
+
+        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
+        private Mock<IMongoDatabase> _mockDB;
+        private NotificationsDatabaseSettings settings;
+        private UserRepo userRepo;
+        private NotificationsRepo noteRepo;
+
+
+
+
+    
 
 
         public NotificationHubTest()
         {
-            //setup for tests
+            //mocking signalr elements for tests
             mockClients.Setup(client => client.All).Returns(mockClientProxy.Object);
-            mockCaller.Setup(client => client.Caller).Returns(mockCallerProxy.Object);
             mockClients.Setup(client => client.OthersInGroup(It.IsIn<string>(groupIds))).Returns(mockClientProxy.Object);
             mockGroups.Setup(group => group.AddToGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
-            // mockGroups.Setup(group => group.RemoveFromGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
+            mockGroups.Setup(group => group.RemoveFromGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
             mockContext.Setup(context => context.ConnectionId).Returns("1");
 
-            // creates hub for testing
-            /*hub = new NotificationHub()
-            {
-                Clients = mockClients.Object,
-                Groups = mockGroups.Object,
-                Context = mockContext.Object,
-            };*/
+            var mockDbContext = new Mock<INotificationsContext>();
+
+            // mocking Mongo db
+           
+            NotificationsRepo noteRepo = new NotificationsRepo(mockDbContext.Object);
+            UserRepo userRepo = new UserRepo(mockDbContext.Object, noteRepo);
+
+        // creates hub for testing
+        hub = new NotificationHub(userRepo, noteRepo)
+           {
+               Clients = mockClients.Object,
+               Groups = mockGroups.Object,
+               Context = mockContext.Object,
+           };
         }
 
 
@@ -88,44 +133,19 @@ namespace FakebookNotifications.Testing
 
         }
 
-        /// <summary>
-        /// Tests notification hub method to send notification back to the user who called the method
-        /// </summary>
-        [Fact]
-        async public void SendCallerVerify()
+       [Fact]
+        async public void SendUserGroupVerify()
         {
-            string caller = hub.Context.ConnectionId;
-  
+            // Arange
+            
+            // Act
+            await hub.SendUserGroupAsync(testUser1, testNote);
+            // Assert
 
-            // arrange
-           
+            mockClients.Verify(c => c.Clients(testUser1.Connections), Times.Once);
 
+            
 
-            // act
-            await hub.SendCaller(caller, "test");
-
-            // assert
-            // checks to see if a message was sent to the caller-user, once, and not other users
-            mockClients.Verify(c => c.User(caller), Times.Once);
-            mockClients.Verify(o => o.AllExcept(caller), Times.Never);
-        }
-
-        /// <summary>
-        /// Tests notification hub method to send a notification to a specific user
-        /// </summary>
-        [Fact]
-        async public void SendUserVerify()
-        {
-            // arrange
-            var user = "0";
-
-            // act
-            //await hub.SendUser(user, "test");
-
-            // assert
-            // checks to see if a message was sent to one specific user, once, and not other users
-            mockClients.Verify(c => c.User(user), Times.Once);
-            mockClients.Verify(c => c.AllExcept("user"), Times.Never);
         }
     }
 }
