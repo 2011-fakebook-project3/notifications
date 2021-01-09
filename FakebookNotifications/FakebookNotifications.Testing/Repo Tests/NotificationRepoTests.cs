@@ -89,5 +89,32 @@ namespace FakebookNotifications.Testing
             //Assert
             Assert.True(result);
         }
+
+        [Fact]
+        public async Task UpdateNotification_RepoTest()
+        {
+            //Arrange
+            //Mock context
+            var context = new Mock<INotificationsContext>();
+
+            //Create repo to work with
+            var repo = new NotificationsRepo(context.Object);
+
+            //Notification to delete
+            Domain.Models.Notification notification = new Domain.Models.Notification()
+            {
+                Type = new KeyValuePair<string, int>("Follow", 1234),
+                LoggedInUserId = "ryan@gmail.com",
+                TriggerUserId = "antonio@gmail.com",
+                HasBeenRead = false,
+                Date = DateTime.Now
+            };
+
+            //Act
+            var result = await repo.UpdateNotificationAsync(notification);
+
+            //Assert
+            Assert.True(result);
+        }
     }
 }
