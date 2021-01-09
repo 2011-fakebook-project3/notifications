@@ -7,10 +7,11 @@ using FakebookNotifications.Domain.Interfaces;
 using FakebookNotifications.Domain.Models;
 using FakebookNotifications.DataAccess.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
-
+    [Authorize]
     public class NotificationHub : Hub<INotificationHub>
     {
         
@@ -25,8 +26,6 @@ namespace FakebookNotifications.WebApi.Hubs
             _noteRepo = noteRepo;
         }
 
-        //Send a notification to all clients
-
         public override async Task OnConnectedAsync()
         {
             thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
@@ -38,9 +37,9 @@ namespace FakebookNotifications.WebApi.Hubs
 
                 await _userRepo.AddUserConnection(thisUser.Email, Context.ConnectionId);
 
-                // TODO: get notifcations for user
+                List<Domain.Models.Notification> notifications = await _noteRepo.GetAllUnreadNotificationsAsync(thisUserEmail);
 
-                // TODO: send unread notifications
+                await SendMultipleUserGroupAsync(thisUser, notifications);
 
             }
             await base.OnConnectedAsync();
@@ -71,6 +70,71 @@ namespace FakebookNotifications.WebApi.Hubs
             await SendUserGroupAsync(followedUser, newNotification);
         }
 
+        public async Task GetTotalUnreadNotifications(string userEmail)
+        {
+            List<Domain.Models.Notification> notifications = await _noteRepo.GetAllUnreadNotificationsAsync(userEmail);
+            Domain.Models.User thisUser = await _userRepo.GetUserAsync(userEmail);
+            await SendMultipleUserGroupAsync(thisUser, notifications);
+        }
+
+        public async Task<int> GetUnreadCountAsync(string userEmail)
+        {
+            int count = await _noteRepo.GetTotalUnreadNotificationsAsync(userEmail);
+            return count;
+        }
+
+        public async Task CreateNotification(DataAccess.Models.Notification notification)
+        {
+            //Create User
+            var user = await _userRepo.GetUserAsync(notification.LoggedInUserId);
+
+            //Create notification
+            Domain.Models.Notification domainNotification = new Domain.Models.Notification()
+            {
+                Type = notification.Type,
+                LoggedInUserId = notification.LoggedInUserId,
+                TriggerUserId = notification.TriggerUserId,
+                HasBeenRead = false,
+                Date = (DateTime)notification.Date
+            };
+
+            //Add to db
+            var result = await _noteRepo.CreateNotificationAsync(domainNotification);
+
+            //Check result
+            if(result)
+            {
+                await SendUserGroupAsync(user, domainNotification);
+            }
+            else
+            {
+                throw new Exception("Error creating notification");
+            }
+        }
+
+        public async Task UpdateNotification(DataAccess.Models.Notification notification)
+        {
+            //Create notification
+            Domain.Models.Notification domainNotification = new Domain.Models.Notification()
+            {
+                Id = notification.Id,
+                Type = notification.Type,
+                LoggedInUserId = notification.LoggedInUserId,
+                TriggerUserId = notification.TriggerUserId,
+                HasBeenRead = notification.HasBeenRead,
+                Date = (DateTime)notification.Date
+            };
+
+            //update db
+            var result = await _noteRepo.UpdateNotificationAsync(domainNotification);
+
+            //Check result
+            if (!result)
+            {
+                throw new Exception("Error creating notification");
+            }
+        }
+
         public async Task SendAll(string user, string notification)
         {
             await Clients.All.SendAsync("SendAll", user, notification);
@@ -99,6 +163,20 @@ namespace FakebookNotifications.WebApi.Hubs
             }
             await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
            
+        }
+
+        public async Task SendMultipleUserGroupAsync(Domain.Models.User user, List<Domain.Models.Notification> notifications)
+        {
+            foreach (string connection in user.Connections)
+            {
+                await AddToGroupAsync(connection, user.Email);
+            }
+            foreach(Domain.Models.Notification note in notifications)
+            {
+                await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", note);
+            }
+        
+
         }
 
         public async Task AddToGroupAsync(string connectionId, string groupName)
