@@ -116,5 +116,59 @@ namespace FakebookNotifications.Testing
             //Assert
             Assert.True(result);
         }
+
+        [Fact]
+        public async Task GetAllUnreadNotificationsAsync_RepoTest()
+        {
+            //Arrange
+            //Mock context
+            var context = new Mock<INotificationsContext>();
+
+            //Create repo to work with
+            var repo = new NotificationsRepo(context.Object);
+
+            //Notification to delete
+            Domain.Models.Notification notification = new Domain.Models.Notification()
+            {
+                Type = new KeyValuePair<string, int>("Follow", 1234),
+                LoggedInUserId = "ryan@gmail.com",
+                TriggerUserId = "antonio@gmail.com",
+                HasBeenRead = false,
+                Date = DateTime.Now
+            };
+
+            //Act
+            var result = await repo.GetAllUnreadNotificationsAsync(notification.LoggedInUserId);
+
+            //Assert
+            Assert.True(result.Count==1);
+        }
+
+        [Fact]
+        public async Task GetTotalUnreadNotificationsAsync_RepoTest()
+        {
+            //Arrange
+            //Mock context
+            var context = new Mock<INotificationsContext>();
+
+            //Create repo to work with
+            var repo = new NotificationsRepo(context.Object);
+
+            //Notification to delete
+            Domain.Models.Notification notification = new Domain.Models.Notification()
+            {
+                Type = new KeyValuePair<string, int>("Follow", 1234),
+                LoggedInUserId = "ryan@gmail.com",
+                TriggerUserId = "antonio@gmail.com",
+                HasBeenRead = false,
+                Date = DateTime.Now
+            };
+
+            //Act
+            var result = await repo.GetTotalUnreadNotificationsAsync(notification.LoggedInUserId);
+
+            //Assert
+            Assert.True(result == 1);
+        }
     }
 }
