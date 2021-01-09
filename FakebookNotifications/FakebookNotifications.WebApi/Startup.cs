@@ -37,7 +37,7 @@ namespace FakebookNotifications.WebApi
                 Configuration.GetSection(nameof(NotificationsDatabaseSettings)));
 
             // Create context and repos services
-            services.AddScoped<NotificationsContext>();
+            services.AddScoped<INotificationsContext, NotificationsContext>();
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<INotificationsRepo, NotificationsRepo>();
 

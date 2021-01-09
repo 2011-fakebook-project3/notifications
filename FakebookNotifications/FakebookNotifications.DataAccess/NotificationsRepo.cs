@@ -69,6 +69,32 @@ namespace FakebookNotifications.DataAccess
             }
         }
 
+        public async Task<bool> UpdateNotificationAsync(Domain.Models.Notification notification)
+        {
+            Notification dbNotification = new Notification()
+            {
+                Id = notification.Id,
+                Type = notification.Type,
+                LoggedInUserId = notification.LoggedInUserId,
+                TriggerUserId = notification.TriggerUserId,
+                HasBeenRead = notification.HasBeenRead,
+                Date = (DateTime)notification.Date
+            };
+
+            try
+            {
+                // Remove the notification from notifications.
+                await _dbCollection.ReplaceOneAsync(x => x.Id == dbNotification.Id, dbNotification);
+                // Return true if it suceeds.
+                return true;
+            }
+            catch
+            {
+                // Return false if it fails.
+                return false;
+            }
+        }
+
         public async Task<List<Domain.Models.Notification>> GetAllUnreadNotificationsAsync(string userEmail)
         {
             IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
