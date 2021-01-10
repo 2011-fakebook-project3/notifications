@@ -210,12 +210,24 @@ namespace FakebookNotifications.Testing
         }
 
         [Fact]
+        async public void OnDisconnectVerify()
+        {
+            //Arrange
+            var exception = new Exception();
+
+            //Act
+            await hub.OnDisconnectedAsync(exception);
+
+            //Assert
+            mockClients.Verify(c => c.All, Times.Never);
+        }
+
+        [Fact]
         public async void AddFollowersVerify()
         {
             //Arrange
             string user = "testc@test.com";
-            string followed = "notTest@test.com";
-            
+            string followed = "notTest@test.com";           
 
 
             //Act
@@ -223,6 +235,37 @@ namespace FakebookNotifications.Testing
 
             //Assert
             mockClients.Verify(c => c.Group(followed), Times.Once());
+        }
+
+        [Fact]
+        public async void GetUnreadNotificationsVerify()
+        {
+            //Arrange
+            var userEmail = testUser1.Email;
+            int count = 3;
+            List<Notification> notes = new List<Notification>();
+            for (int i = 0; i < count; i++)
+            {
+                Notification newNote = new Notification();
+                notes.Add(newNote);
+            }
+
+            //Act
+            await hub.GetTotalUnreadNotifications(userEmail);
+
+            //Assert
+            mockClients.Verify(c => c.Group(userEmail), Times.Exactly(count));
+        }
+
+        [Fact]
+        public async void GetUnreadCountVerify()
+        {
+            //Arrange
+
+            //Act
+            await hub.GetUnreadCountAsync(testUser1.Email);
+            //Assert
+            mockClients.Verify(c => c.Group(testUser1.Email), Times.Once); 
         }
     }
 }
