@@ -201,9 +201,10 @@ namespace FakebookNotifications.Testing
         {
             // Arrange
             Domain.Models.User thisUser = new Domain.Models.User();
-            thisUser.Connections.Add(hub.Context.UserIdentifier); 
+            thisUser.Connections.Add(hub.Context.UserIdentifier);
 
             // Act
+            await hub.OnConnectedAsync();
             await hub.SendUserGroupAsync(thisUser, testNote);
             await userRepo.AddUserConnection("test@test.com", thisUser.Connections[0]);
             Domain.Models.User test = new Domain.Models.User();
