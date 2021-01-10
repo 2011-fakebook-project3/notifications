@@ -22,5 +22,11 @@ namespace FakebookNotifications.WebApi.HubInterfaces
 
         //Send to specific user
         Task SendUser(User user, Notification notifcations);
+
+        Task SendMultipleUserGroupAsync(Domain.Models.User user, List<Domain.Models.Notification> notifications);
+
+        Task GetTotalUnreadNotifications(string userEmail);
+
+        Task<int> GetUnreadCountAsync(string userEmail);
     }
 }
