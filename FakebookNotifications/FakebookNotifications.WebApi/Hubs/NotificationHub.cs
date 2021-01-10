@@ -162,27 +162,23 @@ namespace FakebookNotifications.WebApi.Hubs
         {
             try
             {
-
-
-                if (user.Connections.Count > 0)
+                if (user.Connections != null)
                 {
                     foreach (string connection in user.Connections)
                     {
                         await AddToGroupAsync(connection, user.Email);
                     }
                     await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
-
                 }
                 else
                 {
-                    throw new Exception("User has no connections");
+                    Console.WriteLine("User has no connections");
                 }
             }
             catch
             {
-                throw new Exception("Messages could not be send");
-            }           
-           
+                throw new NullReferenceException();
+            }            
         }
 
         public async Task SendMultipleUserGroupAsync(Domain.Models.User user, List<Domain.Models.Notification> notifications)
