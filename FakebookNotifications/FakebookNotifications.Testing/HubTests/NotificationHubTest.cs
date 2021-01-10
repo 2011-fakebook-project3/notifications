@@ -281,5 +281,53 @@ namespace FakebookNotifications.Testing
            
             mockClients.Verify(c => c.Group(testUser1.Email), Times.Once); 
         }
+
+        [Fact]
+        public async void CreateNotificationAssertTrue()
+        {
+            //Arrange
+            DataAccess.Models.Notification testNote = new DataAccess.Models.Notification
+            {
+                Type = new KeyValuePair<string, int>("follow", 5),
+                LoggedInUserId = testUser1.Email,
+                TriggerUserId = testUser2.Email
+            };
+
+
+            //Act
+            await hub.CreateNotification(testNote);
+            List<Domain.Models.Notification> notes = new List<Domain.Models.Notification>();
+            notes = await noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
+            //Assert
+            Assert.Equal(5, notes[0].Type.Value);
+            Assert.Equal(testUser1.Email, notes[0].LoggedInUserId);
+            Assert.Equal(testUser2.Email, notes[0].TriggerUserId);
+
+            mockClients.Verify(c => c.Group(testUser1.Email), Times.Once);
+        }
+
+        [Fact]
+        public async void UpdateNotificationAssertTrue()
+        {
+            //Arrange
+            DataAccess.Models.Notification testNote = new DataAccess.Models.Notification
+            {
+                Type = new KeyValuePair<string, int>("follow", 5),
+                LoggedInUserId = testUser1.Email,
+                TriggerUserId = testUser2.Email,
+                HasBeenRead = true
+            };
+            //Act
+            await hub.UpdateNotification(testNote);
+            List<Domain.Models.Notification> notes = new List<Domain.Models.Notification>();
+            notes = await noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
+            //Assert
+            Assert.Equal(5, notes[0].Type.Value);
+            Assert.Equal(testUser1.Email, notes[0].LoggedInUserId);
+            Assert.Equal(testUser2.Email, notes[0].TriggerUserId);
+            Assert.True(notes[0].HasBeenRead);
+
+        }
+
     }
 }
