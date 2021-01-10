@@ -166,9 +166,13 @@ namespace FakebookNotifications.WebApi.Hubs
                 {
                     foreach (string connection in user.Connections)
                     {
-                        await AddToGroupAsync(connection, user.Email);
+                        await Groups.AddToGroupAsync(connection, user.Email);
                     }
                     await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
+                    foreach (string connection in user.Connections)
+                    {
+                        await Groups.RemoveFromGroupAsync(connection, user.Email);
+                    }
                 }
                 else
                 {
@@ -185,20 +189,19 @@ namespace FakebookNotifications.WebApi.Hubs
         {
             foreach (string connection in user.Connections)
             {
-                await AddToGroupAsync(connection, user.Email);
+                await Groups.AddToGroupAsync(connection, user.Email);
             }
             foreach(Domain.Models.Notification note in notifications)
             {
                 await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", note);
             }
-        
+            foreach (string connection in user.Connections)
+            {
+                await Groups.RemoveFromGroupAsync(connection, user.Email);
+            }
 
         }
-
-        public async Task AddToGroupAsync(string connectionId, string groupName)
-        {
-            await Groups.AddToGroupAsync(connectionId, groupName);
-        }
+  
     }
 }
  

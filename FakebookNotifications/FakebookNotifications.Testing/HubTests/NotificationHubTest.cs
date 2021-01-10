@@ -12,6 +12,7 @@ using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Security.Claims;
 
 namespace FakebookNotifications.Testing
 
@@ -200,13 +201,18 @@ namespace FakebookNotifications.Testing
         {
             // Arrange
             Domain.Models.User thisUser = new Domain.Models.User();
-            thisUser.Connections.Add(hub.Context.UserIdentifier);
+            thisUser.Connections.Add(hub.Context.UserIdentifier); 
 
             // Act
             await hub.SendUserGroupAsync(thisUser, testNote);
+            await userRepo.AddUserConnection("test@test.com", thisUser.Connections[0]);
+            Domain.Models.User test = new Domain.Models.User();
+            test = await userRepo.GetUserAsync("test@test.com");
 
             //Assert
 
+            Assert.NotNull(hub.Context.User.FindFirst(ClaimTypes.Email));
+            Assert.NotNull(test.Connections[0]);
             mockClients.Verify(c => c.Client(thisUser.Connections[0]), Times.Once);
             mockClients.Verify(c => c.All.SendCoreAsync("SendUserGroupAsync", It.Is<object[]>(o => o != null && o[0] == thisUser && o[1] == testNote), default(CancellationToken)),
                Times.Once);
@@ -272,8 +278,8 @@ namespace FakebookNotifications.Testing
             //Act
             await hub.GetUnreadCountAsync(testUser1.Email);
             //Assert
+           
             mockClients.Verify(c => c.Group(testUser1.Email), Times.Once); 
         }
-
     }
 }
