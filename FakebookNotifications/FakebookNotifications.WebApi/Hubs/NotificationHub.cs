@@ -28,7 +28,10 @@ namespace FakebookNotifications.WebApi.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            if(Context.User?.FindFirst(ClaimTypes.Email) !=null)
+            {
+                thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            }          
 
             if (thisUserEmail != "")
             {
@@ -83,7 +86,7 @@ namespace FakebookNotifications.WebApi.Hubs
             return count;
         }
 
-        public async Task CreateNotification(DataAccess.Models.Notification notification)
+        public async Task CreateNotification(Domain.Models.Notification notification)
         {
             //Create User
             var user = await _userRepo.GetUserAsync(notification.LoggedInUserId);
@@ -112,7 +115,7 @@ namespace FakebookNotifications.WebApi.Hubs
             }
         }
 
-        public async Task UpdateNotification(DataAccess.Models.Notification notification)
+        public async Task UpdateNotification(Domain.Models.Notification notification)
         {
             //Create notification
             Domain.Models.Notification domainNotification = new Domain.Models.Notification()
@@ -157,32 +160,40 @@ namespace FakebookNotifications.WebApi.Hubs
         //Send a notification to one specific user
         public async Task SendUserGroupAsync(Domain.Models.User user, Domain.Models.Notification notification)
         {
-            foreach(string connection in user.Connections)
+            try
             {
-                await AddToGroupAsync(connection, user.Email);
+                if (user != null)
+                {
+                    foreach (string connection in user.Connections)
+                    {
+                        await Groups.AddToGroupAsync(connection, user.Email);
+                    }
+                    await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
+                }
+                else
+                {
+                    Console.WriteLine("User has no connections");
+                }
             }
-            await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
-           
+            catch
+            {
+                throw new NullReferenceException();
+            }            
         }
 
         public async Task SendMultipleUserGroupAsync(Domain.Models.User user, List<Domain.Models.Notification> notifications)
         {
             foreach (string connection in user.Connections)
             {
-                await AddToGroupAsync(connection, user.Email);
+                await Groups.AddToGroupAsync(connection, user.Email);
             }
             foreach(Domain.Models.Notification note in notifications)
             {
                 await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", note);
             }
-        
 
         }
-
-        public async Task AddToGroupAsync(string connectionId, string groupName)
-        {
-            await Groups.AddToGroupAsync(connectionId, groupName);
-        }
+  
     }
 }
  
