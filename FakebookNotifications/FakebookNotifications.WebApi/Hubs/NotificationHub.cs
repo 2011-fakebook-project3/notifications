@@ -86,7 +86,7 @@ namespace FakebookNotifications.WebApi.Hubs
             return count;
         }
 
-        public async Task CreateNotification(DataAccess.Models.Notification notification)
+        public async Task CreateNotification(Domain.Models.Notification notification)
         {
             //Create User
             var user = await _userRepo.GetUserAsync(notification.LoggedInUserId);
@@ -115,7 +115,7 @@ namespace FakebookNotifications.WebApi.Hubs
             }
         }
 
-        public async Task UpdateNotification(DataAccess.Models.Notification notification)
+        public async Task UpdateNotification(Domain.Models.Notification notification)
         {
             //Create notification
             Domain.Models.Notification domainNotification = new Domain.Models.Notification()

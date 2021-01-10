@@ -287,7 +287,7 @@ namespace FakebookNotifications.Testing
         public async void CreateNotificationAssertTrue()
         {
             //Arrange
-            DataAccess.Models.Notification testNote = new DataAccess.Models.Notification
+            Domain.Models.Notification testNote = new Domain.Models.Notification
             {
                 Type = new KeyValuePair<string, int>("follow", 5),
                 LoggedInUserId = testUser1.Email,
@@ -300,6 +300,7 @@ namespace FakebookNotifications.Testing
             List<Domain.Models.Notification> notes = new List<Domain.Models.Notification>();
             notes = await noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
             //Assert
+            Assert.Contains<Domain.Models.Notification>(testNote, notes);
             Assert.Equal(5, notes[0].Type.Value);
             Assert.Equal(testUser1.Email, notes[0].LoggedInUserId);
             Assert.Equal(testUser2.Email, notes[0].TriggerUserId);
@@ -311,7 +312,7 @@ namespace FakebookNotifications.Testing
         public async void UpdateNotificationAssertTrue()
         {
             //Arrange
-            DataAccess.Models.Notification testNote = new DataAccess.Models.Notification
+            Domain.Models.Notification testNote = new Domain.Models.Notification
             {
                 Type = new KeyValuePair<string, int>("follow", 5),
                 LoggedInUserId = testUser1.Email,
@@ -323,6 +324,7 @@ namespace FakebookNotifications.Testing
             List<Domain.Models.Notification> notes = new List<Domain.Models.Notification>();
             notes = await noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
             //Assert
+            Assert.Contains<Domain.Models.Notification>(testNote, notes);
             Assert.Equal(5, notes[0].Type.Value);
             Assert.Equal(testUser1.Email, notes[0].LoggedInUserId);
             Assert.Equal(testUser2.Email, notes[0].TriggerUserId);
