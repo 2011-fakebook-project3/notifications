@@ -28,7 +28,10 @@ namespace FakebookNotifications.WebApi.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            if(Context.User?.FindFirst(ClaimTypes.Email) !=null)
+            {
+                thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            }          
 
             if (thisUserEmail != "")
             {
@@ -157,11 +160,28 @@ namespace FakebookNotifications.WebApi.Hubs
         //Send a notification to one specific user
         public async Task SendUserGroupAsync(Domain.Models.User user, Domain.Models.Notification notification)
         {
-            foreach(string connection in user.Connections)
+            try
             {
-                await AddToGroupAsync(connection, user.Email);
+
+
+                if (user.Connections.Count > 0)
+                {
+                    foreach (string connection in user.Connections)
+                    {
+                        await AddToGroupAsync(connection, user.Email);
+                    }
+                    await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
+
+                }
+                else
+                {
+                    throw new Exception("User has no connections");
+                }
             }
-            await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
+            catch
+            {
+                throw new Exception("Messages could not be send");
+            }           
            
         }
 

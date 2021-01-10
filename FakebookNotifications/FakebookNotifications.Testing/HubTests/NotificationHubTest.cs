@@ -50,11 +50,11 @@ namespace FakebookNotifications.Testing
             "test@test.com","group1", "group2", "group3"
         };
         private List<string> clientIds = new List<string>() { "00", "01", "02", "03", "04", "05" };
-
         private Mock<IHubCallerClients> mockClients = new Mock<IHubCallerClients>();
         private Mock<IGroupManager> mockGroups = new Mock<IGroupManager>();
         private Mock<IClientProxy> mockClientProxy = new Mock<IClientProxy>();
         private Mock<HubCallerContext> mockContext = new Mock<HubCallerContext>();
+    
 
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
         private Mock<IMongoDatabase> _mockDB;
@@ -70,8 +70,10 @@ namespace FakebookNotifications.Testing
 
         public NotificationHubTest()
         {
-            //mocking signalr elements for tests
+
+            //mocking signalr elements for tests   
             mockClients.Setup(client => client.All).Returns(mockClientProxy.Object);
+            mockClients.Setup(client => client.Group(groupIds[0])).Returns(mockClientProxy.Object);
             mockClients.Setup(client => client.OthersInGroup(It.IsIn<string>(groupIds))).Returns(mockClientProxy.Object);
             mockGroups.Setup(group => group.AddToGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
             mockGroups.Setup(group => group.RemoveFromGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
@@ -267,5 +269,8 @@ namespace FakebookNotifications.Testing
             //Assert
             mockClients.Verify(c => c.Group(testUser1.Email), Times.Once); 
         }
+
+       
+
     }
 }
