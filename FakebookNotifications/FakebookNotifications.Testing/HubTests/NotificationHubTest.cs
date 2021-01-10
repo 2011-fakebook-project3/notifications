@@ -210,7 +210,6 @@ namespace FakebookNotifications.Testing
         }
 
         [Fact]
-
         public async void AddFollowersVerify()
         {
             //Arrange
@@ -225,15 +224,5 @@ namespace FakebookNotifications.Testing
             //Assert
             mockClients.Verify(c => c.Group(followed), Times.Once());
         }
-
-     
-
-
-
-
-
-
-
-
     }
 }
