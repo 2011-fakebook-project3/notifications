@@ -162,7 +162,7 @@ namespace FakebookNotifications.WebApi.Hubs
         {
             try
             {
-                if (user.Connections != null)
+                if (user != null)
                 {
                     foreach (string connection in user.Connections)
                     {
