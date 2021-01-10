@@ -49,7 +49,7 @@ namespace FakebookNotifications.Testing
         {
             "test@test.com","group1", "group2", "group3"
         };
-        private List<string> clientIds = new List<string>() { "0", "1", "2", "03", "04", "05" };
+        private List<string> clientIds = new List<string>() { "00", "01", "02", "03", "04", "05" };
 
         private Mock<IHubCallerClients> mockClients = new Mock<IHubCallerClients>();
         private Mock<IGroupManager> mockGroups = new Mock<IGroupManager>();
@@ -78,18 +78,20 @@ namespace FakebookNotifications.Testing
             mockContext.Setup(context => context.ConnectionId).Returns("1");
 
             var mockDbContext = new Mock<INotificationsContext>();
+            
 
             // mocking Mongo db
            
             NotificationsRepo noteRepo = new NotificationsRepo(mockDbContext.Object);
             UserRepo userRepo = new UserRepo(mockDbContext.Object, noteRepo);
 
-        // creates hub for testing
-        hub = new NotificationHub(userRepo, noteRepo)
-           {
-               Clients = mockClients.Object,
-               Groups = mockGroups.Object,
-               Context = mockContext.Object,
+
+            // creates hub for testing
+            hub = new NotificationHub(userRepo, noteRepo)
+            {
+                Clients = mockClients.Object,
+                Groups = mockGroups.Object,
+                Context = mockContext.Object,
            };
         }
 
@@ -142,10 +144,96 @@ namespace FakebookNotifications.Testing
             await hub.SendUserGroupAsync(testUser1, testNote);
             // Assert
 
-            mockClients.Verify(c => c.Clients(testUser1.Connections), Times.Once);
+            mockClients.Verify(c => c.Clients(testUser1.Connections), Times.Once);           
 
-            
+        }        
+     
+
+        /// <summary>
+        /// Tests notification hub method to send notification back to the user who called the method
+        /// </summary>
+        [Fact]
+        async public void SendCallerVerify()
+        {
+            string caller = hub.Context.ConnectionId;
+
+
+            // arrange
+
+
+
+            // act
+            await hub.SendCaller(caller, "test");
+
+            // assert
+            // checks to see if a message was sent to the caller-user, once, and not other users
+            mockClients.Verify(c => c.User(caller), Times.Once);
+            mockClients.Verify(o => o.AllExcept(caller), Times.Never);
+        }
+
+        /// <summary>
+        /// Tests notification hub method to send a notification to a specific user
+        /// </summary>
+        [Fact]
+        async public void SendUserVerify()
+        {
+            // arrange
+            var user = "0";
+
+            // act
+            //await hub.SendUser(user, "test");
+
+            // assert
+            // checks to see if a message was sent to one specific user, once, and not other users
+            mockClients.Verify(c => c.User(user), Times.Once);
+            mockClients.Verify(c => c.AllExcept("user"), Times.Never);
+        }
+
+        [Fact]
+        async public void OnConnectAsyncVerify()
+        {
+            // Arrange
+            Domain.Models.User thisUser = new Domain.Models.User();
+            thisUser.Connections.Add(hub.Context.UserIdentifier);
+
+            // Act
+            await hub.SendUserGroupAsync(thisUser, testNote);
+
+            //Assert
+
+            mockClients.Verify(c => c.Client(thisUser.Connections[0]), Times.Once);
+            mockClients.Verify(c => c.All.SendCoreAsync("SendUserGroupAsync", It.Is<object[]>(o => o != null && o[0] == thisUser && o[1] == testNote), default(CancellationToken)),
+               Times.Once);
+            Assert.Equal(thisUser.Connections[0], hub.Context.UserIdentifier);
+
 
         }
+
+        [Fact]
+
+        public async void AddFollowersVerify()
+        {
+            //Arrange
+            string user = "testc@test.com";
+            string followed = "notTest@test.com";
+            
+
+
+            //Act
+            await hub.AddFollowerAsync(user, followed);
+
+            //Assert
+            mockClients.Verify(c => c.Group(followed), Times.Once());
+        }
+
+     
+
+
+
+
+
+
+
+
     }
 }
