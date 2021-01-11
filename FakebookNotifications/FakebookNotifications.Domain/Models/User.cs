@@ -5,6 +5,12 @@ namespace FakebookNotifications.Domain.Models
 {
     public class User
     {
+        public User()
+        {
+            Connections = new List<string>();
+            Subscribers = new List<string>();
+            Follows = new List<string>();
+        }
         private string _id;
 
         /// <summary>
@@ -44,7 +50,7 @@ namespace FakebookNotifications.Domain.Models
             Id = id;
             Email = email;
         }
-        public User() { }
+    
 
 
         /// <summary>

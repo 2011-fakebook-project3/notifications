@@ -28,7 +28,12 @@ namespace FakebookNotifications.DataAccess
             User dbUser = user.FirstOrDefault();
 
             // Create the domain model version of the user and return it.
-            Domain.Models.User domainUser = new Domain.Models.User(dbUser.Id, dbUser.Email);
+            Domain.Models.User domainUser = new Domain.Models.User()
+            {
+                Id = dbUser.Id,
+                Email = dbUser.Email,
+                Connections = dbUser.Connections
+            };
             return domainUser;
         }
 
@@ -158,29 +163,40 @@ namespace FakebookNotifications.DataAccess
         public async Task<bool> AddUserConnection(string email, string connectionId)
         {
             //Get the user
-            var user = await GetUserAsync(email);
+            IAsyncCursor<User> user = await _dbCollection.FindAsync(u => u.Email == email);
+            User dbUser = user.FirstOrDefault();
 
-            try
+            if (user != null)
             {
-                //Add the connection id to their colelction
-                user.Connections.Add(connectionId);
-                return true;
+                try
+                {
+                    //Add the connection id to their colelction
+                    dbUser.Connections.Add(connectionId);
+                    await _dbCollection.ReplaceOneAsync(u => u.Email == dbUser.Email, dbUser);               
+                    return true;
+                }
+                catch
+                {
+                    throw new Exception("Error adding connection id to user");
+                }
             }
-            catch
+            else
             {
-                throw new Exception("Error adding connection id to user");
-            }
+                return false;
+            }           
         }
 
         public async Task<bool> RemoveUserConnection(string email, string connectionId)
         {
             //Get the user
-            var user = await GetUserAsync(email);
+            IAsyncCursor<User> user = await _dbCollection.FindAsync(u => u.Email == email);
+            User dbUser = user.FirstOrDefault();
 
             try
             {
                 //Remove the connection id to their colelction
-                user.Connections.Remove(connectionId);
+                dbUser.Connections.Remove(connectionId);
+                await _dbCollection.ReplaceOneAsync(u => u.Email == dbUser.Email, dbUser);
                 return true;
             }
             catch
