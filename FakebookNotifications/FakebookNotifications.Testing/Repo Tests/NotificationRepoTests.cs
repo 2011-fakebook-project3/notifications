@@ -22,8 +22,8 @@ namespace FakebookNotifications.Testing
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
-                ConnectionString = "mongodb://test123",
-                DatabaseName = "TestDB",
+                ConnectionString = "mongodb://localhost",
+                DatabaseName = "TestDb",
                 UserCollection = "User",
                 NotificationsCollection = "Notifications"
             };

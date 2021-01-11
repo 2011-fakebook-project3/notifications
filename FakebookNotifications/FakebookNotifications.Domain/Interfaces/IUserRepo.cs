@@ -49,15 +49,6 @@ namespace FakebookNotifications.Domain.Interfaces
         /// </returns>
         Task<int> TotalUserNotificationsAsync(User user);
         /// <summary>
-        /// Get 5 notifications at a time from a user.
-        /// Should be called with page number, if page number is -1. Return all notifications at once.
-        /// </summary>
-        /// <returns>
-        /// A task that represents the asynchronous operation.
-        /// The task result contains an IEnumerable of user notifications.
-        /// </returns>
-        Task<IEnumerable<Notification>> GetUserNotificationsAsync(User user);
-        /// <summary>
         /// Updates a follower and a followed user
         /// </summary>
         /// <param name="subscriberEmail">email of the following user</param>

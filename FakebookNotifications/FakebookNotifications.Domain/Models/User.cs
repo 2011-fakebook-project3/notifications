@@ -10,23 +10,7 @@ namespace FakebookNotifications.Domain.Models
         /// <summary>
         /// Assigns _id an Id number, after verifying it.
         /// </summary>
-        public string Id
-        {
-            get => _id;
-            set
-            {
-                // tries to parse the value
-                if (Int32.TryParse(value, out _))
-                {
-                    _id = value;
-                }
-                else
-                {
-                    // assigns the value to an empty string
-                    _id = "";
-                }
-            }
-        }
+        public string Id { get; set; }
 
         public string Email { get; set; }
 
