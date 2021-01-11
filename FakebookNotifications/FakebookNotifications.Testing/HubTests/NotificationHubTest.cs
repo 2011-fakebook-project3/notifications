@@ -60,8 +60,10 @@ namespace FakebookNotifications.Testing
         {
             "test@test.com","group1", "group2", "group3"
         };
-        private List<string> clientIds = new List<string>() { "00", "01", "02", "03", "04", "05"};
-        private Mock<IRequest> request = new Mock<IRequest>();
+
+        private List<string> clientIds = new List<string>() { "00", "01", "02", "03", "04", "05" };
+
+
         private Mock<IHubCallerClients> mockClients = new Mock<IHubCallerClients>();
         private Mock<IGroupManager> mockGroups = new Mock<IGroupManager>();
         private Mock<IClientProxy> mockClientProxy = new Mock<IClientProxy>();
@@ -69,7 +71,6 @@ namespace FakebookNotifications.Testing
 
 
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
-        //private Mock<IMongoDatabase> _mockDB;
         private readonly UserRepo _userRepo;
         private readonly NotificationsRepo _noteRepo;
         private NotificationsDatabaseSettings settings; 
@@ -120,7 +121,6 @@ namespace FakebookNotifications.Testing
                 Clients = mockClients.Object,
                 Groups = mockGroups.Object,
                 Context = mockContext.Object,
-
 
            };
         }
@@ -298,7 +298,7 @@ namespace FakebookNotifications.Testing
         public async void UpdateNotificationAssertTrue()
         {
             //Arrange
-            
+           
 
             //Act
             await hub.UpdateNotification(updateTestNote);
