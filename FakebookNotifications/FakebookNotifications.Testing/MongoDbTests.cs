@@ -14,16 +14,19 @@ namespace FakebookNotifications.Testing
     public class MongoDbTests
     {
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
-        private Mock<IMongoDatabase> _mockDB;
         private NotificationsDatabaseSettings settings;
 
         //Constructor to initialize mocked components before each test
         public MongoDbTests()
         {
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
-            _mockDB = new Mock<IMongoDatabase>();
-
-            settings = new NotificationsDatabaseSettings();
+            settings = new NotificationsDatabaseSettings()
+            {
+                ConnectionString = "mongodb://test123 ",
+                DatabaseName = "TestDB",
+                UserCollection = "User",
+                NotificationsCollection = "Notifications"
+            };
         }
 
         //Test for context constructor to see if database is connected to successfully
