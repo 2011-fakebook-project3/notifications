@@ -1,0 +1,15 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: fakebook-notifications
+  labels:
+    app: fakebook-notifications
+    role: db
+spec:
+  storageClassName: default
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

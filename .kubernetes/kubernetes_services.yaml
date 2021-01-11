@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fakebook-notifications-api
+  labels:
+    app: fakebook-notifications
+    role: api
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: fakebook-notifications
+    role: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fakebook-notifications-db
+  labels:
+    app: fakebook-notifications
+    role: db
+spec:
+  ports:
+  - port: 27017
+  selector:
+    app: fakebook-notifications
+    role: db
