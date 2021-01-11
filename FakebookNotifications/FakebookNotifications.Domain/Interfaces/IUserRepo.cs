@@ -23,15 +23,6 @@ namespace FakebookNotifications.Domain.Interfaces
         /// </returns>
         Task<bool> CreateUserAsync(User user);
         /// <summary>
-        /// Return a list of users from a list of ids. 
-        /// </summary>
-        /// <param name="Ids"></param>
-        /// <returns>
-        /// A task that represents the asynchronous operation.
-        /// The task result contains an IEnumerable of the user's list of users they are following.
-        /// </returns>
-        Task<IEnumerable<User>> GetUsersSubscriptionsByIdAsync(string email);
-        /// <summary>
         /// Delete a User
         /// </summary>
         /// <returns> 

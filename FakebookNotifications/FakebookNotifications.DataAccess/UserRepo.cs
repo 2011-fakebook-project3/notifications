@@ -51,11 +51,6 @@ namespace FakebookNotifications.DataAccess
             }
         }
 
-        public Task<IEnumerable<Domain.Models.User>> GetUsersSubscriptionsByIdAsync(string email)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<bool> DeleteUserAsync(Domain.Models.User user)
         {
             try
