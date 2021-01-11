@@ -41,7 +41,7 @@ namespace FakebookNotifications.Testing
             var context = new NotificationsContext(_mockSettings.Object); //create context and test constructor
 
             //Assert
-            Assert.NotNull(context);
+            //Test is successfull if no exception
         }
 
         //Test to see if the notification collection is successfully read from db
