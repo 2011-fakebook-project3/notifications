@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: fakebooknotifications:latest
+        image: fakebook.azurecr.io/fakebooknotifications:latest
         ports:
         - containerPort: 80
         env:
