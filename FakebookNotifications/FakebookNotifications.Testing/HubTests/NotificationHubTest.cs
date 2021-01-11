@@ -15,6 +15,7 @@ using MongoDB.Driver;
 using System.Security.Claims;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
+
 namespace FakebookNotifications.Testing
 
 {
@@ -30,6 +31,7 @@ namespace FakebookNotifications.Testing
             Connections = new List<string>{
                 "00", "01", "02"
             },
+
             Email = "test@test.com"
         };
         private Domain.Models.User testUser2 = new Domain.Models.User
@@ -40,6 +42,7 @@ namespace FakebookNotifications.Testing
             },
             Email = "notTest@test.com"
         };
+
         private Domain.Models.Notification updateTestNote = new Domain.Models.Notification
         {
             Id = "5ffca6ca7cf99f8e5c2fae85",
@@ -60,8 +63,10 @@ namespace FakebookNotifications.Testing
         {
             "test@test.com","group1", "group2", "group3"
         };
-        private List<string> clientIds = new List<string>() { "00", "01", "02", "03", "04", "05"};
-        private Mock<IRequest> request = new Mock<IRequest>();
+
+        private List<string> clientIds = new List<string>() { "00", "01", "02", "03", "04", "05" };
+
+
         private Mock<IHubCallerClients> mockClients = new Mock<IHubCallerClients>();
         private Mock<IGroupManager> mockGroups = new Mock<IGroupManager>();
         private Mock<IClientProxy> mockClientProxy = new Mock<IClientProxy>();
@@ -69,10 +74,11 @@ namespace FakebookNotifications.Testing
 
 
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
-        //private Mock<IMongoDatabase> _mockDB;
+
         private readonly UserRepo _userRepo;
         private readonly NotificationsRepo _noteRepo;
         private NotificationsDatabaseSettings settings; 
+
 
 
 
@@ -114,13 +120,13 @@ namespace FakebookNotifications.Testing
             _userRepo = userRepo;
             _noteRepo = noteRepo;
 
+
             // creates hub for testing
             hub = new NotificationHub(userRepo, noteRepo)
             {
                 Clients = mockClients.Object,
                 Groups = mockGroups.Object,
                 Context = mockContext.Object,
-
 
            };
         }
@@ -133,6 +139,7 @@ namespace FakebookNotifications.Testing
         async public void SendAllVerify()
         {
             //arranged in constructor
+
 
             // act
             await hub.SendAll("user", "test");
@@ -164,6 +171,7 @@ namespace FakebookNotifications.Testing
 
         }
 
+
         [Fact]
         async public void SendUserGroupVerify()
         {
@@ -177,12 +185,14 @@ namespace FakebookNotifications.Testing
         }
 
 
+
         /// <summary>
         /// Tests notification hub method to send notification back to the user who called the method
         /// </summary>
         [Fact]
         async public void SendCallerVerify()
         {
+
             // arrange
             string caller = hub.Context.ConnectionId;
 
@@ -192,6 +202,23 @@ namespace FakebookNotifications.Testing
             // assert
             // checks to see if a message was sent to the caller-user, once, and not other users
             mockClients.Verify(c => c.Caller, Times.Once);
+          
+        /// <summary>
+        /// Tests notification hub method to send a notification to a specific user
+        /// </summary>
+        [Fact]
+        async public void SendUserVerify()
+        {
+            // arrange
+            var user = "0";
+
+            // act
+            //await hub.SendUser(user, "test");
+
+            // assert
+            // checks to see if a message was sent to one specific user, once, and not other users
+            mockClients.Verify(c => c.User(user), Times.Once);
+            mockClients.Verify(c => c.AllExcept("user"), Times.Never);
         }
 
         [Fact]
@@ -231,12 +258,14 @@ namespace FakebookNotifications.Testing
             //Assert
             mockClients.Verify(c => c.All, Times.Never);
             Assert.DoesNotContain(hub.Context.ConnectionId, test.Connections);
+
         }
 
         [Fact]
         public async void AddFollowersVerify()
         {
             //Arrange
+
             string user = "notTest@test.com";
             string followed = "test@test.com";
 
@@ -253,10 +282,12 @@ namespace FakebookNotifications.Testing
             //Arrange
             var userEmail = testUser1.Email;
 
+
             //Act
             await hub.GetTotalUnreadNotifications(userEmail);
             var notes = await _noteRepo.GetAllUnreadNotificationsAsync(userEmail);
             int count = notes.Count;
+
 
             //Assert
             mockClients.Verify(c => c.Group(userEmail), Times.Exactly(count));
@@ -272,6 +303,7 @@ namespace FakebookNotifications.Testing
             //Assert
 
             Assert.IsType<int>(count);
+
         }
 
         [Fact]
@@ -291,6 +323,7 @@ namespace FakebookNotifications.Testing
             notes = await _noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
 
             //Assert             
+
             mockClients.Verify(c => c.Group(testUser1.Email), Times.Once);
         }
 
@@ -298,7 +331,7 @@ namespace FakebookNotifications.Testing
         public async void UpdateNotificationAssertTrue()
         {
             //Arrange
-            
+           
 
             //Act
             await hub.UpdateNotification(updateTestNote);

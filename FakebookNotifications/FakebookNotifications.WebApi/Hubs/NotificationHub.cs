@@ -13,6 +13,7 @@ namespace FakebookNotifications.WebApi.Hubs
 {
     [Authorize]
     public class NotificationHub : Hub
+
     {
         
         public string thisUserEmail = "test@test.com";
