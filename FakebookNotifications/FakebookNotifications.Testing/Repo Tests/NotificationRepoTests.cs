@@ -20,17 +20,10 @@ namespace FakebookNotifications.Testing
 
         public NotificationRepoTests()
         {
-            //Get connection string
-            var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<NotificationRepoTests>()
-            .Build();
-
-            var con = configuration.GetValue<string>("TestConnectionString");
-
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
-                ConnectionString = con,
+                ConnectionString = "mongodb+srv://ryan:1234@fakebook.r8oce.mongodb.net/Notifications?retryWrites=true&w=majority",
                 DatabaseName = "TestDb",
                 UserCollection = "User",
                 NotificationsCollection = "Notifications"
