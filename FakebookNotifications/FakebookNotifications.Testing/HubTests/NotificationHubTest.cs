@@ -43,14 +43,14 @@ namespace FakebookNotifications.Testing
         private Domain.Models.Notification updateTestNote = new Domain.Models.Notification
         {
             Id = "5ffca6ca7cf99f8e5c2fae85",
-            Type = new KeyValuePair<string, int>("follow", 0),
+            Type = new KeyValuePair<string, int>("follow", 25),
             HasBeenRead = false,
             TriggerUserId = "notTest@test.com",
             LoggedInUserId = "test@test.com"
         };
         private Domain.Models.Notification testNote = new Domain.Models.Notification
         {
-            Type = new KeyValuePair<string, int>("follow", 0),
+            Type = new KeyValuePair<string, int>("follow", 13),
             HasBeenRead = false,
             TriggerUserId = "notTest@test.com",
             LoggedInUserId = "test@test.com"
@@ -100,8 +100,8 @@ namespace FakebookNotifications.Testing
             Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings
             {
-                //ConnectionString = "mongodb://localhost:27017",
-                DatabaseName = "notificationsDb",
+                ConnectionString = "mongodb+srv://ryan:1234@fakebook.r8oce.mongodb.net/Notifications?retryWrites=true&w=majority",
+                DatabaseName = "Notifications",
                 UserCollection = "User",
                 NotificationsCollection = "Notifications"
             };
@@ -132,7 +132,7 @@ namespace FakebookNotifications.Testing
         [Fact]
         async public void SendAllVerify()
         {
-            //arranged in constructor
+            //arrange
 
             // act
             await hub.SendAll("user", "test");
@@ -298,18 +298,38 @@ namespace FakebookNotifications.Testing
         public async void UpdateNotificationAssertTrue()
         {
             //Arrange
-           
+            List<Domain.Models.Notification> notes = new List<Domain.Models.Notification>();
+            await _noteRepo.CreateNotificationAsync(testNote);
+            notes = await _noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
+            Domain.Models.Notification note = new Domain.Models.Notification();
+       
+            for (int i = 0; i < notes.Count; i++)
+            {
+                if (notes[i].LoggedInUserId == updateTestNote.LoggedInUserId && notes[i].TriggerUserId == updateTestNote.TriggerUserId && notes[i].Type.Key == "follow" && notes[i].Type.Value == 13)
+                {
+                    note = notes[i];
+                }
+
+            }
+            updateTestNote.Id = note.Id;
 
             //Act
             await hub.UpdateNotification(updateTestNote);
-            List<Domain.Models.Notification> notes = new List<Domain.Models.Notification>();
             notes = await _noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
+            Domain.Models.Notification newNote = new Domain.Models.Notification();
+            for (int i = 0; i < notes.Count; i++)
+            {
+                if (notes[i].Id == note.Id)
+                {
+                   newNote = notes[i];
+                }
+            }
 
             //Assert     
-            Assert.Equal(5, notes[0].Type.Value);
-            Assert.Equal(testUser1.Email, notes[0].LoggedInUserId);
-            Assert.Equal(testUser2.Email, notes[0].TriggerUserId);
-            Assert.False(notes[0].HasBeenRead);
+            Assert.Equal(25, newNote.Type.Value);
+            Assert.Equal(testUser1.Email, newNote.LoggedInUserId);
+            Assert.Equal(testUser2.Email, newNote.TriggerUserId);
+            Assert.False(newNote.HasBeenRead);
 
         }
 
