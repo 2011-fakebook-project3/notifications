@@ -1,5 +1,6 @@
 ﻿using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.Domain.Interfaces;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -140,6 +141,22 @@ namespace FakebookNotifications.DataAccess
             return notifications.ToList().Count();
         }
 
-     
+        public async Task<Domain.Models.Notification> GetNotificationAsync(string id)
+        {
+            IAsyncCursor<Notification> notification = await _dbCollection.FindAsync(x => x.Id == id);
+            var dbNote = await notification.FirstAsync();
+
+            Domain.Models.Notification domainNote = new Domain.Models.Notification()
+            {
+                Id = dbNote.Id,
+                Type = dbNote.Type,
+                LoggedInUserId = dbNote.LoggedInUserId,
+                TriggerUserId = dbNote.TriggerUserId,
+                HasBeenRead = dbNote.HasBeenRead,
+                Date = (DateTime)dbNote.Date
+            };
+
+            return domainNote;
+        }
     }
 }
