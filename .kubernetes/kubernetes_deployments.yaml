@@ -29,8 +29,8 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionStrings__Default
-          value: 'Host=fakebook-notifications-db;Database=postgres;Username=postgres;Password=Pass@word'
+        - name: NotificationsDatabaseSettings__ConnectionString
+          value: 'mongodb://fakebook-notifications-db'
         resources:
           limits:
             cpu: 500m
