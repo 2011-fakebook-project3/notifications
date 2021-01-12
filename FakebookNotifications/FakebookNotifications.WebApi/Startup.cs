@@ -38,8 +38,7 @@ namespace FakebookNotifications.WebApi
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:4200",
-                            "https://fakebook.revaturelabs.com/")
+                        builder.WithOrigins("")
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials();
