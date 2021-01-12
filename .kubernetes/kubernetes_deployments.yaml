@@ -52,6 +52,8 @@ spec:
     matchLabels:
       app: fakebook-notifications
       role: db
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
