@@ -182,7 +182,7 @@ namespace FakebookNotifications.Testing
             var repo = new NotificationsRepo(context);
             var newNote = new Domain.Models.Notification
             {
-                LoggedInUserId = "countTest@test.com",
+                LoggedInUserId = "test3@test.com",
                 TriggerUserId = "test@test.com",
                 HasBeenRead = false
             };
@@ -190,14 +190,16 @@ namespace FakebookNotifications.Testing
             await repo.CreateNotificationAsync(newNote);
 
             //Act
-            var result = await repo.GetTotalUnreadNotificationsAsync("countTest@test.com");
-            var noteToClean = await repo.GetAllUnreadNotificationsAsync("countTest@test.com");
+            var result = await repo.GetTotalUnreadNotificationsAsync("test3@test.com");
+            var notesToClean = await repo.GetAllUnreadNotificationsAsync("test3@test.com");
+            //Cleanup
+            foreach (Domain.Models.Notification note in notesToClean)
+            {
+                await repo.DeleteNotificationAsync(note);
+            }
 
             //Assert
-            Assert.Equal(1, result);
-
-            //Cleanup
-            await repo.DeleteNotificationAsync(noteToClean[0]);
+            Assert.Equal(1, result);          
         }
 
         [Fact]

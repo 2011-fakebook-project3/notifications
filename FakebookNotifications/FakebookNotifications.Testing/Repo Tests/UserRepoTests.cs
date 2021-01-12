@@ -125,15 +125,37 @@ namespace FakebookNotifications.Testing
             //Create repo to work with
             var noteRepo = new NotificationsRepo(context);
             var repo = new UserRepo(context, noteRepo);
+            var newNote = new Domain.Models.Notification
+            {
+                LoggedInUserId = "test2@test.com",
+                TriggerUserId = "test@test.com",
+                HasBeenRead = false
+            };
+            await noteRepo.CreateNotificationAsync(newNote);
+
+
+            var newUser = new Domain.Models.User
+            {
+                Email = "test2@test.com"
+            };
+            await repo.CreateUserAsync(newUser);        
+
 
             //User to get notifications for
-            Domain.Models.User user = await repo.GetUserAsync("ryan@gmail.com");
+            Domain.Models.User user = await repo.GetUserAsync("test2@test.com");
 
             //Act
             var result = await repo.TotalUserNotificationsAsync(user);
+            var notesToClean = await noteRepo.GetAllUnreadNotificationsAsync("test2@test.com");
+
+            //Cleanup
+            foreach (Domain.Models.Notification note in notesToClean)
+            {
+                await noteRepo.DeleteNotificationAsync(note);
+            }
 
             //Assert
-            Assert.Equal(0, result);
+            Assert.Equal(1, result);       
         }
 
         [Fact]
