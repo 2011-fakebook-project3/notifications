@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FakebookNotifications.Domain.Interfaces;
 using MongoDB.Driver;
+using Microsoft.Extensions.Configuration;
 
 namespace FakebookNotifications.Testing
 {
@@ -19,11 +20,19 @@ namespace FakebookNotifications.Testing
 
         public UserRepoTests()
         {
+            //Get connection string
+            var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<UserRepoTests>()
+            .Build();
+
+            //Get from user secrets
+            var con = configuration.GetValue<string>("TestConnectionString");
+
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
-                ConnectionString = "mongodb://localhost",
-                DatabaseName = "TestDb",
+                ConnectionString = con,
+                DatabaseName = "Notifications",
                 UserCollection = "User",
                 NotificationsCollection = "Notifications"
             };
