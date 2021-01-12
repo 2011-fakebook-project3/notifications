@@ -203,9 +203,9 @@ namespace FakebookNotifications.WebApi.Hubs
         {
             foreach(string id in noteIds)
             {
-             Domain.Models.Notification noteToUpdate = await _noteRepo.GetNotificationAsync(id);
-             noteToUpdate.HasBeenRead = true;
-             await _noteRepo.UpdateNotificationAsync(noteToUpdate);
+                Domain.Models.Notification noteToUpdate = await _noteRepo.GetNotificationAsync(id);
+                noteToUpdate.HasBeenRead = true;
+                await _noteRepo.UpdateNotificationAsync(noteToUpdate);
             }
         }
   
