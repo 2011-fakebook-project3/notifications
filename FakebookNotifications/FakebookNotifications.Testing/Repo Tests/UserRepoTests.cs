@@ -8,47 +8,55 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FakebookNotifications.Domain.Interfaces;
+using MongoDB.Driver;
+using Microsoft.Extensions.Configuration;
 
 namespace FakebookNotifications.Testing
 {
     public class UserRepoTests
     {
+        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
+        private NotificationsDatabaseSettings settings;
+
         public UserRepoTests()
         {
-            
-        }
+            //Get connection string
+            var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<UserRepoTests>()
+            .Build();
 
-        [Fact]
-        public async Task GetUser_RepoTestAsync()
-        {
-            //Arrange
-            //Mock context
-            var context = new Mock<INotificationsContext>();
-            var noteRepo = new Mock<INotificationsRepo>();
+            //Get from user secrets
+            var con = configuration.GetValue<string>("TestConnectionString");
 
-            //Create repo to work with
-            var repo = new UserRepo(context.Object, noteRepo.Object);
-
-            //Act
-            var result = await repo.GetUserAsync("ryan@gmail.com");
-
-            //Assert
-            Assert.Equal("ryan@gmail.com", result.Email);
+            _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
+            settings = new NotificationsDatabaseSettings()
+            {
+                ConnectionString = con,
+                DatabaseName = "Notifications",
+                UserCollection = "User",
+                NotificationsCollection = "Notifications"
+            };
         }
 
         [Fact]
         public async Task CreateUser_RepoTest()
         {
             //Arrange
-            //Mock context
-            var context = new Mock<INotificationsContext>();
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
             var noteRepo = new Mock<INotificationsRepo>();
 
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
             //Create repo to work with
-            var repo = new UserRepo(context.Object, noteRepo.Object);
+            var repo = new UserRepo(context, noteRepo.Object);
 
             //User to create
-            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+            Domain.Models.User user = new Domain.Models.User("1234", "antonio@gmail.com");
 
             //Act
             var result = await repo.CreateUserAsync(user);
@@ -59,58 +67,48 @@ namespace FakebookNotifications.Testing
         }
 
         [Fact]
-        public async Task GetUsersSubscriptionsById_RepoTest()
+        public async Task GetUser_RepoTestAsync()
         {
             //Arrange
-            //Mock context
-            var context = new Mock<INotificationsContext>();
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
             var noteRepo = new Mock<INotificationsRepo>();
 
-            //Create repo to work with
-            var repo = new UserRepo(context.Object, noteRepo.Object);
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
 
-            //Act
-            IEnumerable<Domain.Models.User> subList = await repo.GetUsersSubscriptionsByIdAsync("ryan@gmail.com");
-            var resultList = subList.ToList();
-
-            //Assert
-            Assert.Equal("antonio@gmail.com", resultList.First().Email);
-        }
-
-        [Fact]
-        public async Task DeleteUser_RepoTest()
-        {
-            //Arrange
             //Mock context
-            var context = new Mock<INotificationsContext>();
-            var noteRepo = new Mock<INotificationsRepo>();
+            var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object, noteRepo.Object);
-
-            //User to delete
-            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+            var repo = new UserRepo(context, noteRepo.Object);
 
             //Act
-            var result = await repo.DeleteUserAsync(user);
+            var result = await repo.GetUserAsync("ryan@gmail.com");
 
             //Assert
-            Assert.True(result);
+            Assert.Equal("ryan@gmail.com", result.Email);
         }
 
         [Fact]
         public async Task UpdateUser_RepoTest()
         {
             //Arrange
-            //Mock context
-            var context = new Mock<INotificationsContext>();
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
             var noteRepo = new Mock<INotificationsRepo>();
 
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
             //Create repo to work with
-            var repo = new UserRepo(context.Object, noteRepo.Object);
+            var repo = new UserRepo(context, noteRepo.Object);
 
             //User to update
-            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
 
             //Act
             var result = await repo.UpdateUserAsync(user);
@@ -123,44 +121,54 @@ namespace FakebookNotifications.Testing
         public async Task TotalUserNotifications_RepoTest()
         {
             //Arrange
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
+        
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
             //Mock context
-            var context = new Mock<INotificationsContext>();
-            var noteRepo = new Mock<INotificationsRepo>();
+            var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new UserRepo(context.Object, noteRepo.Object);
+            var noteRepo = new NotificationsRepo(context);
+            var repo = new UserRepo(context, noteRepo);
 
             //User to get notifications for
-            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+            Domain.Models.User user = await repo.GetUserAsync("ryan@gmail.com");
 
             //Act
             var result = await repo.TotalUserNotificationsAsync(user);
 
             //Assert
-            Assert.Equal(1, result);
+            Assert.Equal(0, result);
         }
 
         [Fact]
-        public async Task GetUserNotifications_RepoTest()
+        public async Task DeleteUser_RepoTest()
         {
             //Arrange
-            //Mock context
-            var context = new Mock<INotificationsContext>();
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
             var noteRepo = new Mock<INotificationsRepo>();
 
-            //Create repo to work with
-            var repo = new UserRepo(context.Object, noteRepo.Object);
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
 
-            //User to get notifications for
-            Domain.Models.User user = new Domain.Models.User("1234", "ryan@gmail.com");
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new UserRepo(context, noteRepo.Object);
+
+            //User to delete
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
 
             //Act
-            IEnumerable<Domain.Models.Notification> notList = await repo.GetUserNotificationsAsync(user);
-            var resultList = notList.ToList();
+            var result = await repo.DeleteUserAsync(user);
 
             //Assert
-            Assert.Equal("ryan@gmail.com", resultList.First().LoggedInUserId);
-            Assert.Equal("antonio@gmail.com", resultList.First().TriggerUserId);
+            Assert.True(result);
         }
     }
 }

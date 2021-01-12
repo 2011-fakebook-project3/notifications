@@ -13,7 +13,7 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains an IEnumerable of all Notifications.
         /// </returns>
-        Task<IEnumerable<Notification>> GetAllNotificationsAsync();
+        Task<List<Domain.Models.Notification>> GetAllNotificationsAsync();
         /// <summary>
         ///  Create a Notification and add to the databse.
         /// </summary>

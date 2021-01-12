@@ -56,11 +56,6 @@ namespace FakebookNotifications.DataAccess
             }
         }
 
-        public Task<IEnumerable<Domain.Models.User>> GetUsersSubscriptionsByIdAsync(string email)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<bool> DeleteUserAsync(Domain.Models.User user)
         {
             try
@@ -101,35 +96,11 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<int> TotalUserNotificationsAsync(Domain.Models.User user)
         {
-            // Find the user entity, based on the user email.
-            IAsyncCursor<User> findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
-            User foundUser = findUser.FirstOrDefault();
+            var notifications = await _noteRepo.GetTotalUnreadNotificationsAsync(user.Email);
 
             // Return the count of their notifications.
-            return foundUser.Notifications.Count();
+            return notifications;
 
-        }
-
-        public async Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
-        {
-            // Find the user entity, based on the user email.
-            IAsyncCursor<User> findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
-
-            // Create a list of Notification Entities
-            IEnumerable<Notification> foundNotifications = findUser.FirstOrDefault().Notifications;
-
-            // Select each item from the list and create a new notification entity.
-            IEnumerable<Domain.Models.Notification> notificationList = foundNotifications.Select(x => new Domain.Models.Notification()
-            {
-                Id = x.Id,
-                Type = x.Type,
-                Date = (DateTime)x.Date,
-                HasBeenRead = x.HasBeenRead,
-                LoggedInUserId = x.LoggedInUserId,
-                TriggerUserId = x.TriggerUserId
-            }).AsEnumerable(); // Create this item as an Enumarable
-
-            return notificationList;
         }
 
         public async Task<Domain.Models.User> AddUserSubscriptionAsync(string subscriberEmail, string subscribeeEmail)
