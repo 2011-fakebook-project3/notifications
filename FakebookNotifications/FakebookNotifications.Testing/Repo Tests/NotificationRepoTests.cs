@@ -51,10 +51,10 @@ namespace FakebookNotifications.Testing
             var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new Mock<INotificationsRepo>();
+            var repo = new NotificationsRepo(context);
 
             //Act
-            var result = await repo.Object.GetAllNotificationsAsync();
+            var result = await repo.GetAllNotificationsAsync();
 
             //Assert
             Assert.NotNull(result);
@@ -74,13 +74,13 @@ namespace FakebookNotifications.Testing
             var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new Mock<INotificationsRepo>();
+            var repo = new NotificationsRepo(context);
 
             //Notification to create
             Domain.Models.Notification notification = new Domain.Models.Notification()
             {
                 Id = "12345",
-                Type = new KeyValuePair<string, int>("Follow", 1234),
+                Type = new KeyValuePair<string, int>("Follow", 12345),
                 LoggedInUserId = "ryan@gmail.com",
                 TriggerUserId = "antonio@gmail.com",
                 HasBeenRead = false,
@@ -88,7 +88,7 @@ namespace FakebookNotifications.Testing
             };
 
             //Act
-            var result = await repo.Object.CreateNotificationAsync(notification);
+            var result = await repo.CreateNotificationAsync(notification);
 
             //Assert
             Assert.True(result);
@@ -108,21 +108,15 @@ namespace FakebookNotifications.Testing
             var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new Mock<INotificationsRepo>();
+            var repo = new NotificationsRepo(context);
 
             //Updated Notification
-            Domain.Models.Notification notification = new Domain.Models.Notification()
-            {
-                Id = "12345",
-                Type = new KeyValuePair<string, int>("Follow", 1234),
-                LoggedInUserId = "ryan@gmail.com",
-                TriggerUserId = "antonio@gmail.com",
-                HasBeenRead = true,
-                Date = DateTime.Now
-            };
+            var notification = await repo.GetAllUnreadNotificationsAsync("ryan@gmail.com");
+            Domain.Models.Notification update = notification.Where(x => x.LoggedInUserId == "ryan@gmail.com" && x.Type.Key == "Follow" && x.Type.Value == 12345).First();
+            update.HasBeenRead = true;
 
             //Act
-            var result = await repo.Object.UpdateNotificationAsync(notification);
+            var result = await repo.UpdateNotificationAsync(update);
 
             //Assert
             Assert.True(result);
@@ -142,21 +136,14 @@ namespace FakebookNotifications.Testing
             var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new Mock<INotificationsRepo>();
+            var repo = new NotificationsRepo(context);
 
-            //Notification to delete
-            Domain.Models.Notification notification = new Domain.Models.Notification()
-            {
-                Id = "12345",
-                Type = new KeyValuePair<string, int>("Follow", 1234),
-                LoggedInUserId = "ryan@gmail.com",
-                TriggerUserId = "antonio@gmail.com",
-                HasBeenRead = false,
-                Date = DateTime.Now
-            };
+            //notification to delete
+            var notification = await repo.GetAllNotificationsAsync();
+            Domain.Models.Notification update = notification.Where(x => x.LoggedInUserId == "ryan@gmail.com" && x.Type.Key == "Follow" && x.Type.Value == 12345 && x.HasBeenRead == true).First();
 
             //Act
-            var result = await repo.Object.DeleteNotificationAsync(notification);
+            var result = await repo.DeleteNotificationAsync(update);
 
             //Assert
             Assert.True(result);
@@ -176,10 +163,10 @@ namespace FakebookNotifications.Testing
             var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new Mock<INotificationsRepo>();
+            var repo = new NotificationsRepo(context);
 
             //Act
-            var result = await repo.Object.GetAllUnreadNotificationsAsync("ryan@gmail.com");
+            var result = await repo.GetAllUnreadNotificationsAsync("ryan@gmail.com");
 
             //Assert
             Assert.NotNull(result);
@@ -199,13 +186,13 @@ namespace FakebookNotifications.Testing
             var context = new NotificationsContext(_mockSettings.Object);
 
             //Create repo to work with
-            var repo = new Mock<INotificationsRepo>();
+            var repo = new NotificationsRepo(context);
 
             //Act
-            var result = await repo.Object.GetTotalUnreadNotificationsAsync("ryan@gmail.com");
+            var result = await repo.GetTotalUnreadNotificationsAsync("ryan@gmail.com");
 
             //Assert
-            Assert.Equal(1, result);
+            Assert.Equal(5, result);
         }
     }
 }
