@@ -333,5 +333,35 @@ namespace FakebookNotifications.Testing
 
         }
 
+        [Fact]
+        public async void MarkAsReadVerify()
+        {
+            //Arrange
+            Domain.Models.Notification noteToRead = new Domain.Models.Notification
+            {
+                Type = new KeyValuePair<string, int>("follow", 79),
+                LoggedInUserId = testUser1.Email,
+                TriggerUserId = testUser2.Email,
+                HasBeenRead = false
+            };
+            await _noteRepo.CreateNotificationAsync(noteToRead);
+            List<Domain.Models.Notification> notes = await _noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
+            List<string> readNotes = new List<string>();
+            for (int i = 0; i < notes.Count; i++)
+            {
+                if (notes[i].LoggedInUserId == updateTestNote.LoggedInUserId && notes[i].TriggerUserId == updateTestNote.TriggerUserId && notes[i].Type.Key == "follow" && notes[i].Type.Value == 79)
+                {
+                    readNotes.Add(notes[i].Id);
+                }
+            }
+
+            // Act
+            await hub.MarkNotificationAsRead(readNotes);
+            Domain.Models.Notification testNote = await _noteRepo.GetNotificationAsync(readNotes[0]);
+
+            // Assert
+            Assert.True(testNote.HasBeenRead);
+        }
+
     }
 }
