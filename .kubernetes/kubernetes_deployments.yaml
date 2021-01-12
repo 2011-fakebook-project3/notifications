@@ -63,6 +63,7 @@ spec:
         volumeMounts:
         - mountPath: /data/db
           name: db-volume
+          subPath: data
         resources:
           limits:
             cpu: 500m
