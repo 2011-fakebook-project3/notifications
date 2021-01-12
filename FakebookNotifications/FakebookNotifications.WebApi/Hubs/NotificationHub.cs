@@ -12,11 +12,10 @@ using Microsoft.AspNetCore.Authorization;
 namespace FakebookNotifications.WebApi.Hubs
 {
     [Authorize]
-    public class NotificationHub : Hub<INotificationHub>
+    public class NotificationHub : Hub
     {
         
-        public new IHubCallerClients  Clients { get; set; }
-        public string thisUserEmail = "";
+        public string thisUserEmail = "test@test.com";
         private readonly IUserRepo _userRepo;
         private readonly INotificationsRepo _noteRepo;
 
@@ -37,8 +36,12 @@ namespace FakebookNotifications.WebApi.Hubs
             {
                 Domain.Models.User thisUser = await _userRepo.GetUserAsync(thisUserEmail);
 
-
                 await _userRepo.AddUserConnection(thisUser.Email, Context.ConnectionId);
+                if(thisUser.Connections == null)
+                {
+                    thisUser.Connections = new List<string>();
+                }
+                thisUser.Connections.Add(Context.ConnectionId);
 
                 List<Domain.Models.Notification> notifications = await _noteRepo.GetAllUnreadNotificationsAsync(thisUserEmail);
 
@@ -50,7 +53,10 @@ namespace FakebookNotifications.WebApi.Hubs
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            if (Context.User?.FindFirst(ClaimTypes.Email) != null)
+            {
+                thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            }
             if (thisUserEmail != "")
             {
                 Domain.Models.User thisUser = await _userRepo.GetUserAsync(thisUserEmail);
@@ -68,7 +74,7 @@ namespace FakebookNotifications.WebApi.Hubs
                 TriggerUserId = user,
                 Type = new KeyValuePair<string, int>("follow", 0)
             };
-            Domain.Models.User followedUser = await _userRepo.AddUserSubscriptionAsync(user, followed);
+            Domain.Models.User followedUser = await _userRepo.GetUserAsync(followed);            
             await _noteRepo.CreateNotificationAsync(newNotification);
             await SendUserGroupAsync(followedUser, newNotification);
         }
@@ -146,15 +152,14 @@ namespace FakebookNotifications.WebApi.Hubs
         //Send a notification to all clients within a specific group
         public async Task SendGroup(string group, string notification)
         {
-            throw new NotImplementedException();
-            //await Clients.Group(group).SendAsync("SendGroup", notification);
+            await Clients.Group(group).SendAsync("SendGroup", notification);
         }
 
         //Send a notification to the caller
-        public async Task SendCaller(string caller, string notification)
+        public async Task SendCaller(Domain.Models.Notification notification)
         {
-            //throw new NotImplementedException();
-            await Clients.User(caller).SendAsync("SendCaller", notification);
+            var con = this.Context;
+            await Clients.Caller.SendAsync("SendCaller", notification);
         }
 
         //Send a notification to one specific user
@@ -192,6 +197,19 @@ namespace FakebookNotifications.WebApi.Hubs
                 await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", note);
             }
 
+        }
+
+        public async Task MarkNotificationAsReadAsync(IEnumerable<string> noteIds)
+        {
+            if(noteIds != null)
+            {
+                foreach (string id in noteIds)
+                {
+                    Domain.Models.Notification noteToUpdate = await _noteRepo.GetNotificationAsync(id);
+                    noteToUpdate.HasBeenRead = true;
+                    await _noteRepo.UpdateNotificationAsync(noteToUpdate);
+                }
+            }            
         }
   
     }

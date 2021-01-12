@@ -23,15 +23,6 @@ namespace FakebookNotifications.Domain.Interfaces
         /// </returns>
         Task<bool> CreateUserAsync(User user);
         /// <summary>
-        /// Return a list of users from a list of ids. 
-        /// </summary>
-        /// <param name="Ids"></param>
-        /// <returns>
-        /// A task that represents the asynchronous operation.
-        /// The task result contains an IEnumerable of the user's list of users they are following.
-        /// </returns>
-        Task<IEnumerable<User>> GetUsersSubscriptionsByIdAsync(string email);
-        /// <summary>
         /// Delete a User
         /// </summary>
         /// <returns> 
@@ -57,23 +48,6 @@ namespace FakebookNotifications.Domain.Interfaces
         /// The task result contains an int to represent unread notifications.
         /// </returns>
         Task<int> TotalUserNotificationsAsync(User user);
-        /// <summary>
-        /// Get 5 notifications at a time from a user.
-        /// Should be called with page number, if page number is -1. Return all notifications at once.
-        /// </summary>
-        /// <returns>
-        /// A task that represents the asynchronous operation.
-        /// The task result contains an IEnumerable of user notifications.
-        /// </returns>
-        Task<IEnumerable<Notification>> GetUserNotificationsAsync(User user);
-        /// <summary>
-        /// Updates a follower and a followed user
-        /// </summary>
-        /// <param name="subscriberEmail">email of the following user</param>
-        /// <param name="subscribedEmail">email of the followed user</param>
-        /// <returns>Domain User model of the followed user for followup notification</returns>
-        Task<User> AddUserSubscriptionAsync(string subscriberEmail, string subscribedEmail);
-
         /// <summary>
         /// Adds a connection id to the users collection for signalr to send notifications to
         /// </summary>

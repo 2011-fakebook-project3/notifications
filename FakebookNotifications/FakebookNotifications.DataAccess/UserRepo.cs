@@ -28,7 +28,12 @@ namespace FakebookNotifications.DataAccess
             User dbUser = user.FirstOrDefault();
 
             // Create the domain model version of the user and return it.
-            Domain.Models.User domainUser = new Domain.Models.User(dbUser.Id, dbUser.Email);
+            Domain.Models.User domainUser = new Domain.Models.User()
+            {
+                Id = dbUser.Id,
+                Email = dbUser.Email,
+                Connections = dbUser.Connections
+            };
             return domainUser;
         }
 
@@ -49,11 +54,6 @@ namespace FakebookNotifications.DataAccess
             {
                 return false;
             }
-        }
-
-        public Task<IEnumerable<Domain.Models.User>> GetUsersSubscriptionsByIdAsync(string email)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<bool> DeleteUserAsync(Domain.Models.User user)
@@ -96,91 +96,50 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<int> TotalUserNotificationsAsync(Domain.Models.User user)
         {
-            // Find the user entity, based on the user email.
-            IAsyncCursor<User> findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
-            User foundUser = findUser.FirstOrDefault();
+            var notifications = await _noteRepo.GetTotalUnreadNotificationsAsync(user.Email);
 
             // Return the count of their notifications.
-            return foundUser.Notifications.Count();
+            return notifications;
 
-        }
-
-        public async Task<IEnumerable<Domain.Models.Notification>> GetUserNotificationsAsync(Domain.Models.User user)
-        {
-            // Find the user entity, based on the user email.
-            IAsyncCursor<User> findUser = await _dbCollection.FindAsync(u => u.Email == user.Email);
-
-            // Create a list of Notification Entities
-            IEnumerable<Notification> foundNotifications = findUser.FirstOrDefault().Notifications;
-
-            // Select each item from the list and create a new notification entity.
-            IEnumerable<Domain.Models.Notification> notificationList = foundNotifications.Select(x => new Domain.Models.Notification()
-            {
-                Id = x.Id,
-                Type = x.Type,
-                Date = (DateTime)x.Date,
-                HasBeenRead = x.HasBeenRead,
-                LoggedInUserId = x.LoggedInUserId,
-                TriggerUserId = x.TriggerUserId
-            }).AsEnumerable(); // Create this item as an Enumarable
-
-            return notificationList;
-        }
-
-        public async Task<Domain.Models.User> AddUserSubscriptionAsync(string subscriberEmail, string subscribeeEmail)
-        {
-            Domain.Models.User subscriber = await GetUserAsync(subscriberEmail);
-            Domain.Models.User subscribee = await GetUserAsync(subscribeeEmail);
-            subscriber.Follows.Add(subscribeeEmail);
-            subscribee.Subscribers.Add(subscriberEmail);
-
-            Domain.Models.Notification notification = new Domain.Models.Notification()
-            {
-                Type = new KeyValuePair<string, int>("follow", 0),
-                Date = DateTime.Now,
-                HasBeenRead = false,
-                LoggedInUserId = subscribeeEmail,
-                TriggerUserId = subscriberEmail
-            };
-
-            //add follow notification to database
-            var result = await _noteRepo.CreateNotificationAsync(notification);
-            if(result == true)
-            {
-                return subscribee;
-            }
-            else
-            {
-                throw new Exception("Error creating follow notification");
-            }
         }
 
         public async Task<bool> AddUserConnection(string email, string connectionId)
         {
             //Get the user
-            var user = await GetUserAsync(email);
+            IAsyncCursor<User> user = await _dbCollection.FindAsync(u => u.Email == email);
+            User dbUser = user.FirstOrDefault();
 
-            try
+            if (user != null)
             {
-                //Add the connection id to their colelction
-                user.Connections.Add(connectionId);
-                return true;
+                try
+                {
+                    //Add the connection id to their colelction
+                    dbUser.Connections.Add(connectionId);
+                    await _dbCollection.ReplaceOneAsync(u => u.Email == dbUser.Email, dbUser);               
+                    return true;
+                }
+                catch
+                {
+                    throw new Exception("Error adding connection id to user");
+                }
             }
-            catch
+            else
             {
-                throw new Exception("Error adding connection id to user");
-            }
+                return false;
+            }           
         }
 
         public async Task<bool> RemoveUserConnection(string email, string connectionId)
         {
             //Get the user
-            var user = await GetUserAsync(email);
+            IAsyncCursor<User> user = await _dbCollection.FindAsync(u => u.Email == email);
+            User dbUser = user.FirstOrDefault();
 
             try
             {
                 //Remove the connection id to their colelction
-                user.Connections.Remove(connectionId);
+                dbUser.Connections.Remove(connectionId);
+                await _dbCollection.ReplaceOneAsync(u => u.Email == dbUser.Email, dbUser);
                 return true;
             }
             catch

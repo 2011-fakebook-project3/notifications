@@ -6,6 +6,10 @@ namespace FakebookNotifications.DataAccess.Models
 {
     public class User
     {
+        public User()
+        {
+            Connections = new List<string>();
+        }
         //mongo object id
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

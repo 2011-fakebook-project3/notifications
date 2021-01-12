@@ -5,28 +5,18 @@ namespace FakebookNotifications.Domain.Models
 {
     public class User
     {
+        public User()
+        {
+            Connections = new List<string>();
+            Subscribers = new List<string>();
+            Follows = new List<string>();
+        }
         private string _id;
 
         /// <summary>
         /// Assigns _id an Id number, after verifying it.
         /// </summary>
-        public string Id
-        {
-            get => _id;
-            set
-            {
-                // tries to parse the value
-                if (Int32.TryParse(value, out _))
-                {
-                    _id = value;
-                }
-                else
-                {
-                    // assigns the value to an empty string
-                    _id = "";
-                }
-            }
-        }
+        public string Id { get; set; }
 
         public string Email { get; set; }
 
@@ -44,7 +34,7 @@ namespace FakebookNotifications.Domain.Models
             Id = id;
             Email = email;
         }
-        public User() { }
+    
 
 
         /// <summary>
