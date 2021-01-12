@@ -2,7 +2,6 @@
 using FakebookNotifications.Domain.Interfaces;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -115,7 +114,7 @@ namespace FakebookNotifications.DataAccess
                 {
                     //Add the connection id to their colelction
                     dbUser.Connections.Add(connectionId);
-                    await _dbCollection.ReplaceOneAsync(u => u.Email == dbUser.Email, dbUser);               
+                    await _dbCollection.ReplaceOneAsync(u => u.Email == dbUser.Email, dbUser);
                     return true;
                 }
                 catch
@@ -126,7 +125,7 @@ namespace FakebookNotifications.DataAccess
             else
             {
                 return false;
-            }           
+            }
         }
 
         public async Task<bool> RemoveUserConnection(string email, string connectionId)

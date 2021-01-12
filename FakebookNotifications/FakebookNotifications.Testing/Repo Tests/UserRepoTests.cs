@@ -1,15 +1,11 @@
 ﻿using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
-using Microsoft.Extensions.Options;
-using Moq;
-using System;
-using Xunit;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FakebookNotifications.Domain.Interfaces;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Microsoft.Extensions.Configuration;
+using Moq;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace FakebookNotifications.Testing
 {
@@ -115,7 +111,7 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Mock collection
             var mockCollection = new Mock<IMongoCollection<User>>();
-        
+
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
@@ -138,7 +134,7 @@ namespace FakebookNotifications.Testing
             {
                 Email = "test2@test.com"
             };
-            await repo.CreateUserAsync(newUser);        
+            await repo.CreateUserAsync(newUser);
 
 
             //User to get notifications for
@@ -155,7 +151,7 @@ namespace FakebookNotifications.Testing
             }
 
             //Assert
-            Assert.Equal(1, result);       
+            Assert.Equal(1, result);
         }
 
         [Fact]

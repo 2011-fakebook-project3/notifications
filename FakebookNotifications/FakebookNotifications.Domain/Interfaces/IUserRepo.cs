@@ -1,5 +1,4 @@
 ﻿using FakebookNotifications.Domain.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FakebookNotifications.Domain.Interfaces
