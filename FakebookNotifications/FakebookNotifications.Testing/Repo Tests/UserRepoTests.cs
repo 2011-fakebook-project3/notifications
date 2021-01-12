@@ -162,5 +162,61 @@ namespace FakebookNotifications.Testing
             //Assert
             Assert.True(result);
         }
+
+        [Fact]
+        public async Task AddUserConnection_RepoTest()
+        {
+            //Arrange
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
+            var noteRepo = new Mock<INotificationsRepo>();
+
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new UserRepo(context, noteRepo.Object);
+
+            //User to add connection id to
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
+            var connectionId = "123456789";
+
+            //Act
+            var result = await repo.AddUserConnection(user.Email, connectionId);
+
+            //Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task RemoveUserConnection_RepoTest()
+        {
+            //Arrange
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
+            var noteRepo = new Mock<INotificationsRepo>();
+
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new UserRepo(context, noteRepo.Object);
+
+            //User to remove connection id from
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
+            var connectionId = "123456789";
+
+            //Act
+            var result = await repo.RemoveUserConnection(user.Email, connectionId);
+
+            //Assert
+            Assert.True(result);
+        }
     }
 }
