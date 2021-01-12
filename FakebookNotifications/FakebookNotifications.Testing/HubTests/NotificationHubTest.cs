@@ -348,15 +348,16 @@ namespace FakebookNotifications.Testing
             List<Domain.Models.Notification> notes = await _noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
             List<string> readNotes = new List<string>();
             for (int i = 0; i < notes.Count; i++)
-            {
-                if (notes[i].LoggedInUserId == updateTestNote.LoggedInUserId && notes[i].TriggerUserId == updateTestNote.TriggerUserId && notes[i].Type.Key == "follow" && notes[i].Type.Value == 79)
-                {
+            {              
+               if (notes[i].LoggedInUserId == updateTestNote.LoggedInUserId && notes[i].TriggerUserId == updateTestNote.TriggerUserId && notes[i].Type.Key == "follow" && notes[i].Type.Value == 79)
+                 {
                     readNotes.Add(notes[i].Id);
-                }
+                 }
+                             
             }
 
             // Act
-            await hub.MarkNotificationAsRead(readNotes);
+            await hub.MarkNotificationAsReadAsync(readNotes);
             Domain.Models.Notification testNote = await _noteRepo.GetNotificationAsync(readNotes[0]);
 
             // Assert

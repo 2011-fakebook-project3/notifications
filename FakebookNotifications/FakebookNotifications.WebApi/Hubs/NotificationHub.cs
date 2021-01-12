@@ -199,14 +199,17 @@ namespace FakebookNotifications.WebApi.Hubs
 
         }
 
-        public async Task MarkNotificationAsRead(List<string> noteIds)
+        public async Task MarkNotificationAsReadAsync(IEnumerable<string> noteIds)
         {
-            foreach(string id in noteIds)
+            if(noteIds != null)
             {
-                Domain.Models.Notification noteToUpdate = await _noteRepo.GetNotificationAsync(id);
-                noteToUpdate.HasBeenRead = true;
-                await _noteRepo.UpdateNotificationAsync(noteToUpdate);
-            }
+                foreach (string id in noteIds)
+                {
+                    Domain.Models.Notification noteToUpdate = await _noteRepo.GetNotificationAsync(id);
+                    noteToUpdate.HasBeenRead = true;
+                    await _noteRepo.UpdateNotificationAsync(noteToUpdate);
+                }
+            }            
         }
   
     }
