@@ -1,15 +1,13 @@
 ﻿using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using Moq;
 using System;
-using Xunit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FakebookNotifications.Domain.Interfaces;
-using MongoDB.Driver;
-using Microsoft.Extensions.Configuration;
+using Xunit;
 
 namespace FakebookNotifications.Testing
 {
@@ -199,7 +197,7 @@ namespace FakebookNotifications.Testing
             }
 
             //Assert
-            Assert.Equal(1, result);          
+            Assert.Equal(1, result);
         }
 
         [Fact]

@@ -1,19 +1,14 @@
-﻿using System;
+﻿using FakebookNotifications.DataAccess;
+using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.WebApi.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
+using Moq;
+using System;
 using System.Collections.Generic;
 using System.Threading;
-using Microsoft.AspNetCore.SignalR;
-using Xunit;
-using Moq;
-using FakebookNotifications.WebApi.Hubs;
-using FakebookNotifications.WebApi.HubInterfaces;
 using System.Threading.Tasks;
-using FakebookNotifications.Domain.Interfaces;
-using FakebookNotifications.DataAccess;
-using FakebookNotifications.DataAccess.Models;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using System.Security.Claims;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
+using Xunit;
 
 namespace FakebookNotifications.Testing
 
@@ -73,7 +68,7 @@ namespace FakebookNotifications.Testing
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
         private readonly UserRepo _userRepo;
         private readonly NotificationsRepo _noteRepo;
-        private NotificationsDatabaseSettings settings; 
+        private NotificationsDatabaseSettings settings;
 
 
 
@@ -82,10 +77,10 @@ namespace FakebookNotifications.Testing
 
 
         public NotificationHubTest()
-        {         
-        
+        {
 
-        //mocking signalr elements for tests   
+
+            //mocking signalr elements for tests   
             mockClients.Setup(client => client.All).Returns(mockClientProxy.Object);
             mockClients.Setup(client => client.Group(groupIds[0])).Returns(mockClientProxy.Object);
             mockClients.Setup(client => client.Caller).Returns(mockClientProxy.Object);
@@ -93,10 +88,10 @@ namespace FakebookNotifications.Testing
             mockGroups.Setup(group => group.AddToGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
             mockGroups.Setup(group => group.RemoveFromGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new System.Threading.CancellationToken())).Returns(Task.FromResult(true));
             mockContext.Setup(context => context.ConnectionId).Returns("01");
-           
-          
 
-           
+
+
+
             Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings
             {
@@ -122,7 +117,7 @@ namespace FakebookNotifications.Testing
                 Groups = mockGroups.Object,
                 Context = mockContext.Object,
 
-           };
+            };
         }
 
 
@@ -168,12 +163,12 @@ namespace FakebookNotifications.Testing
         async public void SendUserGroupVerify()
         {
             // Arange
-            
+
             // Act
             await hub.SendUserGroupAsync(testUser1, testNote);
 
             // Assert
-            mockClients.Verify(c => c.Group(testUser1.Email), Times.Once);    
+            mockClients.Verify(c => c.Group(testUser1.Email), Times.Once);
         }
 
 
@@ -214,7 +209,7 @@ namespace FakebookNotifications.Testing
 
             //Assert
 
-            Assert.NotNull(test.Connections);            
+            Assert.NotNull(test.Connections);
             Assert.Equal(thisUser.Connections[0], hub.Context.ConnectionId);
         }
 
@@ -268,7 +263,7 @@ namespace FakebookNotifications.Testing
             //Arrange
 
             //Act
-            int count  = await hub.GetUnreadCountAsync(testUser1.Email);
+            int count = await hub.GetUnreadCountAsync(testUser1.Email);
             //Assert
 
             Assert.IsType<int>(count);
@@ -302,7 +297,7 @@ namespace FakebookNotifications.Testing
             await _noteRepo.CreateNotificationAsync(testNote);
             notes = await _noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
             Domain.Models.Notification note = new Domain.Models.Notification();
-       
+
             for (int i = 0; i < notes.Count; i++)
             {
                 if (notes[i].LoggedInUserId == updateTestNote.LoggedInUserId && notes[i].TriggerUserId == updateTestNote.TriggerUserId && notes[i].Type.Key == "follow" && notes[i].Type.Value == 13)
@@ -321,7 +316,7 @@ namespace FakebookNotifications.Testing
             {
                 if (notes[i].Id == note.Id)
                 {
-                   newNote = notes[i];
+                    newNote = notes[i];
                 }
             }
 
@@ -348,12 +343,12 @@ namespace FakebookNotifications.Testing
             List<Domain.Models.Notification> notes = await _noteRepo.GetAllUnreadNotificationsAsync(testUser1.Email);
             List<string> readNotes = new List<string>();
             for (int i = 0; i < notes.Count; i++)
-            {              
-               if (notes[i].LoggedInUserId == updateTestNote.LoggedInUserId && notes[i].TriggerUserId == updateTestNote.TriggerUserId && notes[i].Type.Key == "follow" && notes[i].Type.Value == 79)
-                 {
+            {
+                if (notes[i].LoggedInUserId == updateTestNote.LoggedInUserId && notes[i].TriggerUserId == updateTestNote.TriggerUserId && notes[i].Type.Key == "follow" && notes[i].Type.Value == 79)
+                {
                     readNotes.Add(notes[i].Id);
-                 }
-                             
+                }
+
             }
 
             // Act

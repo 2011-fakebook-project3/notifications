@@ -1,13 +1,8 @@
 ﻿using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
-using FakebookNotifications.DataAccess.Models.Interfaces;
 using Microsoft.Extensions.Options;
 using Moq;
-using MongoDB.Driver;
-using System;
 using Xunit;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FakebookNotifications.Testing
 {

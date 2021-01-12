@@ -1,11 +1,9 @@
 ﻿using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.Domain.Interfaces;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FakebookNotifications.DataAccess
@@ -117,9 +115,9 @@ namespace FakebookNotifications.DataAccess
             List<DataAccess.Models.Notification> dbNotes = new List<DataAccess.Models.Notification>();
             dbNotes = await notifications.ToListAsync();
             List<Domain.Models.Notification> domainNotes = new List<Domain.Models.Notification>();
-            foreach(Notification note in dbNotes)
+            foreach (Notification note in dbNotes)
             {
-                
+
                 Domain.Models.Notification newNote = new Domain.Models.Notification
                 {
                     Type = note.Type,

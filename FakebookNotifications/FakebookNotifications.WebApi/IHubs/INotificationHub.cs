@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System;
+﻿using FakebookNotifications.Domain.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using FakebookNotifications.Domain.Models;
 
 namespace FakebookNotifications.WebApi.HubInterfaces
 {
-    public interface INotificationHub    {
+    public interface INotificationHub
+    {
 
         //user and notification params will be replaced with custom objects when available
-        
+
         //Send to all users
-         Task SendAll(User user, Notification notification);
+        Task SendAll(User user, Notification notification);
 
         //Send to Group
         Task SendGroup(string group, Notification notifications);
