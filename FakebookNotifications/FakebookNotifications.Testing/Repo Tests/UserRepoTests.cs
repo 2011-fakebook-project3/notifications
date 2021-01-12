@@ -20,18 +20,10 @@ namespace FakebookNotifications.Testing
 
         public UserRepoTests()
         {
-            //Get connection string
-            var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<UserRepoTests>()
-            .Build();
-
-            //Get from user secrets
-            var con = configuration.GetValue<string>("TestConnectionString");
-
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
-                ConnectionString = con,
+                ConnectionString = "mongodb+srv://ryan:1234@fakebook.r8oce.mongodb.net/Notifications?retryWrites=true&w=majority",
                 DatabaseName = "Notifications",
                 UserCollection = "User",
                 NotificationsCollection = "Notifications"
@@ -166,6 +158,62 @@ namespace FakebookNotifications.Testing
 
             //Act
             var result = await repo.DeleteUserAsync(user);
+
+            //Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task AddUserConnection_RepoTest()
+        {
+            //Arrange
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
+            var noteRepo = new Mock<INotificationsRepo>();
+
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new UserRepo(context, noteRepo.Object);
+
+            //User to add connection id to
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
+            var connectionId = "123456789";
+
+            //Act
+            var result = await repo.AddUserConnection(user.Email, connectionId);
+
+            //Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task RemoveUserConnection_RepoTest()
+        {
+            //Arrange
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<User>>();
+            var noteRepo = new Mock<INotificationsRepo>();
+
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new UserRepo(context, noteRepo.Object);
+
+            //User to remove connection id from
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
+            var connectionId = "123456789";
+
+            //Act
+            var result = await repo.RemoveUserConnection(user.Email, connectionId);
 
             //Assert
             Assert.True(result);

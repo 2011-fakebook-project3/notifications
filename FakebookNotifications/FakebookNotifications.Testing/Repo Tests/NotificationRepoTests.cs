@@ -20,18 +20,11 @@ namespace FakebookNotifications.Testing
 
         public NotificationRepoTests()
         {
-            //Get connection string
-            var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<NotificationRepoTests>()
-            .Build();
-
-            var con = configuration.GetValue<string>("TestConnectionString");
-
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
-                ConnectionString = con,
-                DatabaseName = "TestDb",
+                ConnectionString = "mongodb+srv://ryan:1234@fakebook.r8oce.mongodb.net/Notifications?retryWrites=true&w=majority",
+                DatabaseName = "Notifications",
                 UserCollection = "User",
                 NotificationsCollection = "Notifications"
             };
@@ -193,6 +186,29 @@ namespace FakebookNotifications.Testing
 
             //Assert
             Assert.Equal(5, result);
+        }
+
+        [Fact]
+        public async Task GetNotificationAsync_RepoTest()
+        {
+            //Arrange
+            //Mock collection
+            var mockCollection = new Mock<IMongoCollection<Notification>>();
+
+            //Setup Context Settings
+            _mockSettings.Setup(s => s.Value).Returns(settings);
+
+            //Mock context
+            var context = new NotificationsContext(_mockSettings.Object);
+
+            //Create repo to work with
+            var repo = new NotificationsRepo(context);
+
+            //Act
+            var result = await repo.GetNotificationAsync("5ffdc4e76c7bf518ce77cc1a");
+
+            //Assert
+            Assert.Equal("test@test.com", result.LoggedInUserId);
         }
     }
 }

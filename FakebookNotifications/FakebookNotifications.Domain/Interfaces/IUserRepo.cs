@@ -49,14 +49,6 @@ namespace FakebookNotifications.Domain.Interfaces
         /// </returns>
         Task<int> TotalUserNotificationsAsync(User user);
         /// <summary>
-        /// Updates a follower and a followed user
-        /// </summary>
-        /// <param name="subscriberEmail">email of the following user</param>
-        /// <param name="subscribedEmail">email of the followed user</param>
-        /// <returns>Domain User model of the followed user for followup notification</returns>
-        Task<User> AddUserSubscriptionAsync(string subscriberEmail, string subscribedEmail);
-
-        /// <summary>
         /// Adds a connection id to the users collection for signalr to send notifications to
         /// </summary>
         /// <param name="email">email of the user</param>

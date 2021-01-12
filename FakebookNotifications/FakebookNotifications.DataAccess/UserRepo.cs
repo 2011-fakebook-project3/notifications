@@ -103,34 +103,6 @@ namespace FakebookNotifications.DataAccess
 
         }
 
-        public async Task<Domain.Models.User> AddUserSubscriptionAsync(string subscriberEmail, string subscribeeEmail)
-        {
-            Domain.Models.User subscriber = await GetUserAsync(subscriberEmail);
-            Domain.Models.User subscribee = await GetUserAsync(subscribeeEmail);
-            subscriber.Follows.Add(subscribeeEmail);
-            subscribee.Subscribers.Add(subscriberEmail);
-
-            Domain.Models.Notification notification = new Domain.Models.Notification()
-            {
-                Type = new KeyValuePair<string, int>("follow", 0),
-                Date = DateTime.Now,
-                HasBeenRead = false,
-                LoggedInUserId = subscribeeEmail,
-                TriggerUserId = subscriberEmail
-            };
-
-            //add follow notification to database
-            var result = await _noteRepo.CreateNotificationAsync(notification);
-            if(result == true)
-            {
-                return subscribee;
-            }
-            else
-            {
-                throw new Exception("Error creating follow notification");
-            }
-        }
-
         public async Task<bool> AddUserConnection(string email, string connectionId)
         {
             //Get the user
