@@ -193,6 +193,7 @@ namespace FakebookNotifications.Testing
         async public void OnConnectAsyncVerify()
         {
             // Arrange
+            mockContext.Setup(u => u.UserIdentifier).Returns("test@test.com");
             Domain.Models.User thisUser = new Domain.Models.User
             {
                 Id = "53453455",
@@ -208,7 +209,7 @@ namespace FakebookNotifications.Testing
             test = await _userRepo.GetUserAsync("test@test.com");
 
             //Assert
-
+            Assert.NotNull(hub.Context.UserIdentifier);
             Assert.NotNull(test.Connections);
             Assert.Equal(thisUser.Connections[0], hub.Context.ConnectionId);
         }
@@ -217,6 +218,7 @@ namespace FakebookNotifications.Testing
         async public void OnDisconnectVerify()
         {
             //Arrange
+            mockContext.Setup(u => u.UserIdentifier).Returns("test@test.com");
             var exception = new Exception();
 
             //Act
