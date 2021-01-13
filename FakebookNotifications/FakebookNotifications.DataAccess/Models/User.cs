@@ -22,17 +22,5 @@ namespace FakebookNotifications.DataAccess.Models
         //users connectionid list for signalr
         [BsonElement("connections")]
         public List<string> Connections { get; set; }
-
-        //list of emails that are subscribed to the user
-        [BsonElement("subscribers")]
-        public List<string> Subscribers { get; set; }
-
-        //list of emails that the user follows
-        [BsonElement("follows")]
-        public List<string> Follows { get; set; }
-
-        //collection of notifications belonging to the user
-        [BsonElement("notifications")]
-        public IEnumerable<Notification> Notifications { get; set; }
     }
 }
