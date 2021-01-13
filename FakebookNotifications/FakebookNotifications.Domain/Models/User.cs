@@ -8,8 +8,6 @@ namespace FakebookNotifications.Domain.Models
         public User()
         {
             Connections = new List<string>();
-            Subscribers = new List<string>();
-            Follows = new List<string>();
         }
         private string _id;
 
@@ -22,12 +20,6 @@ namespace FakebookNotifications.Domain.Models
 
         //Contain connection ids of the user for signalr
         public List<string> Connections { get; set; }
-
-        //Contain emails of users that follow the user
-        public List<string> Subscribers { get; set; }
-
-        //Contain emails of users that the user follows
-        public List<string> Follows { get; set; }
 
         public User(string id, string email)
         {
