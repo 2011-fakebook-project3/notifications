@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace FakebookNotifications.DataAccess
 {
@@ -12,9 +12,13 @@ namespace FakebookNotifications.DataAccess
     {
         private IMongoDatabase _database = null;
         private readonly NotificationsDatabaseSettings _settings;
+        private readonly ILogger<NotificationsContext> _logger;
 
-        public NotificationsContext(IOptions<NotificationsDatabaseSettings> settings)
+        public NotificationsContext(IOptions<NotificationsDatabaseSettings> settings, ILogger<NotificationsContext> logger)
         {
+            //setup logger
+            _logger = logger;
+
             //assign settings to object to be used is other methods
             _settings = settings.Value;
 
@@ -78,9 +82,8 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch(Exception ex)
+            catch
             {
-                Debug.WriteLine("Could not clear previous seed data" + ex);
                 return false;
             }
         }
@@ -143,9 +146,8 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch(Exception ex)
+            catch
             {
-                Debug.WriteLine("Could not create seed data: " + ex);
                 return false;
             }
         }
