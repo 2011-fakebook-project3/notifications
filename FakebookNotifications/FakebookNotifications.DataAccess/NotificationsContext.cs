@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FakebookNotifications.DataAccess
 {
@@ -77,8 +78,9 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                Debug.WriteLine("Could not clear previous seed data" + ex);
                 return false;
             }
         }
@@ -141,8 +143,9 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                Debug.WriteLine("Could not create seed data: " + ex);
                 return false;
             }
         }
