@@ -2,6 +2,7 @@
 using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
@@ -69,16 +70,16 @@ namespace FakebookNotifications.Testing
         private readonly UserRepo _userRepo;
         private readonly NotificationsRepo _noteRepo;
         private NotificationsDatabaseSettings settings;
+        private readonly ILogger<NotificationsContext> _logger;
 
 
 
 
 
 
-
-        public NotificationHubTest()
+        public NotificationHubTest(ILogger<NotificationsContext> logger)
         {
-
+            _logger = logger;
 
             //mocking signalr elements for tests   
             mockClients.Setup(client => client.All).Returns(mockClientProxy.Object);
@@ -101,7 +102,7 @@ namespace FakebookNotifications.Testing
                 NotificationsCollection = "Notifications"
             };
             _mockSettings.Setup(s => s.Value).Returns(settings);
-            var mockDbContext = new NotificationsContext(_mockSettings.Object);
+            var mockDbContext = new NotificationsContext(_mockSettings.Object, _logger);
 
 
             // mocking Mongo db           
