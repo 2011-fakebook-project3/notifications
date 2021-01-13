@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 
 namespace FakebookNotifications.WebApi.Hubs
 {
@@ -13,7 +12,7 @@ namespace FakebookNotifications.WebApi.Hubs
     public class NotificationHub : Hub
     {
 
-        public string thisUserEmail = "";
+        private string thisUserEmail = "";
         private readonly IUserRepo _userRepo;
         private readonly INotificationsRepo _noteRepo;
 
