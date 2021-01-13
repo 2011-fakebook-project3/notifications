@@ -51,9 +51,9 @@ namespace FakebookNotifications.WebApi.Hubs
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            if (Context.User?.FindFirst(ClaimTypes.Email) != null)
+            if (Context.UserIdentifier != null)
             {
-                thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+                thisUserEmail = Context.UserIdentifier;
             }
             if (thisUserEmail != "")
             {
