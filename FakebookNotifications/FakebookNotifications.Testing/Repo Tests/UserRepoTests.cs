@@ -1,7 +1,7 @@
 ﻿using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.Domain.Interfaces;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Moq;
@@ -14,11 +14,11 @@ namespace FakebookNotifications.Testing
     {
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
         private NotificationsDatabaseSettings settings;
-        private readonly ILogger<NotificationsContext> _logger;
+        private NullLogger<NotificationsContext> _logger;
 
-        public UserRepoTests(ILogger<NotificationsContext> logger)
+        public UserRepoTests()
         {
-            _logger = logger;
+            _logger = new NullLogger<NotificationsContext>();
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {

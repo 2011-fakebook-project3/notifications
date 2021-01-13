@@ -1,6 +1,6 @@
 ﻿using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -11,13 +11,12 @@ namespace FakebookNotifications.Testing
     {
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
         private NotificationsDatabaseSettings settings;
-        private readonly ILogger<NotificationsContext> _logger;
+        private NullLogger<NotificationsContext> _logger;
 
         //Constructor to initialize mocked components before each test
-        public MongoDbTests(ILogger<NotificationsContext> logger)
+        public MongoDbTests()
         {
-            _logger = logger;
-
+            _logger = new NullLogger<NotificationsContext>();
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {

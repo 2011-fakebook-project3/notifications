@@ -84,9 +84,9 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
-                _logger.LogWarning("Unable to clear seed data");
+                _logger.LogWarning("Unable to clear seed data" + ex);
                 return false;
             }
         }
@@ -150,9 +150,9 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
-                _logger.LogWarning("Unable to insert seed data");
+                _logger.LogWarning("Unable to insert seed data" + ex);
                 return false;
             }
         }

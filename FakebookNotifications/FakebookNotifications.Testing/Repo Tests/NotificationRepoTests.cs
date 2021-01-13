@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FakebookNotifications.Testing
 {
@@ -16,13 +16,11 @@ namespace FakebookNotifications.Testing
     {
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
         private NotificationsDatabaseSettings settings;
-        private readonly ILogger<NotificationsContext> _logger;
+        private NullLogger<NotificationsContext> _logger;
 
-        public NotificationRepoTests(ILogger<NotificationsContext> logger)
+        public NotificationRepoTests()
         {
-            //setup logger
-            _logger = logger;
-
+            _logger = new NullLogger<NotificationsContext>();
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
