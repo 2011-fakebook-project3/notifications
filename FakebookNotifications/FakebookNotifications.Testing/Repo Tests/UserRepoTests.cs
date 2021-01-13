@@ -1,6 +1,7 @@
 ﻿using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.Domain.Interfaces;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Moq;
@@ -13,9 +14,11 @@ namespace FakebookNotifications.Testing
     {
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
         private NotificationsDatabaseSettings settings;
+        private NullLogger<NotificationsContext> _logger;
 
         public UserRepoTests()
         {
+            _logger = new NullLogger<NotificationsContext>();
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
@@ -38,7 +41,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object);
+            var context = new NotificationsContext(_mockSettings.Object, _logger);
 
             //Create repo to work with
             var repo = new UserRepo(context, noteRepo.Object);
@@ -66,7 +69,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object);
+            var context = new NotificationsContext(_mockSettings.Object, _logger);
 
             //Create repo to work with
             var repo = new UserRepo(context, noteRepo.Object);
@@ -90,7 +93,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object);
+            var context = new NotificationsContext(_mockSettings.Object, _logger);
 
             //Create repo to work with
             var repo = new UserRepo(context, noteRepo.Object);
@@ -116,7 +119,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object);
+            var context = new NotificationsContext(_mockSettings.Object, _logger);
 
             //Create repo to work with
             var noteRepo = new NotificationsRepo(context);
@@ -166,7 +169,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object);
+            var context = new NotificationsContext(_mockSettings.Object, _logger);
 
             //Create repo to work with
             var repo = new UserRepo(context, noteRepo.Object);
@@ -193,7 +196,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object);
+            var context = new NotificationsContext(_mockSettings.Object, _logger);
 
             //Create repo to work with
             var repo = new UserRepo(context, noteRepo.Object);
@@ -221,7 +224,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object);
+            var context = new NotificationsContext(_mockSettings.Object, _logger);
 
             //Create repo to work with
             var repo = new UserRepo(context, noteRepo.Object);

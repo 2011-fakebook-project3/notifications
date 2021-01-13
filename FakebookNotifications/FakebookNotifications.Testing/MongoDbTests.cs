@@ -1,5 +1,6 @@
 ﻿using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -10,10 +11,12 @@ namespace FakebookNotifications.Testing
     {
         private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
         private NotificationsDatabaseSettings settings;
+        private NullLogger<NotificationsContext> _logger;
 
         //Constructor to initialize mocked components before each test
         public MongoDbTests()
         {
+            _logger = new NullLogger<NotificationsContext>();
             _mockSettings = new Mock<IOptions<NotificationsDatabaseSettings>>();
             settings = new NotificationsDatabaseSettings()
             {
@@ -33,7 +36,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Act
-            var context = new NotificationsContext(_mockSettings.Object); //create context and test constructor
+            var context = new NotificationsContext(_mockSettings.Object, _logger); //create context and test constructor
 
             //Assert
             //Test is successfull if no exception
@@ -46,7 +49,7 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
-            var context = new NotificationsContext(_mockSettings.Object); //Create context
+            var context = new NotificationsContext(_mockSettings.Object, _logger); //Create context
 
             //Act
             var notificationCollection = context.Notifications; //Get collection from context
@@ -62,7 +65,7 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
-            var context = new NotificationsContext(_mockSettings.Object); //Create context
+            var context = new NotificationsContext(_mockSettings.Object, _logger); //Create context
 
             //Act
             var userCollection = context.User; //Get collection from context
