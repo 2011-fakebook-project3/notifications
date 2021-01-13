@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FakebookNotifications.WebApi.Hubs
 {
@@ -12,7 +13,7 @@ namespace FakebookNotifications.WebApi.Hubs
     public class NotificationHub : Hub
     {
 
-        public string thisUserEmail = "test@test.com";
+        public string thisUserEmail = "";
         private readonly IUserRepo _userRepo;
         private readonly INotificationsRepo _noteRepo;
 
@@ -24,9 +25,9 @@ namespace FakebookNotifications.WebApi.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            if (Context.User?.FindFirst(ClaimTypes.Email) != null)
+            if (Context.UserIdentifier != null)
             {
-                thisUserEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+                thisUserEmail = Context.UserIdentifier;
             }
 
             if (thisUserEmail != "")
@@ -170,7 +171,7 @@ namespace FakebookNotifications.WebApi.Hubs
                     {
                         await Groups.AddToGroupAsync(connection, user.Email);
                     }
-                    await Clients.Group(user.Email).SendAsync("SendUserGroupAsync", notification);
+                    await Clients.Group(user.Email).SendAsync("SendUserGroup", notification);
                 }
                 else
                 {
