@@ -60,6 +60,8 @@ namespace FakebookNotifications.DataAccess
         //Clear previous seeded notifications
         public bool ClearNotifications(IMongoCollection<User> userCol, IMongoCollection<Notification> noteCol)
         {
+            _logger.LogInformation("Clearing previous seed data");
+
             try
             {
                 List<Notification> davidNotes = noteCol.Find(x => x.LoggedInUserId == "david.barnes@revature.net").ToList();
@@ -84,6 +86,7 @@ namespace FakebookNotifications.DataAccess
             }
             catch
             {
+                _logger.LogWarning("Unable to clear seed data");
                 return false;
             }
         }
@@ -91,6 +94,7 @@ namespace FakebookNotifications.DataAccess
         //Seed some initial data
         public bool SeedData(IMongoCollection<User> userCol, IMongoCollection<Notification> noteCol)
         {
+            _logger.LogInformation("Attempting to insert seed data");
 
             try
             {
@@ -148,6 +152,7 @@ namespace FakebookNotifications.DataAccess
             }
             catch
             {
+                _logger.LogWarning("Unable to insert seed data");
                 return false;
             }
         }
