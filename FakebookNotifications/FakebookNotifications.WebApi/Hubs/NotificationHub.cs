@@ -21,7 +21,10 @@ namespace FakebookNotifications.WebApi.Hubs
             _userRepo = userRepo;
             _noteRepo = noteRepo;
         }
-
+        /// <summary>
+        /// Method that runs on new connections to the hub, grabs user's email from access token, adds connection to that user's db entity, and sends outstanding unread notofications
+        /// </summary>
+        /// <returns></returns>
         public override async Task OnConnectedAsync()
         {
             if (Context.UserIdentifier != null)
@@ -47,7 +50,11 @@ namespace FakebookNotifications.WebApi.Hubs
             }
             await base.OnConnectedAsync();
         }
-
+        /// <summary>
+        /// Removes connection Id from user db entity on disconnect from hub
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             if (Context.UserIdentifier != null)
@@ -61,7 +68,12 @@ namespace FakebookNotifications.WebApi.Hubs
             }
             await base.OnDisconnectedAsync(exception);
         }
-
+        /// <summary>
+        /// Creates a notification on a new follow and notify the followed user
+        /// </summary>
+        /// <param name="user"> email of the user following</param>
+        /// <param name="followed">email of the user being followerd</param>
+        /// <returns></returns>
         public async Task AddFollowerAsync(string user, string followed)
         {
             Domain.Models.Notification newNotification = new Domain.Models.Notification
@@ -75,20 +87,32 @@ namespace FakebookNotifications.WebApi.Hubs
             await _noteRepo.CreateNotificationAsync(newNotification);
             await SendUserGroupAsync(followedUser, newNotification);
         }
-
+        /// <summary>
+        /// Method to get all unread notifications from our db for a given user
+        /// </summary>
+        /// <param name="userEmail">email of the user to be checked for notifications</param>
+        /// <returns></returns>
         public async Task GetTotalUnreadNotifications(string userEmail)
         {
             List<Domain.Models.Notification> notifications = await _noteRepo.GetAllUnreadNotificationsAsync(userEmail);
             Domain.Models.User thisUser = await _userRepo.GetUserAsync(userEmail);
             await SendMultipleUserGroupAsync(thisUser, notifications);
         }
-
+        /// <summary>
+        /// method to get the number unread notifications for a given user
+        /// </summary>
+        /// <param name="userEmail">email of user to check</param>
+        /// <returns></returns>
         public async Task<int> GetUnreadCountAsync(string userEmail)
         {
             int count = await _noteRepo.GetTotalUnreadNotificationsAsync(userEmail);
             return count;
         }
-
+        /// <summary>
+        /// method to create a new notification for whatever type needed, send notification to user if actively connected
+        /// </summary>
+        /// <param name="notification">takes in a notification object to add to our db</param>
+        /// <returns></returns>
         public async Task CreateNotification(Domain.Models.Notification notification)
         {
             //Create User
@@ -117,7 +141,11 @@ namespace FakebookNotifications.WebApi.Hubs
                 throw new Exception("Error creating notification");
             }
         }
-
+        /// <summary>
+        /// updates an exisiting notification for edits
+        /// </summary>
+        /// <param name="notification">takes in a notification object</param>
+        /// <returns></returns>
         public async Task UpdateNotification(Domain.Models.Notification notification)
         {
             //Create notification
@@ -140,7 +168,12 @@ namespace FakebookNotifications.WebApi.Hubs
                 throw new Exception("Error creating notification");
             }
         }
-
+        /// <summary>
+        /// Sends notification to all connected users
+        /// </summary>
+        /// <param name="user">email of trigger user</param>
+        /// <param name="notification">notification to be sent as string</param>
+        /// <returns></returns>
         public async Task SendAll(string user, string notification)
         {
             await Clients.All.SendAsync("SendAll", user, notification);
@@ -182,7 +215,12 @@ namespace FakebookNotifications.WebApi.Hubs
                 throw new NullReferenceException();
             }
         }
-
+        /// <summary>
+        /// Method to send notifcications to every active connection of a given user
+        /// </summary>
+        /// <param name="user">user object for the notification to be sent to</param>
+        /// <param name="notifications">notification object to be sent</param>
+        /// <returns></returns>
         public async Task SendMultipleUserGroupAsync(Domain.Models.User user, List<Domain.Models.Notification> notifications)
         {
             foreach (string connection in user.Connections)
@@ -195,7 +233,11 @@ namespace FakebookNotifications.WebApi.Hubs
             }
 
         }
-
+        /// <summary>
+        /// method to mark notifications as read, sets all notifications with the given id's HasBeenRead = true;
+        /// </summary>
+        /// <param name="noteIds">list of string ids of notifications</param>
+        /// <returns></returns>
         public async Task MarkNotificationAsReadAsync(IEnumerable<string> noteIds)
         {
             if (noteIds != null)
