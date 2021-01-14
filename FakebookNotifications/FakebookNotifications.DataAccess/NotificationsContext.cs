@@ -24,8 +24,8 @@ namespace FakebookNotifications.DataAccess
             _settings = settings.Value;
 
             //Create client and db objects from settings
-            var client = new MongoClient("mongodb://localhost:27017");
-            _database = client.GetDatabase("notificationsDb3");
+            var client = new MongoClient(_settings.ConnectionString);
+            _database = client.GetDatabase(_settings.DatabaseName);
             var userCol = User;
             var noteCol = Notifications;
 
@@ -46,7 +46,7 @@ namespace FakebookNotifications.DataAccess
         {
             get
             {
-                return _database.GetCollection<User>("User");
+                return _database.GetCollection<User>(_settings.UserCollection);
             }
         }
 
@@ -55,7 +55,7 @@ namespace FakebookNotifications.DataAccess
         {
             get
             {
-                return _database.GetCollection<Notification>("Notifications");
+                return _database.GetCollection<Notification>(_settings.NotificationsCollection);
             }
         }
         public bool ClearNotifications(IMongoCollection<User> userCol, IMongoCollection<Notification> noteCol)
