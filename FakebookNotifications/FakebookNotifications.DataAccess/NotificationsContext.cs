@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 
 namespace FakebookNotifications.DataAccess
 {
@@ -32,8 +33,11 @@ namespace FakebookNotifications.DataAccess
 
             ClearNotifications(userCol, noteCol);
 
+            if (userCol.CountDocuments(new BsonDocument()) == 0)
+            {
+                SeedData(userCol, noteCol);
+            };
            
-            SeedData(userCol, noteCol);
            
 
         }
