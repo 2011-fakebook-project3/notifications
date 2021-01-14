@@ -33,11 +33,12 @@ namespace FakebookNotifications.DataAccess
 
             ClearNotifications(userCol, noteCol);
 
+
             if (userCol.CountDocuments(new BsonDocument()) == 0)
             {
                 SeedData(userCol, noteCol);
             };
-           
+
            
 
         }
