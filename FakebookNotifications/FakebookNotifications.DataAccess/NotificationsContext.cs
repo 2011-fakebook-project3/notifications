@@ -32,10 +32,9 @@ namespace FakebookNotifications.DataAccess
 
             ClearNotifications(userCol, noteCol);
 
-            if (noteCol == null)
-            {
-                SeedData(userCol, noteCol);
-            }
+           
+            SeedData(userCol, noteCol);
+           
 
         }
 
