@@ -1,11 +1,11 @@
 ﻿using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.Domain.Interfaces;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using MongoDB.Bson;
+using System.Collections.Generic;
 
 namespace FakebookNotifications.DataAccess
 {
@@ -17,29 +17,27 @@ namespace FakebookNotifications.DataAccess
 
         public NotificationsContext(IOptions<NotificationsDatabaseSettings> settings, ILogger<NotificationsContext> logger)
         {
+
             //setup logger
             _logger = logger;
-
             //assign settings to object to be used is other methods
             _settings = settings.Value;
 
             //Create client and db objects from settings
-            var client = new MongoClient(_settings.ConnectionString);
-            _database = client.GetDatabase(_settings.DatabaseName);
-
-            //Seed data if empty
+            var client = new MongoClient("mongodb://localhost:27017");
+            _database = client.GetDatabase("notificationsDb3");
             var userCol = User;
             var noteCol = Notifications;
 
-            ClearNotifications(userCol, noteCol);
+            //ClearNotifications(userCol, noteCol);
 
 
             if (userCol.CountDocuments(new BsonDocument()) == 0)
             {
-                SeedData(userCol, noteCol);
+                SeedUsers(userCol);
             };
 
-           
+            SeedNotes(noteCol);
 
         }
 
@@ -48,7 +46,7 @@ namespace FakebookNotifications.DataAccess
         {
             get
             {
-                return _database.GetCollection<User>(_settings.UserCollection);
+                return _database.GetCollection<User>("User");
             }
         }
 
@@ -57,11 +55,9 @@ namespace FakebookNotifications.DataAccess
         {
             get
             {
-                return _database.GetCollection<Notification>(_settings.NotificationsCollection);
+                return _database.GetCollection<Notification>("Notifications");
             }
         }
-
-        //Clear previous seeded notifications
         public bool ClearNotifications(IMongoCollection<User> userCol, IMongoCollection<Notification> noteCol)
         {
             _logger.LogInformation("Clearing previous seed data");
@@ -76,7 +72,7 @@ namespace FakebookNotifications.DataAccess
                 userCol.DeleteOne(x => x.Email == "testaccount@gmail.com");
 
                 //remove the users notes
-                foreach(var note in davidNotes)
+                foreach (var note in davidNotes)
                 {
                     noteCol.DeleteOne(x => x.Id == note.Id);
                 }
@@ -88,7 +84,7 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch(Exception ex)
+            catch (System.Exception ex)
             {
                 _logger.LogWarning(ex, "Unable to clear seed data");
                 return false;
@@ -96,7 +92,7 @@ namespace FakebookNotifications.DataAccess
         }
 
         //Seed some initial data
-        public bool SeedData(IMongoCollection<User> userCol, IMongoCollection<Notification> noteCol)
+        public bool SeedUsers(IMongoCollection<User> userCol)
         {
             _logger.LogInformation("Attempting to insert seed data");
 
@@ -111,6 +107,21 @@ namespace FakebookNotifications.DataAccess
                 //insert seed users
                 userCol.InsertOne(user1);
                 userCol.InsertOne(user2);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Unable to insert seed data");
+                return false;
+            }
+        }
+
+        public bool SeedNotes(IMongoCollection<Notification> noteCol)
+        {
+            _logger.LogInformation("Attempting to insert seed data");
+
+            try
+            {
 
                 //Create Notifications
                 Notification note1 = new Notification()
@@ -154,7 +165,7 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Unable to insert seed data");
                 return false;
