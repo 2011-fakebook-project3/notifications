@@ -126,7 +126,7 @@ namespace FakebookNotifications.DataAccess
                 //Create Notifications
                 Notification note1 = new Notification()
                 {
-                    Type = new KeyValuePair<string, int>("Post", 1),
+                    Type = new KeyValuePair<string, int>("post", 1),
                     LoggedInUserId = "david.barnes@revature.net",
                     TriggerUserId = "testaccount@gmail.com",
                     HasBeenRead = false,
@@ -134,7 +134,7 @@ namespace FakebookNotifications.DataAccess
                 };
                 Notification note2 = new Notification()
                 {
-                    Type = new KeyValuePair<string, int>("Follow", 0),
+                    Type = new KeyValuePair<string, int>("follow", 0),
                     LoggedInUserId = "david.barnes@revature.net",
                     TriggerUserId = "testaccount@gmail.com",
                     HasBeenRead = true,
@@ -142,7 +142,7 @@ namespace FakebookNotifications.DataAccess
                 };
                 Notification note3 = new Notification()
                 {
-                    Type = new KeyValuePair<string, int>("Like", 15),
+                    Type = new KeyValuePair<string, int>("like", 15),
                     LoggedInUserId = "david.barnes@revature.net",
                     TriggerUserId = "testaccount@gmail.com",
                     HasBeenRead = false,
@@ -150,7 +150,7 @@ namespace FakebookNotifications.DataAccess
                 };
                 Notification note4 = new Notification()
                 {
-                    Type = new KeyValuePair<string, int>("Post", 4),
+                    Type = new KeyValuePair<string, int>("post", 4),
                     LoggedInUserId = "testaccount@gmail.com",
                     TriggerUserId = "david.barnes@revature.net",
                     HasBeenRead = false,
