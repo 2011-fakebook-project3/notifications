@@ -36,10 +36,10 @@ namespace FakebookNotifications.DataAccess
             {
                 SeedUsers(userCol);
             };
-            if (noteCol.CountDocuments(new BsonDocument()) > 20)
-            {
-                ClearNotifications(noteCol);
-            }
+            //if (noteCol.CountDocuments(new BsonDocument()) > 20)
+            //{
+            //    ClearNotifications(noteCol);
+            //}
             SeedNotes(noteCol);
 
         }
