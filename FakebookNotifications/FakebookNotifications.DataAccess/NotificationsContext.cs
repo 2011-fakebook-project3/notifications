@@ -36,7 +36,10 @@ namespace FakebookNotifications.DataAccess
             {
                 SeedUsers(userCol);
             };
-
+            if (noteCol.CountDocuments(new BsonDocument()) > 20)
+            {
+                ClearNotifications(noteCol);
+            }
             SeedNotes(noteCol);
 
         }
@@ -58,7 +61,7 @@ namespace FakebookNotifications.DataAccess
                 return _database.GetCollection<Notification>(_settings.NotificationsCollection);
             }
         }
-        public bool ClearNotifications(IMongoCollection<User> userCol, IMongoCollection<Notification> noteCol)
+        public bool ClearNotifications(IMongoCollection<Notification> noteCol)
         {
             _logger.LogInformation("Clearing previous seed data");
 
@@ -67,10 +70,7 @@ namespace FakebookNotifications.DataAccess
                 List<Notification> davidNotes = noteCol.Find(x => x.LoggedInUserId == "david.barnes@revature.net").ToList();
                 List<Notification> testNotes = noteCol.Find(x => x.LoggedInUserId == "testaccount@gmail.com").ToList();
 
-                //remove users
-                userCol.DeleteOne(x => x.Email == "david.barnes@revature.net");
-                userCol.DeleteOne(x => x.Email == "testaccount@gmail.com");
-
+               
                 //remove the users notes
                 foreach (var note in davidNotes)
                 {
