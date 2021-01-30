@@ -1,22 +1,22 @@
-﻿using FakebookNotifications.DataAccess;
-using FakebookNotifications.DataAccess.Models;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using Moq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
+using FakebookNotifications.DataAccess;
+using FakebookNotifications.DataAccess.Models;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using Moq;
+using Xunit;
 
 namespace FakebookNotifications.Testing
 {
     public class NotificationRepoTests
     {
-        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
-        private NotificationsDatabaseSettings settings;
-        private NullLogger<NotificationsContext> _logger;
+        private readonly Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
+        private readonly NotificationsDatabaseSettings settings;
+        private readonly NullLogger<NotificationsContext> _logger;
 
         public NotificationRepoTests()
         {
@@ -36,16 +36,16 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock collection
-            var mockCollection = new Mock<IMongoCollection<Notification>>();
+            Mock<IMongoCollection<Notification>> mockCollection = new();
 
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object, _logger);
+            NotificationsContext context = new(_mockSettings.Object, _logger);
 
             //Create repo to work with
-            var repo = new NotificationsRepo(context);
+            NotificationsRepo repo = new(context);
 
             //Act
             var result = await repo.GetAllNotificationsAsync();
@@ -59,19 +59,19 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock collection
-            var mockCollection = new Mock<IMongoCollection<Notification>>();
+            Mock<IMongoCollection<Notification>> mockCollection = new();
 
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object, _logger);
+            NotificationsContext context = new(_mockSettings.Object, _logger);
 
             //Create repo to work with
-            var repo = new NotificationsRepo(context);
+            NotificationsRepo repo = new(context);
 
             //Notification to create
-            Domain.Models.Notification notification = new Domain.Models.Notification()
+            Domain.Models.Notification notification = new()
             {
                 Id = "12345",
                 Type = new KeyValuePair<string, int>("Follow", 12345),
@@ -93,16 +93,16 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock collection
-            var mockCollection = new Mock<IMongoCollection<Notification>>();
+            Mock<IMongoCollection<Notification>> mockCollection = new();
 
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object, _logger);
+            NotificationsContext context = new(_mockSettings.Object, _logger);
 
             //Create repo to work with
-            var repo = new NotificationsRepo(context);
+            NotificationsRepo repo = new(context);
 
             //Updated Notification
             var notification = await repo.GetAllUnreadNotificationsAsync("ryan@gmail.com");
@@ -121,16 +121,16 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock collection
-            var mockCollection = new Mock<IMongoCollection<Notification>>();
+            Mock<IMongoCollection<Notification>> mockCollection = new();
 
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object, _logger);
+            NotificationsContext context = new(_mockSettings.Object, _logger);
 
             //Create repo to work with
-            var repo = new NotificationsRepo(context);
+            NotificationsRepo repo = new(context);
 
             //notification to delete
             var notification = await repo.GetAllNotificationsAsync();
@@ -148,16 +148,16 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock collection
-            var mockCollection = new Mock<IMongoCollection<Notification>>();
+            Mock<IMongoCollection<Notification>> mockCollection = new();
 
             ///Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object, _logger);
+            NotificationsContext context = new(_mockSettings.Object, _logger);
 
             //Create repo to work with
-            var repo = new NotificationsRepo(context);
+            NotificationsRepo repo = new(context);
 
             //Act
             var result = await repo.GetAllUnreadNotificationsAsync("ryan@gmail.com");
@@ -171,17 +171,17 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock collection
-            var mockCollection = new Mock<IMongoCollection<Notification>>();
+            Mock<IMongoCollection<Notification>> mockCollection = new();
 
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object, _logger);
+            NotificationsContext context = new(_mockSettings.Object, _logger);
 
             //Create repo to work with
-            var repo = new NotificationsRepo(context);
-            var newNote = new Domain.Models.Notification
+            NotificationsRepo repo = new(context);
+            Domain.Models.Notification newNote = new()
             {
                 LoggedInUserId = "test3@test.com",
                 TriggerUserId = "test@test.com",
@@ -208,16 +208,16 @@ namespace FakebookNotifications.Testing
         {
             //Arrange
             //Mock collection
-            var mockCollection = new Mock<IMongoCollection<Notification>>();
+            Mock<IMongoCollection<Notification>> mockCollection = new();
 
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Mock context
-            var context = new NotificationsContext(_mockSettings.Object, _logger);
+            NotificationsContext context = new(_mockSettings.Object, _logger);
 
             //Create repo to work with
-            var repo = new NotificationsRepo(context);
+            NotificationsRepo repo = new(context);
 
             //Act
             var result = await repo.GetNotificationAsync("5ffdc4e76c7bf518ce77cc1a");

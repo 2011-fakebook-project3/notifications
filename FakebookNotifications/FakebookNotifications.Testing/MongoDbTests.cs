@@ -9,9 +9,9 @@ namespace FakebookNotifications.Testing
 {
     public class MongoDbTests
     {
-        private Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
-        private NotificationsDatabaseSettings settings;
-        private NullLogger<NotificationsContext> _logger;
+        private readonly Mock<IOptions<NotificationsDatabaseSettings>> _mockSettings;
+        private readonly NotificationsDatabaseSettings settings;
+        private readonly NullLogger<NotificationsContext> _logger;
 
         //Constructor to initialize mocked components before each test
         public MongoDbTests()
@@ -36,7 +36,7 @@ namespace FakebookNotifications.Testing
             _mockSettings.Setup(s => s.Value).Returns(settings);
 
             //Act
-            var context = new NotificationsContext(_mockSettings.Object, _logger); //create context and test constructor
+            NotificationsContext context = new(_mockSettings.Object, _logger); //create context and test constructor
 
             //Assert
             //Test is successfull if no exception
@@ -49,12 +49,12 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
-            var context = new NotificationsContext(_mockSettings.Object, _logger); //Create context
+            NotificationsContext context = new(_mockSettings.Object, _logger); //Create context
 
             //Act
             var notificationCollection = context.Notifications; //Get collection from context
 
-            //Assert 
+            //Assert
             Assert.NotNull(notificationCollection);
         }
 
@@ -65,12 +65,12 @@ namespace FakebookNotifications.Testing
             //Arrange
             //Setup Context Settings
             _mockSettings.Setup(s => s.Value).Returns(settings);
-            var context = new NotificationsContext(_mockSettings.Object, _logger); //Create context
+            NotificationsContext context = new(_mockSettings.Object, _logger); //Create context
 
             //Act
             var userCollection = context.User; //Get collection from context
 
-            //Assert 
+            //Assert
             Assert.NotNull(userCollection);
         }
     }

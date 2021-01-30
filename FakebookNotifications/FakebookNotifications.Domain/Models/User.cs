@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FakebookNotifications.Domain.Models
 {
@@ -9,7 +8,6 @@ namespace FakebookNotifications.Domain.Models
         {
             Connections = new List<string>();
         }
-        private string _id;
 
         /// <summary>
         /// Assigns _id an Id number, after verifying it.
@@ -27,8 +25,6 @@ namespace FakebookNotifications.Domain.Models
             Email = email;
         }
 
-
-
         /// <summary>
         /// Checks whether a user is a valid object or not.
         /// </summary>
@@ -37,7 +33,7 @@ namespace FakebookNotifications.Domain.Models
         /// </returns>
         public bool IsValid()
         {
-            return !(String.IsNullOrEmpty(Id) || String.IsNullOrEmpty(Email));
+            return !(string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Email));
         }
     }
 }

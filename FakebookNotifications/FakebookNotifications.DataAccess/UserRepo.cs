@@ -1,9 +1,9 @@
-﻿using FakebookNotifications.DataAccess.Models;
-using FakebookNotifications.Domain.Interfaces;
-using MongoDB.Driver;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.Domain.Interfaces;
+using MongoDB.Driver;
 
 namespace FakebookNotifications.DataAccess
 {
@@ -27,7 +27,7 @@ namespace FakebookNotifications.DataAccess
             User dbUser = user.FirstOrDefault();
 
             // Create the domain model version of the user and return it.
-            Domain.Models.User domainUser = new Domain.Models.User()
+            Domain.Models.User domainUser = new()
             {
                 Id = dbUser.Id,
                 Email = dbUser.Email,
@@ -41,7 +41,7 @@ namespace FakebookNotifications.DataAccess
             try
             {
                 // Create an entity version of the user.
-                User newuser = new User()
+                User newuser = new()
                 {
                     Email = user.Email
                 };
@@ -77,7 +77,7 @@ namespace FakebookNotifications.DataAccess
             try
             {
                 // Create an entity version of the user.
-                User updatedUser = new User()
+                User updatedUser = new()
                 {
                     Id = user.Id,
                     Email = user.Email

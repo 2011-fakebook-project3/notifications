@@ -1,6 +1,6 @@
-﻿using FakebookNotifications.Domain.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using FakebookNotifications.Domain.Models;
 
 namespace FakebookNotifications.Domain.Interfaces
 {
@@ -13,7 +13,8 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains an IEnumerable of all Notifications.
         /// </returns>
-        Task<List<Domain.Models.Notification>> GetAllNotificationsAsync();
+        Task<List<Notification>> GetAllNotificationsAsync();
+
         /// <summary>
         ///  Create a Notification and add to the databse.
         /// </summary>
@@ -21,7 +22,8 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a bool that returns true on a successful create.
         /// </returns>
-        Task<bool> CreateNotificationAsync(Domain.Models.Notification notification);
+        Task<bool> CreateNotificationAsync(Notification notification);
+
         /// <summary>
         /// Delete a Notification from the database.
         /// </summary>
@@ -29,7 +31,8 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a bool that returns true on a successful delete.
         /// </returns>
-        Task<bool> DeleteNotificationAsync(Domain.Models.Notification notification);
+        Task<bool> DeleteNotificationAsync(Notification notification);
+
         /// <summary>
         /// Updates a notification in the database
         /// </summary>
@@ -37,13 +40,15 @@ namespace FakebookNotifications.Domain.Interfaces
         /// A task that represents the asynchronous operation.
         /// The task result contains a bool that returns true on a successful delete.
         /// </returns>
-        Task<bool> UpdateNotificationAsync(Domain.Models.Notification notification);
+        Task<bool> UpdateNotificationAsync(Notification notification);
+
         /// <summary>
         /// Method to get all unread notifications
         /// </summary>
         /// <param name="userEmail">email to search notifications for as string</param>
         /// <returns>A list of notifications</returns>
         Task<List<Notification>> GetAllUnreadNotificationsAsync(string userEmail);
+
         /// <summary>
         /// Method to get unread notification count
         /// </summary>
@@ -51,12 +56,13 @@ namespace FakebookNotifications.Domain.Interfaces
         /// <returns>Unread notification count as an int</returns>
         Task<int> GetTotalUnreadNotificationsAsync(string userEmail);
 
+
         /// <summary>
         /// Method to get a single notification by Id
         /// </summary>
         /// <param name="id">takes a string to match to a mongoDb objectID</param>
         /// <returns>Domain model notification</returns>
-        Task<Domain.Models.Notification> GetNotificationAsync(string id);
+        Task<Notification> GetNotificationAsync(string id);
     }
 
 

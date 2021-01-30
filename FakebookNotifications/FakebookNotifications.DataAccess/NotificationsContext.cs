@@ -1,17 +1,17 @@
-﻿using FakebookNotifications.DataAccess.Models;
-using FakebookNotifications.Domain.Interfaces;
-using System;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
-using MongoDB.Bson;
+﻿using System;
 using System.Collections.Generic;
+using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace FakebookNotifications.DataAccess
 {
     public class NotificationsContext : INotificationsContext
     {
-        private IMongoDatabase _database = null;
+        private readonly IMongoDatabase _database = null;
         private readonly NotificationsDatabaseSettings _settings;
         private readonly ILogger<NotificationsContext> _logger;
 
@@ -24,7 +24,7 @@ namespace FakebookNotifications.DataAccess
             _settings = settings.Value;
 
             //Create client and db objects from settings
-            var client = new MongoClient(_settings.ConnectionString);
+            MongoClient client = new(_settings.ConnectionString);
             _database = client.GetDatabase(_settings.DatabaseName);
             var userCol = User;
             var noteCol = Notifications;
@@ -45,22 +45,10 @@ namespace FakebookNotifications.DataAccess
         }
 
         //Method to get the user collection
-        public IMongoCollection<User> User
-        {
-            get
-            {
-                return _database.GetCollection<User>(_settings.UserCollection);
-            }
-        }
+        public IMongoCollection<User> User => _database.GetCollection<User>(_settings.UserCollection);
 
         //Method to get the notification collection
-        public IMongoCollection<Notification> Notifications
-        {
-            get
-            {
-                return _database.GetCollection<Notification>(_settings.NotificationsCollection);
-            }
-        }
+        public IMongoCollection<Notification> Notifications => _database.GetCollection<Notification>(_settings.NotificationsCollection);
         public bool ClearNotifications(IMongoCollection<Notification> noteCol)
         {
             _logger.LogInformation("Clearing previous seed data");
@@ -70,7 +58,7 @@ namespace FakebookNotifications.DataAccess
                 List<Notification> davidNotes = noteCol.Find(x => x.LoggedInUserId == "david.barnes@revature.net").ToList();
                 List<Notification> testNotes = noteCol.Find(x => x.LoggedInUserId == "testaccount@gmail.com").ToList();
 
-               
+
                 //remove the users notes
                 foreach (var note in davidNotes)
                 {
@@ -84,7 +72,7 @@ namespace FakebookNotifications.DataAccess
 
                 return true;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Unable to clear seed data");
                 return false;
@@ -99,10 +87,14 @@ namespace FakebookNotifications.DataAccess
             try
             {
                 //Create seed users
-                User user1 = new User();
-                user1.Email = "david.barnes@revature.net";
-                User user2 = new User();
-                user2.Email = "testaccount@gmail.com";
+                User user1 = new()
+                {
+                    Email = "david.barnes@revature.net"
+                };
+                User user2 = new()
+                {
+                    Email = "testaccount@gmail.com"
+                };
 
                 //insert seed users
                 userCol.InsertOne(user1);
@@ -124,7 +116,7 @@ namespace FakebookNotifications.DataAccess
             {
 
                 //Create Notifications
-                Notification note1 = new Notification()
+                Notification note1 = new()
                 {
                     Type = new KeyValuePair<string, int>("post", 1),
                     LoggedInUserId = "david.barnes@revature.net",
@@ -132,7 +124,7 @@ namespace FakebookNotifications.DataAccess
                     HasBeenRead = false,
                     Date = DateTime.Now
                 };
-                Notification note2 = new Notification()
+                Notification note2 = new()
                 {
                     Type = new KeyValuePair<string, int>("follow", 0),
                     LoggedInUserId = "david.barnes@revature.net",
@@ -140,7 +132,7 @@ namespace FakebookNotifications.DataAccess
                     HasBeenRead = true,
                     Date = DateTime.Now
                 };
-                Notification note3 = new Notification()
+                Notification note3 = new()
                 {
                     Type = new KeyValuePair<string, int>("like", 15),
                     LoggedInUserId = "david.barnes@revature.net",
@@ -148,7 +140,7 @@ namespace FakebookNotifications.DataAccess
                     HasBeenRead = false,
                     Date = DateTime.Now
                 };
-                Notification note4 = new Notification()
+                Notification note4 = new()
                 {
                     Type = new KeyValuePair<string, int>("post", 4),
                     LoggedInUserId = "testaccount@gmail.com",
