@@ -120,7 +120,7 @@ namespace FakebookNotifications.Testing
             // assert
             // checks to see if a message was sent to all clients, once and the content is what is expected
             mockClients.Verify(c => c.All, Times.Once);
-            mockClients.Verify(c => c.All.SendCoreAsync("SendAll", It.Is<object[]>(o => o != null && o[0] == "user" && o[1] == "test"), default),
+            mockClients.Verify(c => c.All.SendCoreAsync("SendAll", It.Is<object[]>(o => o != null && (o[0] as string) == "user" && (o[1] as string) == "test"), default),
                 Times.Once);
         }
 
