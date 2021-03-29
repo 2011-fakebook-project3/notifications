@@ -1,6 +1,6 @@
-﻿using FakebookNotifications.Domain.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using FakebookNotifications.Domain.Models;
 
 namespace FakebookNotifications.WebApi.HubInterfaces
 {
@@ -21,7 +21,7 @@ namespace FakebookNotifications.WebApi.HubInterfaces
         //Send to specific user
         Task SendUser(User user, Notification notifcations);
 
-        Task SendMultipleUserGroupAsync(Domain.Models.User user, List<Domain.Models.Notification> notifications);
+        Task SendMultipleUserGroupAsync(User user, List<Notification> notifications);
 
         Task GetTotalUnreadNotifications(string userEmail);
 

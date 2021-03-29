@@ -1,9 +1,9 @@
-﻿using FakebookNotifications.Domain.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FakebookNotifications.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace FakebookNotifications.WebApi.Hubs
@@ -55,7 +55,7 @@ namespace FakebookNotifications.WebApi.Hubs
         /// </summary>
         /// <param name="exception"></param>
         /// <returns></returns>
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
             if (Context.UserIdentifier != null)
             {
@@ -76,7 +76,7 @@ namespace FakebookNotifications.WebApi.Hubs
         /// <returns></returns>
         public async Task AddFollowerAsync(string user, string followed)
         {
-            Domain.Models.Notification newNotification = new Domain.Models.Notification
+            Domain.Models.Notification newNotification = new()
             {
                 HasBeenRead = false,
                 LoggedInUserId = followed,
@@ -119,13 +119,13 @@ namespace FakebookNotifications.WebApi.Hubs
             var user = await _userRepo.GetUserAsync(notification.LoggedInUserId);
 
             //Create notification
-            Domain.Models.Notification domainNotification = new Domain.Models.Notification()
+            Domain.Models.Notification domainNotification = new()
             {
                 Type = notification.Type,
                 LoggedInUserId = notification.LoggedInUserId,
                 TriggerUserId = notification.TriggerUserId,
                 HasBeenRead = false,
-                Date = (DateTime)notification.Date
+                Date = notification.Date
             };
 
             //Add to db
@@ -149,14 +149,14 @@ namespace FakebookNotifications.WebApi.Hubs
         public async Task UpdateNotification(Domain.Models.Notification notification)
         {
             //Create notification
-            Domain.Models.Notification domainNotification = new Domain.Models.Notification()
+            Domain.Models.Notification domainNotification = new()
             {
                 Id = notification.Id,
                 Type = notification.Type,
                 LoggedInUserId = notification.LoggedInUserId,
                 TriggerUserId = notification.TriggerUserId,
                 HasBeenRead = notification.HasBeenRead,
-                Date = (DateTime)notification.Date
+                Date = notification.Date
             };
 
             //update db
@@ -188,7 +188,6 @@ namespace FakebookNotifications.WebApi.Hubs
         //Send a notification to the caller
         public async Task SendCaller(Domain.Models.Notification notification)
         {
-            var con = this.Context;
             await Clients.Caller.SendAsync("SendCaller", notification);
         }
 

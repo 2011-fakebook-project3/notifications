@@ -1,10 +1,10 @@
-﻿using FakebookNotifications.DataAccess.Models;
-using FakebookNotifications.Domain.Interfaces;
-using MongoDB.Driver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.Domain.Interfaces;
+using MongoDB.Driver;
 
 namespace FakebookNotifications.DataAccess
 {
@@ -24,11 +24,11 @@ namespace FakebookNotifications.DataAccess
             // Get all the notifications from the database
             IAsyncCursor<Notification> all = await _dbCollection.FindAsync(_ => true);
             var dbList = await all.ToListAsync();
-            List<Domain.Models.Notification> domainNotes = new List<Domain.Models.Notification>();
+            List<Domain.Models.Notification> domainNotes = new();
             foreach (Notification note in dbList)
             {
 
-                Domain.Models.Notification newNote = new Domain.Models.Notification
+                Domain.Models.Notification newNote = new()
                 {
                     Type = note.Type,
                     LoggedInUserId = note.LoggedInUserId,
@@ -47,7 +47,7 @@ namespace FakebookNotifications.DataAccess
             try
             {
                 // Create a new notification based on the passed in Notification.
-                Notification newnotification = new Notification()
+                Notification newnotification = new()
                 {
                     HasBeenRead = notification.HasBeenRead,
                     TriggerUserId = notification.TriggerUserId,
@@ -85,14 +85,14 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<bool> UpdateNotificationAsync(Domain.Models.Notification notification)
         {
-            Notification dbNotification = new Notification()
+            Notification dbNotification = new()
             {
                 Id = notification.Id,
                 Type = notification.Type,
                 LoggedInUserId = notification.LoggedInUserId,
                 TriggerUserId = notification.TriggerUserId,
                 HasBeenRead = notification.HasBeenRead,
-                Date = (DateTime)notification.Date
+                Date = notification.Date
             };
 
             try
@@ -111,14 +111,14 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<List<Domain.Models.Notification>> GetAllUnreadNotificationsAsync(string userEmail)
         {
-            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
-            List<DataAccess.Models.Notification> dbNotes = new List<DataAccess.Models.Notification>();
+            IAsyncCursor<Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
+            List<Notification> dbNotes = new();
             dbNotes = await notifications.ToListAsync();
-            List<Domain.Models.Notification> domainNotes = new List<Domain.Models.Notification>();
+            List<Domain.Models.Notification> domainNotes = new();
             foreach (Notification note in dbNotes)
             {
 
-                Domain.Models.Notification newNote = new Domain.Models.Notification
+                Domain.Models.Notification newNote = new()
                 {
                     Type = note.Type,
                     LoggedInUserId = note.LoggedInUserId,
@@ -135,8 +135,8 @@ namespace FakebookNotifications.DataAccess
 
         public async Task<int> GetTotalUnreadNotificationsAsync(string userEmail)
         {
-            IAsyncCursor<DataAccess.Models.Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
-            return notifications.ToList().Count();
+            IAsyncCursor<Notification> notifications = await _dbCollection.FindAsync(x => x.LoggedInUserId == userEmail && x.HasBeenRead == false);
+            return notifications.ToList().Count;
         }
 
         public async Task<Domain.Models.Notification> GetNotificationAsync(string id)
@@ -144,7 +144,7 @@ namespace FakebookNotifications.DataAccess
             IAsyncCursor<Notification> notification = await _dbCollection.FindAsync(x => x.Id == id);
             var dbNote = await notification.FirstAsync();
 
-            Domain.Models.Notification domainNote = new Domain.Models.Notification()
+            Domain.Models.Notification domainNote = new()
             {
                 Id = dbNote.Id,
                 Type = dbNote.Type,
