@@ -55,7 +55,7 @@ namespace FakebookNotifications.WebApi
             }
             ).AddJwtBearer(options =>
             {
-                options.Authority = "https://dev-2875280.okta.com/oauth2/default";
+                options.Authority = "https://revature-p3.okta.com/oauth2/default";
                 options.Audience = "api://default";
                 options.Events = new JwtBearerEvents
                 {

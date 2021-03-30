@@ -55,7 +55,7 @@ namespace FakebookNotifications.DataAccess
 
             try
             {
-                List<Notification> davidNotes = noteCol.Find(x => x.LoggedInUserId == "david.barnes@revature.net").ToList();
+                List<Notification> davidNotes = noteCol.Find(x => x.LoggedInUserId == "john.werner@revature.net").ToList();
                 List<Notification> testNotes = noteCol.Find(x => x.LoggedInUserId == "testaccount@gmail.com").ToList();
 
 
@@ -89,7 +89,7 @@ namespace FakebookNotifications.DataAccess
                 //Create seed users
                 User user1 = new()
                 {
-                    Email = "david.barnes@revature.net"
+                    Email = "john.werner@revature.net"
                 };
                 User user2 = new()
                 {
@@ -119,7 +119,7 @@ namespace FakebookNotifications.DataAccess
                 Notification note1 = new()
                 {
                     Type = new KeyValuePair<string, int>("post", 1),
-                    LoggedInUserId = "david.barnes@revature.net",
+                    LoggedInUserId = "john.werner@revature.net",
                     TriggerUserId = "testaccount@gmail.com",
                     HasBeenRead = false,
                     Date = DateTime.Now
@@ -127,7 +127,7 @@ namespace FakebookNotifications.DataAccess
                 Notification note2 = new()
                 {
                     Type = new KeyValuePair<string, int>("follow", 0),
-                    LoggedInUserId = "david.barnes@revature.net",
+                    LoggedInUserId = "john.werner@revature.net",
                     TriggerUserId = "testaccount@gmail.com",
                     HasBeenRead = true,
                     Date = DateTime.Now
@@ -135,7 +135,7 @@ namespace FakebookNotifications.DataAccess
                 Notification note3 = new()
                 {
                     Type = new KeyValuePair<string, int>("like", 15),
-                    LoggedInUserId = "david.barnes@revature.net",
+                    LoggedInUserId = "john.werner@revature.net",
                     TriggerUserId = "testaccount@gmail.com",
                     HasBeenRead = false,
                     Date = DateTime.Now
@@ -144,7 +144,7 @@ namespace FakebookNotifications.DataAccess
                 {
                     Type = new KeyValuePair<string, int>("post", 4),
                     LoggedInUserId = "testaccount@gmail.com",
-                    TriggerUserId = "david.barnes@revature.net",
+                    TriggerUserId = "john.werner@revature.net",
                     HasBeenRead = false,
                     Date = DateTime.Now
                 };
