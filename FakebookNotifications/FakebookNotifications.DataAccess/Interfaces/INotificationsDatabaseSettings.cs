@@ -1,4 +1,4 @@
-﻿namespace FakebookNotifications.DataAccess.Models.Interfaces
+﻿namespace FakebookNotifications.DataAccess.Interfaces
 {
     public interface INotificationsDatabaseSettings
     {
