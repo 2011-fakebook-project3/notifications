@@ -1,4 +1,4 @@
-﻿using FakebookNotifications.DataAccess.Models.Interfaces;
+﻿using FakebookNotifications.DataAccess.Interfaces;
 
 namespace FakebookNotifications.DataAccess.Models
 {

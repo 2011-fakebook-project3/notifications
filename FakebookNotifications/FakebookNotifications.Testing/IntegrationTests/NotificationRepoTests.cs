@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.DataAccess.Repositories;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Moq;
 using Xunit;
 
-namespace FakebookNotifications.Testing
+namespace FakebookNotifications.Testing.IntegrationTests
 {
     public class NotificationRepoTests
     {

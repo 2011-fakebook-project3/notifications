@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FakebookNotifications.DataAccess;
 using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.DataAccess.Repositories;
 using FakebookNotifications.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace FakebookNotifications.Testing
+namespace FakebookNotifications.Testing.IntegrationTests
 {
     public class NotificationHubTest
     {
@@ -53,7 +53,10 @@ namespace FakebookNotifications.Testing
 
         private readonly List<string> groupIds = new()
         {
-            "test@test.com","group1", "group2", "group3"
+            "test@test.com",
+            "group1",
+            "group2",
+            "group3"
         };
 
         private readonly List<string> clientIds = new() { "00", "01", "02", "03", "04", "05" };
@@ -120,7 +123,7 @@ namespace FakebookNotifications.Testing
             // assert
             // checks to see if a message was sent to all clients, once and the content is what is expected
             mockClients.Verify(c => c.All, Times.Once);
-            mockClients.Verify(c => c.All.SendCoreAsync("SendAll", It.Is<object[]>(o => o != null && (o[0] as string) == "user" && (o[1] as string) == "test"), default),
+            mockClients.Verify(c => c.All.SendCoreAsync("SendAll", It.Is<object[]>(o => o != null && o[0] as string == "user" && o[1] as string == "test"), default),
                 Times.Once);
         }
 

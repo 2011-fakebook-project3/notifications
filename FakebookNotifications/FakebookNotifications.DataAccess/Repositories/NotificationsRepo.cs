@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FakebookNotifications.DataAccess.Interfaces;
 using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.Domain.Interfaces;
 using MongoDB.Driver;
 
-namespace FakebookNotifications.DataAccess
+namespace FakebookNotifications.DataAccess.Repositories
 {
     public class NotificationsRepo : INotificationsRepo
     {
