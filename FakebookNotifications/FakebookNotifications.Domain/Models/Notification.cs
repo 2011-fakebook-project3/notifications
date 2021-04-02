@@ -21,12 +21,12 @@ namespace FakebookNotifications.Domain.Models
         public KeyValuePair<string, int> Type { get; set; }
 
         /// <summary>
-        /// The Id of user that the notification should be sent to
+        /// The Email of user that the notification should be sent to
         /// </summary>
         public string LoggedInUserId { get; set; }
 
         /// <summary>
-        /// The Id of user that caused the notification to be sent
+        /// The Email of user that caused the notification to be sent
         /// </summary>
         public string TriggerUserId { get; set; }
 

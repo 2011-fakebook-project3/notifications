@@ -4,30 +4,47 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace FakebookNotifications.DataAccess.Models
 {
+
+    /// <summary>
+    /// A notification object in the database
+    /// </summary>
     public class Notification
     {
-        //mongo object id
+
+        /// <summary>
+        /// Notification Id in the database
+        /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        //notification type: post/comment/tag  
+        /// <summary>
+        /// The notification type (post, comment, like, follow)
+        /// </summary>
         [BsonElement("type")]
         public KeyValuePair<string, int> Type { get; set; } // ("Post", 1), ("Comment", 45) etc
 
-        //email of user logged in to receive notifications
+        /// <summary>
+        /// Email of the user that will receive the notifications
+        /// </summary>
         [BsonElement("user")]
         public string LoggedInUserId { get; set; }
 
-        //email user that triggered a notification by commenting on a user post or tagging a user etc.
+        /// <summary>
+        /// Email of the user that triggered a notification.
+        /// </summary>
         [BsonElement("trigger")]
         public string TriggerUserId { get; set; }
 
-        //if notification has been read
+        /// <summary>
+        /// If notification has been read or not
+        /// </summary>
         [BsonElement("read")]
         public bool HasBeenRead { get; set; }
 
-        //date of notification
+        /// <summary>
+        /// The date the notification was created
+        /// </summary>
         [BsonElement("date")]
         public BsonDateTime Date { get; set; }
     }

@@ -14,6 +14,11 @@ namespace FakebookNotifications.DataAccess.Models
         private readonly NotificationsDatabaseSettings _settings;
         private readonly ILogger<NotificationsContext> _logger;
 
+        /// <summary>
+        /// Creates database connection
+        /// </summary>
+        /// <param name="settings">The database settings</param>
+        /// <param name="logger">The logger</param>
         public NotificationsContext(IOptions<NotificationsDatabaseSettings> settings, ILogger<NotificationsContext> logger)
         {
 
@@ -43,11 +48,21 @@ namespace FakebookNotifications.DataAccess.Models
 
         }
 
-        //Method to get the user collection
+        /// <summary>
+        /// Gets the user collection from the database
+        /// </summary>
         public IMongoCollection<User> User => _database.GetCollection<User>(_settings.UserCollection);
 
-        //Method to get the notification collection
+        /// <summary>
+        /// Gets the notification collection from the database
+        /// </summary>
         public IMongoCollection<Notification> Notifications => _database.GetCollection<Notification>(_settings.NotificationsCollection);
+
+        /// <summary>
+        /// Deletes all notifications in the notification collection
+        /// </summary>
+        /// <param name="noteCol">The notification collection</param>
+        /// <returns></returns>
         public bool ClearNotifications(IMongoCollection<Notification> noteCol)
         {
             _logger.LogInformation("Clearing previous seed data");
@@ -78,7 +93,11 @@ namespace FakebookNotifications.DataAccess.Models
             }
         }
 
-        //Seed some initial data
+        /// <summary>
+        /// Seed some initial user data
+        /// </summary>
+        /// <param name="userCol">The user collection</param>
+        /// <returns>true if seeding was successful, false if it was not.</returns>
         public bool SeedUsers(IMongoCollection<User> userCol)
         {
             _logger.LogInformation("Attempting to insert seed data");
@@ -107,6 +126,11 @@ namespace FakebookNotifications.DataAccess.Models
             }
         }
 
+        /// <summary>
+        /// Seed some initial notification data
+        /// </summary>
+        /// <param name="noteCol">The notification collection</param>
+        /// <returns>true if seeding was successful, false if it was not.</returns>
         public bool SeedNotes(IMongoCollection<Notification> noteCol)
         {
             _logger.LogInformation("Attempting to insert seed data");
