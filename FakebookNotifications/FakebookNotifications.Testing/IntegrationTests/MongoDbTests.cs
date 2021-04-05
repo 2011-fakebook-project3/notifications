@@ -1,11 +1,10 @@
-﻿using FakebookNotifications.DataAccess;
-using FakebookNotifications.DataAccess.Models;
+﻿using FakebookNotifications.DataAccess.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace FakebookNotifications.Testing
+namespace FakebookNotifications.Testing.IntegrationTests
 {
     public class MongoDbTests
     {

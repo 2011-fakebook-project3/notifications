@@ -1,7 +1,7 @@
 ﻿using FakebookNotifications.Domain.Models;
 using Xunit;
 
-namespace FakebookNotifications.Testing.DomainTests
+namespace FakebookNotifications.Testing.UnitTests
 {
     public class DomainUserTest
     {

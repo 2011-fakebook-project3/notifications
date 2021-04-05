@@ -1,7 +1,7 @@
 ﻿using FakebookNotifications.DataAccess.Models;
 using MongoDB.Driver;
 
-namespace FakebookNotifications.Domain.Interfaces
+namespace FakebookNotifications.DataAccess.Interfaces
 {
     public interface INotificationsContext
     {

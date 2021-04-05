@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
-using FakebookNotifications.DataAccess;
+using FakebookNotifications.DataAccess.Interfaces;
 using FakebookNotifications.DataAccess.Models;
+using FakebookNotifications.DataAccess.Repositories;
 using FakebookNotifications.Domain.Interfaces;
 using FakebookNotifications.WebApi.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
