@@ -24,7 +24,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
                 Id = "0123",
                 Type = new(type, 1),
                 LoggedInUserId = "john.werner@revature.net",
-                TriggerUserId = "hamza.butt@revature.net",
+                TriggerUserId = "john.werner@revature.net",
                 HasBeenRead = false,
                 Date = new DateTime(2021, 04, 05)
             };
@@ -37,8 +37,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
             Mock<IUserRepo> userRepo = new();
             Mock<INotificationsRepo> notificationRepo = new();
             Mock<IHubContext<NotificationHub>> mockHub = new();
-            //NotificationController controller = new(mockHub.Object, notificationRepo.Object, userRepo.Object);
-            NotificationController controller = null;
+            NotificationController controller = new(mockHub.Object, notificationRepo.Object, userRepo.Object);
 
             Notification dummy = GetDummyNotification("comment");
             int dummyPostId = 0;
@@ -63,9 +62,8 @@ namespace FakebookNotifications.Testing.IntegrationTests
             Mock<IUserRepo> userRepo = new();
             Mock<INotificationsRepo> notificationRepo = new();
             Mock<IHubContext<NotificationHub>> mockHub = new();
-            //NotificationController controller = new(mockHub.Object, notificationRepo.Object, userRepo.Object);
-            NotificationController controller = null;
-
+            NotificationController controller = new(mockHub.Object, notificationRepo.Object, userRepo.Object);
+            
             Notification dummy = GetDummyNotification("like");
             int dummyPostId = 0;
             notificationRepo
@@ -89,9 +87,8 @@ namespace FakebookNotifications.Testing.IntegrationTests
             Mock<IUserRepo> userRepo = new();
             Mock<INotificationsRepo> notificationRepo = new();
             Mock<IHubContext<NotificationHub>> mockHub = new();
-            //NotificationController controller = new(mockHub.Object, notificationRepo.Object, userRepo.Object);
-            NotificationController controller = null;
-
+            NotificationController controller = new(mockHub.Object, notificationRepo.Object, userRepo.Object);
+            
             Notification dummy = GetDummyNotification("like");
             int dummyPostId = 0;
             notificationRepo

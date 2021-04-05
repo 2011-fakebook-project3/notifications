@@ -50,7 +50,7 @@ namespace FakebookNotification.WebApi.Controllers
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw new NullReferenceException("User not connected");
+                throw new NullReferenceException(e.ToString());
             }
 
             return Ok();
@@ -88,7 +88,7 @@ namespace FakebookNotification.WebApi.Controllers
         }
 
         [HttpPost("follow")]
-        public async System.Threading.Tasks.Task<IActionResult> FollowNotificationAsync(string loggedInUser, string triggerUser, int postId)
+        public async System.Threading.Tasks.Task<IActionResult> FollowNotificationAsync(string loggedInUser, string triggerUser, int profileId)
         {
             FakebookNotifications.Domain.Models.Notification notification = new FakebookNotifications.Domain.Models.Notification
             {
