@@ -62,7 +62,7 @@ namespace FakebookNotifications.DataAccess.Models
         /// Deletes all notifications in the notification collection
         /// </summary>
         /// <param name="noteCol">The notification collection</param>
-        /// <returns></returns>
+        /// <returns>true if successfully deleted, false otherwise.</returns>
         public bool ClearNotifications(IMongoCollection<Notification> noteCol)
         {
             _logger.LogInformation("Clearing previous seed data");

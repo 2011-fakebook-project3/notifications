@@ -19,7 +19,8 @@ namespace FakebookNotifications.DataAccess.Models
         public string Id { get; set; }
 
         /// <summary>
-        /// The notification type (post, comment, like, follow)
+        /// The type of notification it is. The key is a string that states the type (comment, follow, like, post). The value is an int
+        /// that uniquely identifies what comment/follow/like/post it is.
         /// </summary>
         [BsonElement("type")]
         public KeyValuePair<string, int> Type { get; set; } // ("Post", 1), ("Comment", 45) etc

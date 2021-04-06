@@ -16,7 +16,8 @@ namespace FakebookNotifications.Domain.Models
         public string Id { get; set; }
 
         /// <summary>
-        /// The type of notification it is. The key is a string that states the type (comment, follow, like).
+        /// The type of notification it is. The key is a string that states the type (comment, follow, like, post). The value is an int
+        /// that uniquely identifies what comment/follow/like/post it is.
         /// </summary>
         public KeyValuePair<string, int> Type { get; set; }
 
