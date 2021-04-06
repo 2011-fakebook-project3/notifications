@@ -57,7 +57,10 @@ namespace FakebookNotifications.Domain.Interfaces
         /// </summary>
         /// <param name="email">email of the user</param>
         /// <param name="connectionId">the connectionid to be added to the users collection</param>
-        /// <returns>Bool if the update was successfull</returns>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// The task result contains a bool that is true if the add was successful, false otherwise.
+        /// </returns>
         Task<bool> AddUserConnection(string email, string connectionId);
 
         /// <summary>
@@ -65,7 +68,10 @@ namespace FakebookNotifications.Domain.Interfaces
         /// </summary>
         /// <param name="email">email of the user</param>
         /// <param name="connectionId">the connectionid to be removed from the users collection</param>
-        /// <returns>Bool if the update was successfull</returns>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// The task result contains a bool that is true if the remove was successful, false otherwise.
+        /// </returns>
         Task<bool> RemoveUserConnection(string email, string connectionId);
     }
 }

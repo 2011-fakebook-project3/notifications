@@ -46,14 +46,20 @@ namespace FakebookNotifications.Domain.Interfaces
         /// Method to get all unread notifications
         /// </summary>
         /// <param name="userEmail">email to search notifications for as string</param>
-        /// <returns>A list of notifications</returns>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// The task result contains a list of notifications.
+        /// </returns>
         Task<List<Notification>> GetAllUnreadNotificationsAsync(string userEmail);
 
         /// <summary>
         /// Method to get unread notification count
         /// </summary>
         /// <param name="userEmail">email to search notifications for as string</param>
-        /// <returns>Unread notification count as an int</returns>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// The task result contains the count of unread notification as an int.
+        /// </returns>
         Task<int> GetTotalUnreadNotificationsAsync(string userEmail);
 
 
@@ -61,7 +67,10 @@ namespace FakebookNotifications.Domain.Interfaces
         /// Method to get a single notification by Id
         /// </summary>
         /// <param name="id">takes a string to match to a mongoDb objectID</param>
-        /// <returns>Domain model notification</returns>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// The task result contains a notification.
+        /// </returns>
         Task<Notification> GetNotificationAsync(string id);
     }
 
