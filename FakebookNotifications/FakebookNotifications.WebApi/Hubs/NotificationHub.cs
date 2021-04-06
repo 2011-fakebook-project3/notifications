@@ -11,7 +11,7 @@ namespace FakebookNotifications.WebApi.Hubs
     [Authorize]
     public class NotificationHub : Hub
     {
-
+        public static IHubContext<NotificationHub> Current { get; set; }
         private string thisUserEmail = "";
         private readonly IUserRepo _userRepo;
         private readonly INotificationsRepo _noteRepo;

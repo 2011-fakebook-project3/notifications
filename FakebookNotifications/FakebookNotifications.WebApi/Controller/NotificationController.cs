@@ -23,7 +23,14 @@ namespace FakebookNotification.WebApi.Controllers
             notificationsRepo = _notificationsRepo;
             userRepo = _userRepo;
         }
-
+        
+        /// <summary>
+        /// API call from other services to create a comment notification
+        /// </summary>
+        /// <param>loggedInUser = email of the user who commented</param>
+        /// <param>triggerUser = email of user who owns the post</param>
+        /// <param>postId = int value of Post ID</param>
+        /// <returns>Ok if accepted, Exception if fail</returns>
         [HttpPost("comment")]
         public async System.Threading.Tasks.Task<IActionResult> CommentNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
@@ -56,6 +63,13 @@ namespace FakebookNotification.WebApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// API call from other services to create a comment notification
+        /// </summary>
+        /// <param>loggedInUser = email of the user who "Liked" the post</param>
+        /// <param>triggerUser = email of user who owns the post</param>
+        /// <param>postId = int value of Post ID</param>
+        /// <returns>Ok if accepted, Exception if fail</returns>
         [HttpPost("like")]
         public async System.Threading.Tasks.Task<IActionResult> LikeNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
@@ -87,6 +101,13 @@ namespace FakebookNotification.WebApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// API call from other services to create a comment notification
+        /// </summary>
+        /// <param>loggedInUser = email of the user who followed (follower)</param>
+        /// <param>triggerUser = email of user who has been followed (followee)</param>
+        /// <param>profileId = int value of follower ID</param>
+        /// <returns>Ok if accepted, Exception if fail</returns>
         [HttpPost("follow")]
         public async System.Threading.Tasks.Task<IActionResult> FollowNotificationAsync(string loggedInUser, string triggerUser, int profileId)
         {
