@@ -9,11 +9,19 @@ using MongoDB.Driver;
 
 namespace FakebookNotifications.DataAccess.Repositories
 {
+
+    /// <summary>
+    /// The actual implementation of the INotificationsRepo interface
+    /// </summary>
     public class NotificationsRepo : INotificationsRepo
     {
         private readonly INotificationsContext _context;
         private readonly IMongoCollection<Notification> _dbCollection;
 
+        /// <summary>
+        /// Constructor that takes the database context and sets _dbCollection to the Notification collection.
+        /// </summary>
+        /// <param name="context"></param>
         public NotificationsRepo(INotificationsContext context)
         {
             _context = context;
