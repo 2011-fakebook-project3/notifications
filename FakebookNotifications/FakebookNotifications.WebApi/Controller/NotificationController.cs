@@ -1,10 +1,10 @@
-
 using System;
 using FakebookNotifications.WebApi.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using FakebookNotifications.Domain.Interfaces;
 using FakebookNotifications.Domain.Models;
+using System.Threading.Tasks;
 
 namespace FakebookNotification.WebApi.Controllers
 {
@@ -23,112 +23,89 @@ namespace FakebookNotification.WebApi.Controllers
             notificationsRepo = _notificationsRepo;
             userRepo = _userRepo;
         }
-        
+
         /// <summary>
         /// API call from other services to create a comment notification
         /// </summary>
-        /// <param>loggedInUser = email of the user who commented</param>
-        /// <param>triggerUser = email of user who owns the post</param>
-        /// <param>postId = int value of Post ID</param>
-        /// <returns>Ok if accepted, Exception if fail</returns>
+        /// <param name="loggedInUser">email of the user who owns the post</param>
+        /// <param name="triggerUser">email of user who commented</param>
+        /// <param name="postId">Post ID of the post that was commented on</param>
+        /// <returns>Ok if accepted, BadRequest if fail</returns>
         [HttpPost("comment")]
-        public async System.Threading.Tasks.Task<IActionResult> CommentNotificationAsync(string loggedInUser, string triggerUser, int postId)
+        public async Task<IActionResult> CommentNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
-            FakebookNotifications.Domain.Models.Notification notification = new FakebookNotifications.Domain.Models.Notification
-            {
-                Type = new System.Collections.Generic.KeyValuePair<string, int>("comment", postId),
-                LoggedInUserId = loggedInUser,
-                TriggerUserId = triggerUser,
-                Date = DateTime.Now
-            };
-
-            try
-            {
-                await notificationsRepo.CreateNotificationAsync(notification);
-                User user = await userRepo.GetUserAsync(triggerUser);
-
-                foreach (var connection in user.Connections)
-                {
-                    await hub.Groups.AddToGroupAsync(connection, user.Email);
-                }
-                
-                await hub.Clients.Group(user.Email).SendAsync("CommentNotification", notification);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
+            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, "comment");
         }
 
         /// <summary>
-        /// API call from other services to create a comment notification
+        /// API call from other services to create a like notification
         /// </summary>
-        /// <param>loggedInUser = email of the user who "Liked" the post</param>
-        /// <param>triggerUser = email of user who owns the post</param>
-        /// <param>postId = int value of Post ID</param>
-        /// <returns>Ok if accepted, Exception if fail</returns>
+        /// <param name="loggedInUser">email of user who owns the post</param>
+        /// <param name="triggerUser">email of the user who "Liked" the post</param>
+        /// <param name="postId">Post ID of the post that was liked</param>
+        /// <returns>Ok if accepted, BadRequest if fail</returns>
         [HttpPost("like")]
-        public async System.Threading.Tasks.Task<IActionResult> LikeNotificationAsync(string loggedInUser, string triggerUser, int postId)
+        public async Task<IActionResult> LikeNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
-            FakebookNotifications.Domain.Models.Notification notification = new FakebookNotifications.Domain.Models.Notification
-            {
-                Type = new System.Collections.Generic.KeyValuePair<string, int>("post", postId),
-                LoggedInUserId = loggedInUser,
-                TriggerUserId = triggerUser,
-                Date = DateTime.Now
-            };
-
-            try
-            {
-                await notificationsRepo.CreateNotificationAsync(notification);
-                User user = await userRepo.GetUserAsync(triggerUser);
-
-                foreach (var connection in user.Connections)
-                {
-                    await hub.Groups.AddToGroupAsync(connection, user.Email);
-                }
-                
-                await hub.Clients.Group(user.Email).SendAsync("LikeNotification", notification);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
+            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, "like");
         }
 
         /// <summary>
-        /// API call from other services to create a comment notification
+        /// API call from other services to create a follow notification. The user that was followed will get a notification.
         /// </summary>
-        /// <param>loggedInUser = email of the user who followed (follower)</param>
-        /// <param>triggerUser = email of user who has been followed (followee)</param>
-        /// <param>profileId = int value of follower ID</param>
-        /// <returns>Ok if accepted, Exception if fail</returns>
+        /// <param name="loggedInUser">email of user who has been followed (followee)</param>
+        /// <param name="triggerUser">email of the user who followed (follower)</param>
+        /// <param name="profileId">Profile ID of the trigger user</param>
+        /// <returns>Ok if accepted, BadRequest if fail</returns>
         [HttpPost("follow")]
-        public async System.Threading.Tasks.Task<IActionResult> FollowNotificationAsync(string loggedInUser, string triggerUser, int profileId)
+        public async Task<IActionResult> FollowNotificationAsync(string loggedInUser, string triggerUser, int profileId)
         {
-            FakebookNotifications.Domain.Models.Notification notification = new FakebookNotifications.Domain.Models.Notification
+            return await CreateNotificationAsync(loggedInUser, triggerUser, profileId, "follow");
+        }
+
+        /// <summary>
+        /// Helper method to create the notification.
+        /// </summary>
+        /// <param name="loggedInUser">email of user that will receive the notification</param>
+        /// <param name="triggerUser">email of user that triggered the notification event</param>
+        /// <param name="linkId">Id of the resource to link to with the notification</param>
+        /// <param name="notificationType">The type of the notification (comment/follow/like)</param>
+        /// <returns></returns>
+        private async Task<IActionResult> CreateNotificationAsync(string loggedInUser, string triggerUser, int linkId, string notificationType)
+        {
+            Notification notification = new Notification
             {
-                Type = new System.Collections.Generic.KeyValuePair<string, int>("follow", profileId),
+                Type = new System.Collections.Generic.KeyValuePair<string, int>(notificationType, linkId),
                 LoggedInUserId = loggedInUser,
                 TriggerUserId = triggerUser,
                 Date = DateTime.Now
             };
 
+            string methodName = "";
+            if (notificationType == "comment")
+            {
+                methodName = "CommentNotification";
+            }
+            else if (notificationType == "like")
+            {
+                methodName = "LikeNotification";
+            }
+            else if (notificationType == "follow")
+            {
+                methodName = "FollowNotification";
+            }
+
             try
             {
                 await notificationsRepo.CreateNotificationAsync(notification);
-                User user = await userRepo.GetUserAsync(triggerUser);
+                User user = await userRepo.GetUserAsync(loggedInUser);
 
                 foreach (var connection in user.Connections)
                 {
                     await hub.Groups.AddToGroupAsync(connection, user.Email);
                 }
-                
-                await hub.Clients.Group(user.Email).SendAsync("FollowNotification", notification);
 
+                await hub.Clients.Group(user.Email).SendAsync(methodName, notification);
                 return Ok();
             }
             catch (Exception e)
