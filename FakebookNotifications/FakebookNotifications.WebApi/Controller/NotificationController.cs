@@ -53,14 +53,12 @@ namespace FakebookNotification.WebApi.Controllers
                 }
                 
                 await hub.Clients.Group(user.Email).SendAsync("CommentNotification", notification);
+                return Ok();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw new NullReferenceException(e.ToString());
+                return BadRequest(e);
             }
-
-            return Ok();
         }
 
         /// <summary>
@@ -92,13 +90,13 @@ namespace FakebookNotification.WebApi.Controllers
                 }
                 
                 await hub.Clients.Group(user.Email).SendAsync("LikeNotification", notification);
+
+                return Ok();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw new NullReferenceException("User not connected");
+                return BadRequest(e);
             }
-            return Ok();
         }
 
         /// <summary>
@@ -130,14 +128,13 @@ namespace FakebookNotification.WebApi.Controllers
                 }
                 
                 await hub.Clients.Group(user.Email).SendAsync("FollowNotification", notification);
+
+                return Ok();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw new NullReferenceException("User not connected");
+                return BadRequest(e);
             }
-
-            return Ok();
         }
     }
 }
