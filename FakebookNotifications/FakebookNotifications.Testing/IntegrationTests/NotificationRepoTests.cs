@@ -132,12 +132,29 @@ namespace FakebookNotifications.Testing.IntegrationTests
             //Create repo to work with
             NotificationsRepo repo = new(context);
 
-            //notification to delete
-            var notification = await repo.GetAllNotificationsAsync();
-            Domain.Models.Notification update = notification.Where(x => x.LoggedInUserId == "ryan@gmail.com" && x.Type.Key == "Follow" && x.Type.Value == 12345 && x.HasBeenRead == true).First();
+            //Notification to create
+            Domain.Models.Notification notification = new()
+            {
+                Id = "42069",
+                Type = new KeyValuePair<string, int>("Follow", 12345),
+                LoggedInUserId = "ryan@gmail.com",
+                TriggerUserId = "antonio@gmail.com",
+                HasBeenRead = true,
+                Date = DateTime.Now
+            };
 
             //Act
-            var result = await repo.DeleteNotificationAsync(update);
+            var result = await repo.CreateNotificationAsync(notification);
+
+            //Assert
+            Assert.True(result);
+
+            //notification to delete
+            var notifications = await repo.GetAllNotificationsAsync();
+            Domain.Models.Notification update = notifications.Where(x => x.LoggedInUserId == "ryan@gmail.com" && x.Type.Key == "Follow" && x.Type.Value == 12345 && x.HasBeenRead == true).First();
+
+            //Act
+            result = await repo.DeleteNotificationAsync(update);
 
             //Assert
             Assert.True(result);
