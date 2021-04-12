@@ -73,6 +73,11 @@ namespace FakebookNotification.WebApi.Controllers
         /// <returns></returns>
         private async Task<IActionResult> CreateNotificationAsync(string loggedInUser, string triggerUser, int linkId, string notificationType)
         {
+            if (loggedInUser == null && triggerUser == null && notificationType == null)
+            {
+                return BadRequest("parameter values cannot be null");
+            }
+
             Notification notification = new Notification
             {
                 Type = new System.Collections.Generic.KeyValuePair<string, int>(notificationType, linkId),
@@ -95,23 +100,17 @@ namespace FakebookNotification.WebApi.Controllers
                 methodName = "FollowNotification";
             }
 
-            try
-            {
-                await notificationsRepo.CreateNotificationAsync(notification);
-                User user = await userRepo.GetUserAsync(loggedInUser);
 
-                foreach (var connection in user.Connections)
-                {
-                    await hub.Groups.AddToGroupAsync(connection, user.Email);
-                }
+            await notificationsRepo.CreateNotificationAsync(notification);
+            User user = await userRepo.GetUserAsync(loggedInUser);
 
-                await hub.Clients.Group(user.Email).SendAsync(methodName, notification);
-                return Ok();
-            }
-            catch (Exception e)
+            foreach (var connection in user.Connections)
             {
-                return BadRequest(e);
+                await hub.Groups.AddToGroupAsync(connection, user.Email);
             }
+
+            await hub.Clients.Group(user.Email).SendAsync(methodName, notification);
+            return Ok();
         }
     }
 }

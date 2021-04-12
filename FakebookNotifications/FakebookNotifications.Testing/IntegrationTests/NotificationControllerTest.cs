@@ -1,6 +1,7 @@
 ﻿using FakebookNotification.WebApi.Controllers;
 using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.DataAccess.Repositories;
+using FakebookNotifications.Domain.Interfaces;
 using FakebookNotifications.WebApi.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -18,6 +19,30 @@ namespace FakebookNotifications.Testing.IntegrationTests
     public class NotificationControllerTest
     {
 
+        private readonly Domain.Models.User _testUser1 = new()
+        {
+            Id = "01",
+            Connections = new List<string>{
+                "00", "02", "03"
+            },
+            Email = "test@test.com"
+        };
+
+        private readonly Mock<IGroupManager> _mockGroups = new();
+        private readonly Mock<IClientProxy> _mockClientProxy = new();
+        private readonly Mock<IUserRepo> _userRepo = new();
+        private readonly Mock<INotificationsRepo> _noteRepo = new();
+        private readonly Mock<IHubContext<NotificationHub>> _mockHubContext = new();
+
+        public NotificationControllerTest()
+        {
+            _mockHubContext.Setup(t => t.Clients.All).Returns(_mockClientProxy.Object);
+            _mockHubContext.Setup(t => t.Groups).Returns(_mockGroups.Object).Verifiable();
+            _mockHubContext.Setup(t => t.Clients.Group(_testUser1.Email)).Returns(_mockClientProxy.Object);
+            _noteRepo.Setup(t => t.CreateNotificationAsync(It.IsAny<Domain.Models.Notification>())).Verifiable();
+            _userRepo.Setup(t => t.GetUserAsync(It.IsAny<string>())).ReturnsAsync(_testUser1).Verifiable();
+        }
+
         private static Domain.Models.Notification GetDummyNotification(string type)
         {
             return new()
@@ -31,158 +56,70 @@ namespace FakebookNotifications.Testing.IntegrationTests
             };
         }
 
-        private readonly Domain.Models.User testUser1 = new()
-        {
-            Id = "01",
-            Connections = new List<string>{
-                "00", "02", "03"
-            },
-            Email = "test@test.com"
-        };
-
-        private readonly List<string> groupIds = new()
-        {
-            "test@test.com",
-            "group1",
-            "group2",
-            "group3"
-        };
-
-        private readonly List<string> clientIds = new() { "00", "01", "02", "03", "04", "05" };
-
-        private readonly Mock<IHubCallerClients> mockClients = new();
-        private readonly Mock<IGroupManager> mockGroups = new();
-        private readonly Mock<IClientProxy> mockClientProxy = new();
-        private readonly Mock<HubCallerContext> mockContext = new();
-        private readonly NotificationHub mockHub;
-
-        private readonly UserRepo _userRepo;
-        private readonly NotificationsRepo _noteRepo;
-        private readonly NotificationsDatabaseSettings settings;
-        private readonly NullLogger<NotificationsContext> _logger;
-
-        public NotificationControllerTest()
-        {
-            //mocking signalr elements for tests
-            mockClients.Setup(client => client.All).Returns(mockClientProxy.Object);
-            mockClients.Setup(client => client.Group(groupIds[0])).Returns(mockClientProxy.Object);
-            mockClients.Setup(client => client.Caller).Returns(mockClientProxy.Object);
-            mockClients.Setup(client => client.OthersInGroup(It.IsIn<string>(groupIds))).Returns(mockClientProxy.Object);
-            mockGroups.Setup(group => group.AddToGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new CancellationToken())).Returns(Task.FromResult(true));
-            mockGroups.Setup(group => group.RemoveFromGroupAsync(It.IsIn<string>(clientIds), It.IsIn<string>(groupIds), new CancellationToken())).Returns(Task.FromResult(true));
-            mockContext.Setup(context => context.ConnectionId).Returns("01");
-            
-
-            _logger = new NullLogger<NotificationsContext>();
-            Mock<IOptions<NotificationsDatabaseSettings>> mockSettings = new();
-            settings = new NotificationsDatabaseSettings
-            {
-                ConnectionString = "mongodb+srv://ryan:1234@fakebook.r8oce.mongodb.net/Notifications?retryWrites=true&w=majority",
-                //ConnectionString = "mongodb://localhost:27017",
-                DatabaseName = "Notifications",
-                UserCollection = "User",
-                NotificationsCollection = "Notifications"
-            };
-            mockSettings.Setup(s => s.Value).Returns(settings);
-            NotificationsContext mockDbContext = new(mockSettings.Object, _logger);
-
-            // mocking Mongo db
-            NotificationsRepo noteRepo = new(mockDbContext);
-            UserRepo userRepo = new(mockDbContext, noteRepo);
-            _userRepo = userRepo;
-            _noteRepo = noteRepo;
-
-            // creates hub for testing
-            mockHub = new NotificationHub(userRepo, noteRepo)
-            {
-                Clients = mockClients.Object,
-                Groups = mockGroups.Object,
-                Context = mockContext.Object,
-            };
-        }
-
         [Fact]
-        public async Task CommentNotificationAsync_CreatesACommentNotificationAsync()
+        public async Task CommentNotificationAsync_ReturnsOk()
         {
             // arrange
-            Mock<IHubContext<NotificationHub>> mHCtx = new();
-            mHCtx.Setup(t => t.Clients.All).Returns(mockClientProxy.Object);
-            mHCtx.Setup(t => t.Groups).Returns(mockGroups.Object);
-            mHCtx.Setup(t => t.Clients.Group(testUser1.Email)).Returns(mockClientProxy.Object);
-            NotificationController controller = new(mHCtx.Object, _noteRepo, _userRepo);
+            var dummy = GetDummyNotification("comment");
 
-            Domain.Models.Notification dummy = GetDummyNotification("comment");
-            int dummyPostId = 0;
-            await mockHub.OnConnectedAsync();
+            NotificationController controller = new(_mockHubContext.Object, _noteRepo.Object, _userRepo.Object);
 
-            Domain.Models.User thisUser = testUser1;
-
-            await _userRepo.AddUserConnection(thisUser.Email, thisUser.Connections[0]);
+            var postId = 0;
 
             // act
-            var result = await controller.CommentNotificationAsync(dummy.LoggedInUserId, dummy.TriggerUserId, dummyPostId);
+            var result = await controller.CommentNotificationAsync(dummy.LoggedInUserId, dummy.TriggerUserId, postId);
 
             // assert
             Assert.NotNull(result);
+            _noteRepo.Verify(c => c.CreateNotificationAsync(It.IsAny<Domain.Models.Notification>()), Times.Once);
+            _userRepo.Verify(c => c.GetUserAsync(It.IsAny<string>()), Times.Once);
+            _mockGroups.Verify(c => c.AddToGroupAsync(It.IsAny<string>(), It.IsAny<string>(), new CancellationToken()), Times.Exactly(3));
             Assert.IsAssignableFrom<IActionResult>(result);
             Assert.IsType<OkResult>(result);
-            await _userRepo.RemoveUserConnection(thisUser.Email, thisUser.Connections[0]);
         }
 
         [Fact]
-        public async Task LikeNotificationAsync_CreatesALikeNotificationAsync()
+        public async Task LikeNotificationAsync_ReturnsOk()
         {
             // arrange
-            Mock<IHubContext<NotificationHub>> mHCtx = new();
-            mHCtx.Setup(t => t.Clients.All).Returns(mockClientProxy.Object);
-            mHCtx.Setup(t => t.Groups).Returns(mockGroups.Object);
-            mHCtx.Setup(t => t.Clients.Group(testUser1.Email)).Returns(mockClientProxy.Object);
-            NotificationController controller = new(mHCtx.Object, _noteRepo, _userRepo);
+            var dummy = GetDummyNotification("comment");
 
-            Domain.Models.Notification dummy = GetDummyNotification("like");
-            int dummyPostId = 0;
-            await mockHub.OnConnectedAsync();
+            NotificationController controller = new(_mockHubContext.Object, _noteRepo.Object, _userRepo.Object);
 
-            Domain.Models.User thisUser = testUser1;
-
-            await _userRepo.AddUserConnection(thisUser.Email, thisUser.Connections[0]);
+            var postId = 0;
 
             // act
-            var result = await controller.LikeNotificationAsync(dummy.LoggedInUserId, dummy.TriggerUserId, dummyPostId);
+            var result = await controller.LikeNotificationAsync(dummy.LoggedInUserId, dummy.TriggerUserId, postId);
 
             // assert
             Assert.NotNull(result);
+            _noteRepo.Verify(c => c.CreateNotificationAsync(It.IsAny<Domain.Models.Notification>()), Times.Once);
+            _userRepo.Verify(c => c.GetUserAsync(It.IsAny<string>()), Times.Once);
+            _mockGroups.Verify(c => c.AddToGroupAsync(It.IsAny<string>(), It.IsAny<string>(), new CancellationToken()), Times.Exactly(3));
             Assert.IsAssignableFrom<IActionResult>(result);
             Assert.IsType<OkResult>(result);
-            await _userRepo.RemoveUserConnection(thisUser.Email, thisUser.Connections[0]);
         }
 
         [Fact]
-        public async Task FollowNotificationAsync_CreatesAFollowNotificationAsync()
+        public async Task FollowNotificationAsync_ReturnsOk()
         {
             // arrange
-            Mock<IHubContext<NotificationHub>> mHCtx = new();
-            mHCtx.Setup(t => t.Clients.All).Returns(mockClientProxy.Object);
-            mHCtx.Setup(t => t.Groups).Returns(mockGroups.Object);
-            mHCtx.Setup(t => t.Clients.Group(testUser1.Email)).Returns(mockClientProxy.Object);
-            NotificationController controller = new(mHCtx.Object, _noteRepo, _userRepo);
+            var dummy = GetDummyNotification("comment");
 
-            Domain.Models.Notification dummy = GetDummyNotification("follow");
-            int dummyProfileId = 0;
-            await mockHub.OnConnectedAsync();
+            NotificationController controller = new(_mockHubContext.Object, _noteRepo.Object, _userRepo.Object);
 
-            Domain.Models.User thisUser = testUser1;
-
-            await _userRepo.AddUserConnection(thisUser.Email, thisUser.Connections[0]);
+            var postId = 0;
 
             // act
-            var result = await controller.FollowNotificationAsync(dummy.LoggedInUserId, dummy.TriggerUserId, dummyProfileId);
+            var result = await controller.FollowNotificationAsync(dummy.LoggedInUserId, dummy.TriggerUserId, postId);
 
             // assert
             Assert.NotNull(result);
+            _noteRepo.Verify(c => c.CreateNotificationAsync(It.IsAny<Domain.Models.Notification>()), Times.Once);
+            _userRepo.Verify(c => c.GetUserAsync(It.IsAny<string>()), Times.Once);
+            _mockGroups.Verify(c => c.AddToGroupAsync(It.IsAny<string>(), It.IsAny<string>(), new CancellationToken()), Times.Exactly(3));
             Assert.IsAssignableFrom<IActionResult>(result);
             Assert.IsType<OkResult>(result);
-            await _userRepo.RemoveUserConnection(thisUser.Email, thisUser.Connections[0]);
         }
     }
 }
