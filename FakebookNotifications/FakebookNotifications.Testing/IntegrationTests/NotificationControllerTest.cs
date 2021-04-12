@@ -28,8 +28,8 @@ namespace FakebookNotifications.Testing.IntegrationTests
             {
                 Id = "0123",
                 Type = new(type, 1),
-                LoggedInUserId = "john.werner@revature.net",
-                TriggerUserId = "john.werner@revature.net",
+                LoggedInUserId = "test@test.com",
+                TriggerUserId = "test@test.com",
                 HasBeenRead = false,
                 Date = new DateTime(2021, 04, 05)
             };
@@ -39,9 +39,9 @@ namespace FakebookNotifications.Testing.IntegrationTests
         {
             Id = "01",
             Connections = new List<string>{
-                "00", "01", "02"
+                "00", "02", "03"
             },
-            Email = "john.werner@revature.net"
+            Email = "test@test.com"
         };
         private readonly Domain.Models.User testUser2 = new()
         {
@@ -104,8 +104,8 @@ namespace FakebookNotifications.Testing.IntegrationTests
             Mock<IOptions<NotificationsDatabaseSettings>> mockSettings = new();
             settings = new NotificationsDatabaseSettings
             {
-                //ConnectionString = "mongodb+srv://ryan:1234@fakebook.r8oce.mongodb.net/Notifications?retryWrites=true&w=majority",
-                ConnectionString = "mongodb://localhost:27017",
+                ConnectionString = "mongodb+srv://ryan:1234@fakebook.r8oce.mongodb.net/Notifications?retryWrites=true&w=majority",
+                //ConnectionString = "mongodb://localhost:27017",
                 DatabaseName = "Notifications",
                 UserCollection = "User",
                 NotificationsCollection = "Notifications"
