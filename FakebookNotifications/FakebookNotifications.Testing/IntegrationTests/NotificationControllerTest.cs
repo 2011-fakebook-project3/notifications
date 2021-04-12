@@ -1,8 +1,6 @@
 ﻿using FakebookNotification.WebApi.Controllers;
 using FakebookNotifications.DataAccess.Models;
 using FakebookNotifications.DataAccess.Repositories;
-using FakebookNotifications.Domain.Interfaces;
-using FakebookNotifications.Domain.Models;
 using FakebookNotifications.WebApi.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -11,8 +9,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -22,7 +18,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
     public class NotificationControllerTest
     {
 
-        private Domain.Models.Notification GetDummyNotification(string type)
+        private static Domain.Models.Notification GetDummyNotification(string type)
         {
             return new()
             {
@@ -42,29 +38,6 @@ namespace FakebookNotifications.Testing.IntegrationTests
                 "00", "02", "03"
             },
             Email = "test@test.com"
-        };
-        private readonly Domain.Models.User testUser2 = new()
-        {
-            Id = "02",
-            Connections = new List<string>{
-                "03", "04", "05",
-            },
-            Email = "notTest@test.com"
-        };
-        private readonly Domain.Models.Notification updateTestNote = new()
-        {
-            Id = "5ffca6ca7cf99f8e5c2fae85",
-            Type = new KeyValuePair<string, int>("follow", 25),
-            HasBeenRead = false,
-            TriggerUserId = "notTest@test.com",
-            LoggedInUserId = "test@test.com"
-        };
-        private readonly Domain.Models.Notification testNote = new()
-        {
-            Type = new KeyValuePair<string, int>("follow", 13),
-            HasBeenRead = false,
-            TriggerUserId = "notTest@test.com",
-            LoggedInUserId = "test@test.com"
         };
 
         private readonly List<string> groupIds = new()
