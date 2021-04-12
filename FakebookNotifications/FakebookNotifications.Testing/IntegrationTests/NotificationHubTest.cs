@@ -113,7 +113,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         /// Tests notfication hub method to send global notifications
         /// </summary>
         [Fact]
-        public async void SendAllVerify()
+        public async Task SendAllVerify()
         {
             //arrange
 
@@ -131,7 +131,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         /// Tests notfication hub method to send notifications to all users in a group
         /// </summary>
         [Fact]
-        public async void SendGroupVerify()
+        public async Task SendGroupVerify()
         {
             //arrange
             string group = groupIds[0];
@@ -147,7 +147,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void SendUserGroupVerify()
+        public async Task SendUserGroupVerify()
         {
             // Arrange
 
@@ -162,7 +162,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         /// Tests notification hub method to send notification back to the user who called the method
         /// </summary>
         [Fact]
-        public async void SendCallerVerify()
+        public async Task SendCallerVerify()
         {
             // arrange
             string caller = hub.Context.ConnectionId;
@@ -176,7 +176,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void OnConnectAsyncVerify()
+        public async Task OnConnectAsyncVerify()
         {
             // Arrange
             mockContext.Setup(u => u.UserIdentifier).Returns("test@test.com");
@@ -200,7 +200,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void OnDisconnectVerify()
+        public async Task OnDisconnectVerify()
         {
             //Arrange
             mockContext.Setup(u => u.UserIdentifier).Returns("test@test.com");
@@ -215,7 +215,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void AddFollowersVerify()
+        public async Task AddFollowersVerify()
         {
             //Arrange
             string user = "notTest@test.com";
@@ -229,7 +229,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void GetUnreadNotificationsVerify()
+        public async Task GetUnreadNotificationsVerify()
         {
             //Arrange
             var userEmail = testUser1.Email;
@@ -244,7 +244,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void GetUnreadCountVerify()
+        public async Task GetUnreadCountVerify()
         {
             //Arrange
 
@@ -256,7 +256,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void CreateNotificationAssertTrue()
+        public async Task CreateNotificationAssertTrue()
         {
             //Arrange
             Domain.Models.Notification testNote = new()
@@ -276,7 +276,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void UpdateNotificationAssertTrue()
+        public async Task UpdateNotificationAssertTrue()
         {
             //Arrange
             await _noteRepo.CreateNotificationAsync(testNote);
@@ -313,7 +313,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
         }
 
         [Fact]
-        public async void MarkAsReadVerify()
+        public async Task MarkAsReadVerify()
         {
             //Arrange
             Domain.Models.Notification noteToRead = new()
