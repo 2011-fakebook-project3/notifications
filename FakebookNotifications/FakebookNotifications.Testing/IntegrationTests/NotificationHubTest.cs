@@ -211,7 +211,6 @@ namespace FakebookNotifications.Testing.IntegrationTests
             var test = await _userRepo.GetUserAsync("test@test.com");
 
             //Assert
-            //mockClients.Verify(c => c.All, Times.Never);
             Assert.DoesNotContain(hub.Context.ConnectionId, test.Connections);
         }
 
