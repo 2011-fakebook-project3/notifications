@@ -13,15 +13,15 @@ namespace FakebookNotification.WebApi.Controllers
 
     public class NotificationController : ControllerBase
     {
-        private readonly IHubContext<NotificationHub> hub;
-        private readonly INotificationsRepo notificationsRepo;
-        private readonly IUserRepo userRepo;
+        private readonly IHubContext<NotificationHub> _hub;
+        private readonly INotificationsRepo _notificationsRepo;
+        private readonly IUserRepo _userRepo;
 
-        public NotificationController(IHubContext<NotificationHub> _hub, INotificationsRepo _notificationsRepo, IUserRepo _userRepo) 
+        public NotificationController(IHubContext<NotificationHub> hub, INotificationsRepo notificationsRepo, IUserRepo userRepo) 
         { 
-            hub = _hub;
-            notificationsRepo = _notificationsRepo;
-            userRepo = _userRepo;
+            _hub = hub;
+            _notificationsRepo = notificationsRepo;
+            _userRepo = userRepo;
         }
 
         /// <summary>
@@ -34,7 +34,8 @@ namespace FakebookNotification.WebApi.Controllers
         [HttpPost("comment")]
         public async Task<IActionResult> CommentNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
-            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, "comment");
+            string notificationType = "comment";
+            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, notificationType);
         }
 
         /// <summary>
@@ -47,7 +48,8 @@ namespace FakebookNotification.WebApi.Controllers
         [HttpPost("like")]
         public async Task<IActionResult> LikeNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
-            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, "like");
+            string notificationType = "like";
+            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, notificationType);
         }
 
         /// <summary>
@@ -60,7 +62,8 @@ namespace FakebookNotification.WebApi.Controllers
         [HttpPost("follow")]
         public async Task<IActionResult> FollowNotificationAsync(string loggedInUser, string triggerUser, int profileId)
         {
-            return await CreateNotificationAsync(loggedInUser, triggerUser, profileId, "follow");
+            string notificationType = "follow";
+            return await CreateNotificationAsync(loggedInUser, triggerUser, profileId, notificationType);
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace FakebookNotification.WebApi.Controllers
         /// <returns></returns>
         private async Task<IActionResult> CreateNotificationAsync(string loggedInUser, string triggerUser, int linkId, string notificationType)
         {
-            if (loggedInUser == null && triggerUser == null && notificationType == null)
+            if (loggedInUser == null || triggerUser == null)
             {
                 return BadRequest("parameter values cannot be null");
             }
@@ -99,17 +102,22 @@ namespace FakebookNotification.WebApi.Controllers
             {
                 methodName = "FollowNotification";
             }
-
-
-            await notificationsRepo.CreateNotificationAsync(notification);
-            User user = await userRepo.GetUserAsync(loggedInUser);
-
-            foreach (var connection in user.Connections)
+            else
             {
-                await hub.Groups.AddToGroupAsync(connection, user.Email);
+                throw new ArgumentException("notificationType is not valid");
             }
 
-            await hub.Clients.Group(user.Email).SendAsync(methodName, notification);
+
+            await _notificationsRepo.CreateNotificationAsync(notification);
+            User user = await _userRepo.GetUserAsync(loggedInUser);
+
+            // Here we send notification to all different places the same user is connected from (laptop, mobile, multiple browsers, etc.).
+            foreach (var connection in user.Connections)
+            {
+                await _hub.Groups.AddToGroupAsync(connection, user.Email);
+            }
+
+            await _hub.Clients.Group(user.Email).SendAsync(methodName, notification);
             return Ok();
         }
     }

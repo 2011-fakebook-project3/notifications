@@ -143,18 +143,15 @@ namespace FakebookNotifications.Testing.IntegrationTests
                 Date = DateTime.Now
             };
 
-            //Act
-            var result = await repo.CreateNotificationAsync(notification);
-
-            //Assert
-            Assert.True(result);
+            //Create the notification
+            await repo.CreateNotificationAsync(notification);
 
             //notification to delete
             var notifications = await repo.GetAllNotificationsAsync();
             Domain.Models.Notification update = notifications.Where(x => x.LoggedInUserId == "ryan@gmail.com" && x.Type.Key == "Follow" && x.Type.Value == 12345 && x.HasBeenRead == true).First();
 
             //Act
-            result = await repo.DeleteNotificationAsync(update);
+            var result = await repo.DeleteNotificationAsync(update);
 
             //Assert
             Assert.True(result);
