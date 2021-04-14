@@ -34,6 +34,7 @@ namespace FakebookNotifications.WebApi
             services.AddScoped<INotificationsContext, NotificationsContext>();
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<INotificationsRepo, NotificationsRepo>();
+            
 
             services.AddCors(options =>
             {
