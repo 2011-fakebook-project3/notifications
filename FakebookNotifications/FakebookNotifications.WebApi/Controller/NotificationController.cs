@@ -17,6 +17,13 @@ namespace FakebookNotification.WebApi.Controllers
         private readonly INotificationsRepo _notificationsRepo;
         private readonly IUserRepo _userRepo;
 
+        private enum NotificationType
+        {
+            Comment,
+            Like,
+            Follow
+        }
+
         public NotificationController(IHubContext<NotificationHub> hub, INotificationsRepo notificationsRepo, IUserRepo userRepo) 
         { 
             _hub = hub;
@@ -34,8 +41,7 @@ namespace FakebookNotification.WebApi.Controllers
         [HttpPost("comment")]
         public async Task<IActionResult> CommentNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
-            string notificationType = "comment";
-            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, notificationType);
+            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, NotificationType.Comment);
         }
 
         /// <summary>
@@ -48,8 +54,7 @@ namespace FakebookNotification.WebApi.Controllers
         [HttpPost("like")]
         public async Task<IActionResult> LikeNotificationAsync(string loggedInUser, string triggerUser, int postId)
         {
-            string notificationType = "like";
-            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, notificationType);
+            return await CreateNotificationAsync(loggedInUser, triggerUser, postId, NotificationType.Like);
         }
 
         /// <summary>
@@ -62,8 +67,7 @@ namespace FakebookNotification.WebApi.Controllers
         [HttpPost("follow")]
         public async Task<IActionResult> FollowNotificationAsync(string loggedInUser, string triggerUser, int profileId)
         {
-            string notificationType = "follow";
-            return await CreateNotificationAsync(loggedInUser, triggerUser, profileId, notificationType);
+            return await CreateNotificationAsync(loggedInUser, triggerUser, profileId, NotificationType.Follow);
         }
 
         /// <summary>
@@ -74,7 +78,7 @@ namespace FakebookNotification.WebApi.Controllers
         /// <param name="linkId">Id of the resource to link to with the notification</param>
         /// <param name="notificationType">The type of the notification (comment/follow/like)</param>
         /// <returns></returns>
-        private async Task<IActionResult> CreateNotificationAsync(string loggedInUser, string triggerUser, int linkId, string notificationType)
+        private async Task<IActionResult> CreateNotificationAsync(string loggedInUser, string triggerUser, int linkId, NotificationType notificationType)
         {
             if (loggedInUser == null || triggerUser == null)
             {
@@ -83,30 +87,19 @@ namespace FakebookNotification.WebApi.Controllers
 
             Notification notification = new Notification
             {
-                Type = new System.Collections.Generic.KeyValuePair<string, int>(notificationType, linkId),
+                Type = new System.Collections.Generic.KeyValuePair<string, int>(notificationType.ToString().ToLower(), linkId),
                 LoggedInUserId = loggedInUser,
                 TriggerUserId = triggerUser,
                 Date = DateTime.Now
             };
 
-            string methodName = "";
-            if (notificationType == "comment")
+            string methodName = notificationType switch
             {
-                methodName = "CommentNotification";
-            }
-            else if (notificationType == "like")
-            {
-                methodName = "LikeNotification";
-            }
-            else if (notificationType == "follow")
-            {
-                methodName = "FollowNotification";
-            }
-            else
-            {
-                throw new ArgumentException("notificationType is not valid");
-            }
-
+                NotificationType.Comment => "CommentNotification",
+                NotificationType.Like => "LikeNotification",
+                NotificationType.Follow => "FollowNotification",
+                _ => throw new ArgumentException("notificationType is not valid", nameof(notificationType))
+            };
 
             await _notificationsRepo.CreateNotificationAsync(notification);
             User user = await _userRepo.GetUserAsync(loggedInUser);
