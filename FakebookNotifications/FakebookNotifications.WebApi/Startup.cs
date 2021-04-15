@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FakebookNotifications.DataAccess.Interfaces;
 using FakebookNotifications.DataAccess.Models;
@@ -50,34 +51,52 @@ namespace FakebookNotifications.WebApi
                     });
             });
 
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}
+            //).AddJwtBearer(options =>
+            //{
+            //    options.Authority = "https://revature-p3.okta.com/oauth2/default";
+            //    options.Audience = "api://default";
+            //    options.Events = new JwtBearerEvents
+            //    {
+            //        OnMessageReceived = context =>
+            //        {
+            //            var accessToken = context.Request.Query["access_token"];
+
+            //            // If the request is for our hub...
+            //            var path = context.HttpContext.Request.Path;
+            //            if (!string.IsNullOrEmpty(accessToken) &&
+            //                (path.StartsWithSegments("/notifications")))
+            //            {
+            //                // Read the token out of the query string
+            //                context.Token = accessToken;
+            //            }
+            //            return Task.CompletedTask;
+            //        }
+            //    };
+
+
+            //});
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }
-            ).AddJwtBearer(options =>
+            }).AddJwtBearer(o =>
             {
-                options.Authority = "https://revature-p3.okta.com/oauth2/default";
-                options.Audience = "api://default";
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
+                // change to real auth url later
+                o.Authority = "https://localhost:5001";
+                o.Audience = "fakebookApi";
+                o.RequireHttpsMetadata = false;
+            });
 
-                        // If the request is for our hub...
-                        var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/notifications")))
-                        {
-                            // Read the token out of the query string
-                            context.Token = accessToken;
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-
-
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ApiReader", policy => policy.RequireClaim("scope", "api.read"));
+                options.AddPolicy("Consumer", policy => policy.RequireClaim(ClaimTypes.Role, "consumer"));
             });
 
 
