@@ -44,6 +44,7 @@ namespace FakebookNotifications.DataAccess.Models
             //{
             //    ClearNotifications(noteCol);
             //}
+            SeedUsers(userCol);
             SeedNotes(noteCol);
 
         }
@@ -113,10 +114,15 @@ namespace FakebookNotifications.DataAccess.Models
                 {
                     Email = "testaccount@gmail.com"
                 };
+                User user3 = new()
+                {
+                    Email = "trevor.dunbar@revature.net"
+                };
 
                 //insert seed users
                 userCol.InsertOne(user1);
                 userCol.InsertOne(user2);
+                userCol.InsertOne(user3);
                 return true;
             }
             catch (Exception ex)
@@ -171,12 +177,21 @@ namespace FakebookNotifications.DataAccess.Models
                     HasBeenRead = false,
                     Date = DateTime.Now
                 };
+                Notification note5 = new()
+                {
+                    Type = new KeyValuePair<string, int>("post", 1),
+                    LoggedInUserId = "trevor.dunbar@revature.net",
+                    TriggerUserId = "john.werner@revature.net",
+                    HasBeenRead = false,
+                    Date = DateTime.Now
+                };
 
                 //Insert Notifications
                 noteCol.InsertOne(note1);
                 noteCol.InsertOne(note2);
                 noteCol.InsertOne(note3);
                 noteCol.InsertOne(note4);
+                noteCol.InsertOne(note5);
 
                 return true;
             }
