@@ -117,7 +117,7 @@ namespace FakebookNotifications.DataAccess.Models
                 User user3 = new()
                 {
                     Email = "trevor.dunbar@revature.net"
-                }
+                };
 
                 //insert seed users
                 userCol.InsertOne(user1);
