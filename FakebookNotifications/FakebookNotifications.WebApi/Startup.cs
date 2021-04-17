@@ -57,7 +57,7 @@ namespace FakebookNotifications.WebApi
             }
             ).AddJwtBearer(options =>
             {
-                options.Authority = "https://localhost:5001";
+                options.Authority = "https://localhost:44374";
                 options.Audience = "fakebookApi";
                 options.Events = new JwtBearerEvents
                 {
