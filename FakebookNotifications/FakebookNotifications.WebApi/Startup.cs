@@ -17,12 +17,14 @@ namespace FakebookNotifications.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -57,7 +59,14 @@ namespace FakebookNotifications.WebApi
             }
             ).AddJwtBearer(options =>
             {
-                options.Authority = "https://localhost:44374";
+                if (_env.IsDevelopment())
+                {
+                    options.Authority = "https://localhost:44374";
+                }
+                else
+                {
+                    options.Authority = "https://fakebook.revaturelabs.com";
+                }
                 options.Audience = "fakebookApi";
                 options.Events = new JwtBearerEvents
                 {
