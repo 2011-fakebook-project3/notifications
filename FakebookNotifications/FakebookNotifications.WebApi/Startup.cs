@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FakebookNotifications.DataAccess.Interfaces;
 using FakebookNotifications.DataAccess.Models;
@@ -16,12 +17,14 @@ namespace FakebookNotifications.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -41,7 +44,6 @@ namespace FakebookNotifications.WebApi
                 options.AddDefaultPolicy(
                     builder =>
                     {
-
                         builder.WithOrigins("http://localhost:4200",
                             "https://fakebook.revaturelabs.com")
                             .AllowAnyMethod()
@@ -57,8 +59,15 @@ namespace FakebookNotifications.WebApi
             }
             ).AddJwtBearer(options =>
             {
-                options.Authority = "https://revature-p3.okta.com/oauth2/default";
-                options.Audience = "api://default";
+                if (_env.IsDevelopment())
+                {
+                    options.Authority = "https://localhost:44374";
+                }
+                else
+                {
+                    options.Authority = "https://fakebook.revaturelabs.com";
+                }
+                options.Audience = "fakebookApi";
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
@@ -76,10 +85,7 @@ namespace FakebookNotifications.WebApi
                         return Task.CompletedTask;
                     }
                 };
-
-
             });
-
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
