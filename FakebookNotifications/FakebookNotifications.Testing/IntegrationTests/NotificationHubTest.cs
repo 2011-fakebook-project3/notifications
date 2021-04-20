@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using FakebookNotifications.DataAccess.Models;
@@ -182,9 +180,6 @@ namespace FakebookNotifications.Testing.IntegrationTests
         {
             // Arrange
             mockContext.Setup(u => u.UserIdentifier).Returns("test@test.com");
-            //mockContext.Setup(u => u.User.Identity).Returns(new ClaimsIdentity("Email", "test@test.com", "test@test.com"));
-            mockContext.Setup(u => u.User).Returns(new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Email, "test@test.com") })));
-
             Domain.Models.User thisUser = new()
             {
                 Id = "53453455",

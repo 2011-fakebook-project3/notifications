@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using FakebookNotifications.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -40,8 +39,7 @@ namespace FakebookNotifications.WebApi.Hubs
         {
             if (Context.UserIdentifier != null)
             {
-                var identity = (ClaimsIdentity)Context.User.Identity;
-                thisUserEmail = identity.FindFirst(ClaimTypes.Email).Value;   
+                thisUserEmail = Context.UserIdentifier;
             }
 
             if (thisUserEmail != "")

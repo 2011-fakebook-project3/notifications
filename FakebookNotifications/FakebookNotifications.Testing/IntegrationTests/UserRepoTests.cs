@@ -99,7 +99,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
             UserRepo repo = new(context, noteRepo.Object);
 
             //User to update
-            Domain.Models.User user = await repo.GetUserAsync("john.werner@revature.net");
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
 
             //Act
             var result = await repo.UpdateUserAsync(user);
@@ -202,7 +202,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
             UserRepo repo = new(context, noteRepo.Object);
 
             //User to add connection id to
-            Domain.Models.User user = await repo.GetUserAsync("john.werner@revature.net");
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
             var connectionId = "123456789";
 
             //Act
@@ -230,7 +230,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
             UserRepo repo = new(context, noteRepo.Object);
 
             //User to remove connection id from
-            Domain.Models.User user = await repo.GetUserAsync("john.werner@revature.net");
+            Domain.Models.User user = await repo.GetUserAsync("antonio@gmail.com");
             var connectionId = "123456789";
 
             //Act
