@@ -41,7 +41,7 @@ namespace FakebookNotifications.WebApi.Hubs
             if (Context.UserIdentifier != null)
             {
                 var identity = (ClaimsIdentity)Context.User.Identity;
-                thisUserEmail = identity.FindFirst(ClaimTypes.Email).Value;   
+                thisUserEmail = identity.FindFirst(ClaimTypes.NameIdentifier).Value;   
             }
 
             if (thisUserEmail != "")
