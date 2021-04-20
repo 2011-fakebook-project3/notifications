@@ -183,7 +183,7 @@ namespace FakebookNotifications.Testing.IntegrationTests
             // Arrange
             mockContext.Setup(u => u.UserIdentifier).Returns("test@test.com");
             //mockContext.Setup(u => u.User.Identity).Returns(new ClaimsIdentity("Email", "test@test.com", "test@test.com"));
-            mockContext.Setup(u => u.User).Returns(new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Email, "test@test.com") })));
+            mockContext.Setup(u => u.User).Returns(new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, "test@test.com") })));
 
             Domain.Models.User thisUser = new()
             {
